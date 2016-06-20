@@ -39,7 +39,35 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   })
 
   // Each tab has its own nav history stack:
-
+  .state('login', {
+    url: '/login',
+    abstract: true,
+    templateUrl: 'templates/login.html'
+    // views: {
+    //   'login': {
+    //     templateUrl: 'templates/login.html',
+    //     controller: 'LoginCtrl'
+    //   }
+    // }
+  })
+  .state('login.active', {
+    url:'/active',
+    views:{
+      'login-active':{
+        templateUrl:'templates/login-active.html',
+        controller:'ActiveCtrl'
+      }
+    }
+  })
+  .state('login.id', {
+    url:'/id',
+    views:{
+      'login-id':{
+        templateUrl:'templates/login-id.html',
+        controller:'IdCtrl'
+      }
+    }
+  })
   .state('tab.dash', {
     url: '/dash',
     views: {
@@ -49,17 +77,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     }
   })
-  .state('login', {
-    url: '/login',
-    templateUrl: 'templates/login.html',
-    controller: 'LoginCtrl'
-    // views: {
-    //   'login': {
-    //     templateUrl: 'templates/login.html',
-    //     controller: 'LoginCtrl'
-    //   }
-    // }
-  })
+  
   .state('tab.chats', {
       url: '/chats',
       views: {

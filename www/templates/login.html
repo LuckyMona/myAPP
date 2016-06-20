@@ -1,5 +1,15 @@
 <ion-view view-title="Login">
-  <ion-content class="padding">
-    
+  <ion-content class="has-header">
+     <ion-tabs class="tabs-icon-top tabs-positive">
+
+        <ion-tab title="active" icon="ion-home" href="#/login/active">
+          <ion-nav-view name="login-active"></ion-nav-view>
+        </ion-tab>
+
+        <ion-tab title="id" icon="ion-ios-information" href="#/login/id">
+          <ion-nav-view name="login-id"></ion-nav-view>
+        </ion-tab>
+      </ion-tabs>
+  
   </ion-content>
 </ion-view>
