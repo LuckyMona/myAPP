@@ -1,8 +1,8 @@
 /* Empty. Add your own CSS if you like */
 
 .bar.bar-positive { background: #3E50B5; }
-.bar { height: 56px; }
-.bar .title { height: 56px; line-height: 56px; color: rgba(255,255,255,0.87) !important; font-size: 20px;}
+.bar-cus { height: 56px; }
+.bar .title-cus { height: 56px; line-height: 56px; color: rgba(255,255,255,0.87) !important; font-size: 20px;}
 .bar-positive .buttons:first-child .button { opacity: 0; }
 .has-tabs, .bar-footer.has-tabs {  } 
 .has-header {
@@ -16,7 +16,7 @@
 .fz20 { font-size: 20px !important; }
 .fr { float:right; }
 .no-bdr { border:none !important; }
-
+.h56 { height:56px !important; line-height: 56px !important; }
 
 
 .btnWp { margin-top:20px; }
@@ -25,4 +25,15 @@
 
 .login-button { box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26); padding: 0 14px; vertical-align:middle; border-radius:3px; line-height: 1; min-height: 36px; }
 .btn-clear { color: rgb(33,33,33); background-color: rgb(250,250,250);}
- 
+.bdr-color-cuz { border-color:#ceced2 !important; }
+.bg-img-cuz { background-image: linear-gradient(0deg, #ceced2, #ceced2 50%, transparent 50%) !important; }
+.add-btn { color:#017AFF !important; padding: 0 10px !important; font-size: 22px !important; }
+
+.greyBar { background: #efeff4; color:#8e8e93; padding: 20px 0 10px 10px; font-size: 16px; }
+.has-header44 { top: 44px }
+
+.r-img { position: absolute; top: 16px; right: 16px; color:#8e8e8e; }
+.r-img h2 img { height:20px; }
+.r-img p { text-align: right; color:#8e8e8e; }
+.upload > h2 { color:#333333; }
+.upload > p { color:#8e8e8e; margin-bottom: -4px; }
