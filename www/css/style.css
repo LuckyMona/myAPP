@@ -13,10 +13,15 @@
 .tabs-striped .tabs { border:none; } 
 .item-floating-label { border-top: none; }
 
+.c3 { color:#333 !important; }
+.c8e { color:#8e8e93 !important; }
+.cce { color:#ceced2 !important; }
 .fz20 { font-size: 20px !important; }
 .fr { float:right; }
 .no-bdr { border:none !important; }
+.no-mg { margin:0 !important; }
 .h56 { height:56px !important; line-height: 56px !important; }
+.ml10 { margin-left:10px; }
 
 
 .btnWp { margin-top:20px; }
@@ -37,3 +42,18 @@
 .r-img p { text-align: right; color:#8e8e8e; }
 .upload > h2 { color:#333333; }
 .upload > p { color:#8e8e8e; margin-bottom: -4px; }
+
+.thinBar { background:#efeff4; height:24px; }
+.sign-btn { color:#ff3b30 !important; background: #fff !important; }
+.bg-grey { background: #efeff4 !important; }
+.hotLine { font-weight: bold; font-size: 20px; text-align: center;color:#999999; }
+.deleteIcon {     position: absolute;
+    top: 0;
+    right: 0;
+    color: #8e8e8e;
+    width: 50px;
+    height: 71px;
+     }
+.deleteIcon i {     top: 26px;
+    position: absolute;
+    right: 16px; }
