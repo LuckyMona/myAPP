@@ -8,3 +8,21 @@
 .has-header {
     top: 56px;
 } 
+.has-2header { top:105px; }
+.tabs-top > .tabs, .tabs.tabs-top { top: 56px; }
+.tabs-striped .tabs { border:none; } 
+.item-floating-label { border-top: none; }
+
+.fz20 { font-size: 20px !important; }
+.fr { float:right; }
+.no-bdr { border:none !important; }
+
+
+
+.btnWp { margin-top:20px; }
+.btnWp button { margin-right: 10px }
+.btnWp button:first { margin-right:20px; }
+
+.login-button { box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26); padding: 0 14px; vertical-align:middle; border-radius:3px; line-height: 1; min-height: 36px; }
+.btn-clear { color: rgb(33,33,33); background-color: rgb(250,250,250);}
+ 

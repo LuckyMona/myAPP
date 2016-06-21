@@ -16,15 +16,18 @@ angular.module('starter.controllers', [])
     Chats.remove(chat);
   };
 })
+.controller('taskListCtrl', function($scope) { 
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
+
+})
+.controller('UploadsCtrl', function($scope, $stateParams, Chats) {
+  // $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
+.controller('SystemCtrl', function($scope) {
+  // $scope.settings = {
+  //   enableFriends: true
+  // };
 })
 .controller('ActiveCtrl', function($scope){
   

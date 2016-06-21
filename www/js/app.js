@@ -68,26 +68,26 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     }
   })
-  .state('tab.dash', {
-    url: '/dash',
+  .state('tab.taskList', {
+    url: '/taskList',
     views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
+      'tab-taskList': {
+        templateUrl: 'templates/tab-taskList.html',
+        controller: 'taskListCtrl'
       }
     }
   })
   
-  .state('tab.chats', {
-      url: '/chats',
+  .state('tab.uploads', {
+      url: '/uploads',
       views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
+        'tab-uploads': {
+          templateUrl: 'templates/tab-uploads.html',
+          controller: 'UploadsCtrl'
         }
       }
     })
-    .state('tab.chat-detail', {
+    /*.state('tab.chat-detail', {
       url: '/chats/:chatId',
       views: {
         'tab-chats': {
@@ -95,19 +95,20 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
           controller: 'ChatDetailCtrl'
         }
       }
-    })
+    })*/
 
-  .state('tab.account', {
-    url: '/account',
+  .state('tab.system', {
+    url: '/system',
     views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
+      'tab-system': {
+        templateUrl: 'templates/tab-system.html',
+        controller: 'SystemCtrl'
       }
     }
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+  $urlRouterProvider.otherwise('/tab/taskList');
+  //$urlRouterProvider.otherwise('/login/active');
 
 });

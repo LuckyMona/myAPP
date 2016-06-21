@@ -4721,14 +4721,14 @@ a.subdued {
       opacity: 1; }
 
 .tabs-striped.tabs-color-positive .tab-item {
-  color: rgba(56, 126, 245, 0.4);
+  color: rgba(0,0,0,0.54);
   opacity: 1; }
   .tabs-striped.tabs-color-positive .tab-item .badge {
     opacity: 0.4; }
   .tabs-striped.tabs-color-positive .tab-item.tab-item-active, .tabs-striped.tabs-color-positive .tab-item.active, .tabs-striped.tabs-color-positive .tab-item.activated {
     margin-top: -2px;
-    color: #387ef5;
-    border: 0 solid #387ef5;
+     color: #3E50B5;
+    border: 0 solid #FF3076;
     border-top-width: 2px; }
     .tabs-striped.tabs-color-positive .tab-item.tab-item-active .badge, .tabs-striped.tabs-color-positive .tab-item.active .badge, .tabs-striped.tabs-color-positive .tab-item.activated .badge {
       top: 2px;
@@ -7663,7 +7663,7 @@ textarea {
   padding: 7px 10px 7px 0px;
   max-width: 200px;
   width: 35%;
-  color: #444;
+  color: #3E50B5;
   font-size: 16px; }
 
 .placeholder-icon {
@@ -7815,15 +7815,15 @@ input[type="file"] {
 
 input::-moz-placeholder,
 textarea::-moz-placeholder {
-  color: #aaaaaa; }
+  color: #ccc; }
 
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder {
-  color: #aaaaaa; }
+  color: #ccc; }
 
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
-  color: #aaaaaa;
+  color: #ccc;
   text-indent: 0; }
 
 input[disabled],
@@ -8807,8 +8807,8 @@ progress {
         color: #fff; }
   .button.button-royal {
     border-color: transparent;
-    background-color: #886aea;
-    color: #fff; }
+    background-color: #3E50B5;
+    color: rgba(255,255,255,0.87); }
     .button.button-royal:hover {
       color: #fff;
       text-decoration: none; }
