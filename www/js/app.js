@@ -105,6 +105,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         controller: 'SystemCtrl'
       }
     }
+  })
+  .state('newAct', {
+    url: '/newAct',
+    templateUrl: 'templates/newAct.html',
+    controller: 'newActCtrl'
+    /*views: {
+      'newAct': {
+        templateUrl: 'templates/newAct.html',
+        controller: 'newActCtrl'
+      }
+    }*/
   });
 
   // if none of the above states are matched, use this as the fallback

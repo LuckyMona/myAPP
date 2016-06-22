@@ -16,12 +16,22 @@
 .c3 { color:#333 !important; }
 .c8e { color:#8e8e93 !important; }
 .cce { color:#ceced2 !important; }
+.cred { color:#FF4A6D !important; }
+
+.hide { display: none; }
+.show { display: block; }
 .fz20 { font-size: 20px !important; }
+.fz16 { font-size:16px !important; }
 .fr { float:right; }
+.fl { float: left; }
 .no-bdr { border:none !important; }
 .no-mg { margin:0 !important; }
 .h56 { height:56px !important; line-height: 56px !important; }
 .ml10 { margin-left:10px; }
+.ml30- { margin-left: 30%; }
+.mt24 { margin:0; margin-top:24px !important; }
+.mb24 { margin-bottom:24px !important; }
+
 
 
 .btnWp { margin-top:20px; }
@@ -34,7 +44,7 @@
 .bg-img-cuz { background-image: linear-gradient(0deg, #ceced2, #ceced2 50%, transparent 50%) !important; }
 .add-btn { color:#017AFF !important; padding: 0 10px !important; font-size: 22px !important; }
 
-.greyBar { background: #efeff4; color:#8e8e93; padding: 20px 0 10px 10px; font-size: 16px; }
+.greyBar { background: #efeff4; color:#8e8e93; padding: 10px 0 10px 10px; font-size: 16px; }
 .has-header44 { top: 44px }
 
 .r-img { position: absolute; top: 16px; right: 16px; color:#8e8e8e; }
@@ -57,3 +67,22 @@
 .deleteIcon i {     top: 26px;
     position: absolute;
     right: 16px; }
+
+.newAct { padding-top:44px; }
+.prevBlock:before { border:1px solid rgb(221, 221, 221); border-left:none; border-right: none; content:''; display: block; background: white; height:100%; position:absolute; left:0; top:0; z-index:99; width:14px; }
+
+.attach { font-size: 24px !important;
+    margin-bottom: -4px;
+    transform:rotate(30deg);
+	-ms-transform:rotate(30deg); 	/* IE 9 */
+	-moz-transform:rotate(30deg); 	/* Firefox */
+	-webkit-transform:rotate(30deg); /* Safari 和 Chrome */
+	-o-transform:rotate(30deg);
+	color:#007aff;  }
+.imgItem { max-height: 70px; overflow:hidden; position: relative; display: inline-block;}
+.imgItem img { max-height: 70px; }
+.imgItem a { position:absolute; right:0; top:0; background: url(/img/delete.png) no-repeat;
+	background-size: contain;
+	width:20px;
+	height:20px; }
+

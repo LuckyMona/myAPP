@@ -34,4 +34,7 @@ angular.module('starter.controllers', [])
 })
 .controller('IdCtrl', function($scope){
   
+})
+.controller('newActCtrl', function($scope){
+  
 });
