@@ -3,20 +3,21 @@ Create tabs with an icon and label, using the tabs-positive style.
 Each tab's child <ion-nav-view> directive will have its own
 navigation history that also transitions its views in and out.
 -->
-<ion-nav-bar>
+<!-- <ion-nav-bar>
   <ion-header-bar align-title="center" class="bg-img-cuz bar bar-header bar-stable bdr-color-cuz">
-        <!-- <div class="buttons">
+        <div class="buttons">
           <button class="button" ng-click="doSomething()"></button>
-        </div> -->
+        </div>
         <h1 class="title">Upload</h1>
         <div class="buttons">
           <button class="button button-clear add-btn"><i class="ion-plus"></i></button>
         </div>
   </ion-header-bar> 
-</ion-nav-bar>
+</ion-nav-bar> -->
 
-<ion-tabs class="tabs-icon-top tabs-color-active-positive tabs-color-positive">
+<ion-tabs class="tabs-icon-only tabs-color-active-positive tabs-color-positive">
 
+  <div class="num">J12345</div>
   <!-- tastList Tab -->
   <ion-tab title="TaskList" icon-off="ion-social-buffer-outline" icon-on="ion-social-buffer-outline " href="#/tab/taskList.html">
     <ion-nav-view name="tab-taskList"></ion-nav-view>
@@ -26,6 +27,9 @@ navigation history that also transitions its views in and out.
   <ion-tab title="Upload" icon-off="ion-ios-cloud-upload-outline" icon-on="ion-ios-cloud-upload-outline" href="#/tab/uploads">
     <ion-nav-view name="tab-uploads"></ion-nav-view>
   </ion-tab>
+
+  <!-- newAct Tab -->
+  <a class="actAdd" href="#/newAct"><i>+</i></a>
 
   <!-- system Tab -->
   <ion-tab title="System" icon-off="ion-ios-settings" icon-on="ion-ios-settings" href="#/tab/system">

@@ -46,6 +46,7 @@
 
 .greyBar { background: #efeff4; color:#8e8e93; padding: 10px 0 10px 10px; font-size: 16px; }
 .has-header44 { top: 44px }
+.has-header49 { top: 49px; height: 100%; }
 
 .r-img { position: absolute; top: 16px; right: 16px; color:#8e8e8e; }
 .r-img h2 img { height:20px; }
@@ -127,3 +128,27 @@
     height:-webkit-calc(100% - 2px);
     margin-top: 1px;
      }
+.tabs { top:0 !important; background-image: none !important; border-bottom: 1px solid rgb(221, 221, 221);}
+.num, .actAdd { -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    
+}
+.num { padding-left:15px;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    padding-right:20%;
+    order:1; }
+.actAdd { order:4; align-items: center;
+    justify-content: center;
+}
+.actAdd i { display: inline-block; width:100%; text-align: center; font-size:44px; font-weight:300;     position: relative;
+    top: -3px; }
+
+.tab-item:nth-of-type(2) { order:2; }
+.tab-item:nth-of-type(3) { order:3; }
+.tab-item:nth-of-type(4) { order:5;}
