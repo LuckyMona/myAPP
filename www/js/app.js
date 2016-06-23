@@ -106,13 +106,24 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     }
   })
-  .state('newAct', {
+  .state('tab.newAct', {
     url: '/newAct',
-    templateUrl: 'templates/newAct.html',
-    controller: 'newActCtrl'
+    /*templateUrl: 'templates/newAct.html',
+    controller: 'newActCtrl'*/
+    views: {
+      'tab-newAct': {
+        templateUrl: 'templates/tab-newAct.html',
+        controller: 'newActCtrl'
+      }
+    }
+  })
+  .state('photo', {
+    url: '/photo',
+    templateUrl: 'templates/photo.html',
+    // controller: 'newActCtrl'
     /*views: {
-      'newAct': {
-        templateUrl: 'templates/newAct.html',
+      'tab-newAct': {
+        templateUrl: 'templates/tab-newAct.html',
         controller: 'newActCtrl'
       }
     }*/
@@ -152,7 +163,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/taskList');
-  //$urlRouterProvider.otherwise('/login/active');
+  //$urlRouterProvider.otherwise('/tab/taskList');
+  $urlRouterProvider.otherwise('/login/active');
 
 });

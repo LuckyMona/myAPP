@@ -15,21 +15,24 @@ navigation history that also transitions its views in and out.
   </ion-header-bar> 
 </ion-nav-bar> -->
 
-<ion-tabs class="tabs-icon-only tabs-color-active-positive tabs-color-positive">
+<ion-tabs class="notLogin tabs-icon-only tabs-color-active-positive tabs-color-positive">
 
   <div class="num">J12345</div>
   <!-- tastList Tab -->
-  <ion-tab title="TaskList" icon-off="ion-social-buffer-outline" icon-on="ion-social-buffer-outline " href="#/tab/taskList.html">
+  <ion-tab title="TaskList" badge="6" badge-style="badge-assertive" icon-off="ion-social-buffer-outline" icon-on="ion-social-buffer-outline " href="#/tab/taskList.html">
     <ion-nav-view name="tab-taskList"></ion-nav-view>
   </ion-tab>
 
   <!-- uploads Tab -->
-  <ion-tab title="Upload" icon-off="ion-ios-cloud-upload-outline" icon-on="ion-ios-cloud-upload-outline" href="#/tab/uploads">
+  <ion-tab title="Upload" badge="2" badge-style="badge-assertive" icon-off="ion-ios-cloud-upload-outline" icon-on="ion-ios-cloud-upload-outline" href="#/tab/uploads">
     <ion-nav-view name="tab-uploads"></ion-nav-view>
   </ion-tab>
 
   <!-- newAct Tab -->
-  <a class="actAdd" href="#/newAct"><i>+</i></a>
+  <ion-tab title="ActAdd" icon-off="ion-ios-plus-empty" icon-on="ion-ios-plus-empty" href="#/tab/newAct">
+    <ion-nav-view name="tab-newAct"></ion-nav-view>
+  </ion-tab>
+  <!-- <a class="actAdd" href="#/newAct"><i>+</i></a> -->
 
   <!-- system Tab -->
   <ion-tab title="System" icon-off="ion-ios-settings" icon-on="ion-ios-settings" href="#/tab/system">
