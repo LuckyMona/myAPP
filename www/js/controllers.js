@@ -37,4 +37,13 @@ angular.module('starter.controllers', [])
 })
 .controller('newActCtrl', function($scope){
   
+})
+.controller('BlockCtrl', function($scope){
+ 
+})
+.controller('FloorCtrl', function($scope){
+  $scope.block = 'A';
+})
+.controller('CategoryCtrl', function($scope){
+  $scope.category = 'A';
 });

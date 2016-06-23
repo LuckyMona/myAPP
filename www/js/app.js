@@ -116,6 +116,39 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         controller: 'newActCtrl'
       }
     }*/
+  })
+  .state('block', {
+    url: '/block',
+    templateUrl: 'templates/block.html',
+    controller: 'BlockCtrl'
+    // views: {
+    //   'newAct': {
+    //     templateUrl: 'templates/block.html',
+    //     controller: 'BlockCtrl'
+    //   }
+    // }
+  })
+  .state('floor', {
+    url: '/floor',
+    templateUrl: 'templates/floor.html',
+    controller: 'FloorCtrl'
+    // views: {
+    //   'newAct': {
+    //     templateUrl: 'templates/floor.html',
+    //     controller: 'FloorCtrl'
+    //   }
+    // }
+  })
+  .state('category', {
+    url: '/category',
+    templateUrl: 'templates/category.html',
+    controller: 'CategoryCtrl'
+    // views: {
+    //   'newAct': {
+    //     templateUrl: 'templates/floor.html',
+    //     controller: 'FloorCtrl'
+    //   }
+    // }
   });
 
   // if none of the above states are matched, use this as the fallback

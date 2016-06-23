@@ -100,7 +100,8 @@
     padding: 0 5px; }
 .bar-footer { background: #f7f7f7; }
 .bar-footer label { background: #fafafa; border:1px solid #bcbcc2; }
-.mockinput { width: 80%;
+.mockinput { width: 78%;
+    margin:0 auto !important;
     height: auto;
     min-height: 32px;
     line-height: 1.2;
@@ -112,3 +113,17 @@
     background: #fafafa; }
 .fixbottom { position:absolute; bottom:5px; }
 .fixbottom:last-child { right:5px; }
+.ellipsis { text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; }
+.ion-android-arrow-back:before { font-size: 26px !important; }
+.radio-icon { color:#4CA2FF !important; }
+.item-radio input:checked + .radio-content .item-content {
+    /* style the item content when its checked */
+    background: white !important; }
+.prevBlock.blockFix:before { 
+    height:calc(100% - 2px);
+    height:-moz-calc(100% - 2px);
+    height:-webkit-calc(100% - 2px);
+    margin-top: 1px;
+     }
