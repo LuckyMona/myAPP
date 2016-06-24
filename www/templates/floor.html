@@ -14,9 +14,9 @@
 	  	
 	  	<div class="list mt24 blockFix prevBlock">
 		  	<ion-list>
-			  	<ion-radio ng-model="block" ng-checked="true" ng-value="'A'">Ground floor</ion-radio>
-			  	<ion-radio ng-model="block" ng-value="'B'">2F</ion-radio>
-			  	<ion-radio ng-model="block" ng-value="'C'">3F</ion-radio>
+			  	<ion-radio ng-model="$parent.floor" nav-direction="back" ng-value="'A'">Ground floor</ion-radio>
+			  	<ion-radio ng-model="$parent.floor" nav-direction="back"  ng-value="'B'">2F</ion-radio>
+			  	<ion-radio ng-model="$parent.floor" nav-direction="back"  ng-value="'C'">3F</ion-radio>
 			</ion-list>
 			<!-- <a class="item c3" href="#/block">
 			    <span class="fl" style="width:40%;">Block A</span>

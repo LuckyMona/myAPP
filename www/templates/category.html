@@ -13,9 +13,9 @@
 	<ion-content class="bg-grey has-header44">
 		<div class="list mt24 blockFix prevBlock">
 		  	<ion-list>
-			  	<ion-radio ng-model="category" ng-checked="true" ng-value="'A'">Category A</ion-radio>
-			  	<ion-radio ng-model="category" ng-value="'B'">Category B</ion-radio>
-			  	<ion-radio ng-model="category" ng-value="'C'">Category C</ion-radio>
+			  	<ion-radio ng-model="$parent.category" nav-direction="back" ng-checked="true" ng-value="'A'">Category A</ion-radio>
+			  	<ion-radio ng-model="$parent.category" nav-direction="back" ng-value="'B'">Category B</ion-radio>
+			  	<ion-radio ng-model="$parent.category" nav-direction="back" ng-value="'C'">Category C</ion-radio>
 			</ion-list>
 		</div>
 	</ion-content>

@@ -66,7 +66,7 @@
 				    <span class="fl" style="width:40%; position: relative; left: -3px;">Photo <i>(8)</i></span>
 				    <i style="width:5%" class="attach fr icon ion-android-attach"></i>
 				</a>
-				<div class="item">
+				<div class="item horizScroll">
 					<div class="imgItem">
 						<img src="img/one.jpg">
 						<a href="#" class="deletePic"></a>
@@ -93,8 +93,8 @@
 	</ion-content>
 	<div class="bar bar-footer" style="height:auto !important;">
 		    <button class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
-			
-		    <div class="mockinput" contenteditable="true">Input activity log here ...</div>
+			<!-- <input type="" id="realInput" name=""> -->
+		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{mockInputData}}</div>
 		    <button class="fixbottom button button-clear send"></button>
 	</div>	
 </ion-view>

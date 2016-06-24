@@ -142,7 +142,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('floor', {
     url: '/floor',
     templateUrl: 'templates/floor.html',
-    controller: 'FloorCtrl'
+    controller: 'newActCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
@@ -153,7 +153,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('category', {
     url: '/category',
     templateUrl: 'templates/category.html',
-    controller: 'CategoryCtrl'
+    controller: 'newActCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
@@ -182,7 +182,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('review', {
     url: '/review',
     templateUrl: 'templates/review.html',
-    controller: 'ReviewCtrl'
+    controller: 'newActCtrl'
     
   });
 
