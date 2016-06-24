@@ -160,6 +160,30 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     //     controller: 'FloorCtrl'
     //   }
     // }
+  })
+  .state('language', {
+    url: '/language',
+    templateUrl: 'templates/language.html',
+    controller: 'LanguageCtrl'
+    
+  })
+  .state('trade', {
+    url: '/trade',
+    templateUrl: 'templates/trade.html',
+    // controller: 'TradeCtrl'
+    
+  })
+  .state('subcontractor', {
+    url: '/subcontractor',
+    templateUrl: 'templates/subcontractor.html',
+    // controller: 'TradeCtrl'
+    
+  })
+  .state('review', {
+    url: '/review',
+    templateUrl: 'templates/review.html',
+    controller: 'ReviewCtrl'
+    
   });
 
   // if none of the above states are matched, use this as the fallback

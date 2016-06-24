@@ -36,7 +36,11 @@ angular.module('starter.controllers', [])
   
 })
 .controller('newActCtrl', function($scope){
-  
+  $scope.isTradeShow = false;
+  $scope.isReviewShow = false;
+  $scope.toggleTradeShow = function(){
+    $scope.isTradeShow = !$scope.isTradeShow;
+  }
 })
 .controller('BlockCtrl', function($scope){
  
@@ -46,4 +50,10 @@ angular.module('starter.controllers', [])
 })
 .controller('CategoryCtrl', function($scope){
   $scope.category = 'A';
+})
+.controller('LanguageCtrl', function($scope){
+  $scope.lan = 'En';
+})
+.controller('ReviewCtrl', function($scope){
+  $scope.review = 'Allan';
 });

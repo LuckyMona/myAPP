@@ -8,6 +8,7 @@
 .has-header {
     top: 56px;
 } 
+.has-header50 { top: 50px !important; }
 .has-2header { top:105px; }
 .tabs-top > .tabs, .tabs.tabs-top { top: 56px; }
 .tabs-striped .tabs { border:none; } 
@@ -71,7 +72,7 @@
     position: absolute;
     right: 16px; }
 
-.newAct { padding-top:49px; }
+/*.newAct { padding-top:49px; }*/
 .prevBlock:before { border:1px solid rgb(221, 221, 221); border-left:none; border-right: none; content:''; display: block; background: white; height:100%; position:absolute; left:0; top:0; z-index:99; width:14px; }
 
 .attach { font-size: 24px !important;
@@ -84,11 +85,11 @@
 	color:#007aff;  }
 .imgItem { max-height: 70px; overflow:hidden; position: relative; display: inline-block;}
 .imgItem img { max-height: 70px; }
-.imgItem a { position:absolute; right:0; top:0; background: url(/img/delete.png) no-repeat;
+.imgItem a { position:absolute; right:0; top:0; background: url(../img/delete.png) no-repeat;
 	background-size: contain;
 	width:20px;
 	height:20px; }
-.send { background: url(/img/send.png) no-repeat center !important;
+.send { background: url(../img/send.png) no-repeat center !important;
     width: 30px;
     background-size: contain !important; margin-right: 6px; }
 .bar-footer textarea {     background: transparent;
@@ -105,6 +106,7 @@
 .bar-footer label { background: #fafafa; border:1px solid #bcbcc2; }
 .mockinput { 
     max-height: 116px;
+    overflow-y: auto;
     width: 78%;
     margin:0 auto !important;
     height: auto;
@@ -173,7 +175,7 @@
 }
 .photoWall .eachPhoto img { width:100%; }
 .photoWall .eachPhoto a { position:absolute; z-index:99; right:0; top:0; display: block;
-    background: url(/img/selected.png) no-repeat;
+    background: url(../img/selected.png) no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;
@@ -194,3 +196,8 @@
     right: 10px;
 }
 .startUpload p { margin-bottom: 0; margin-top: 19px; }
+.newLine {     white-space: normal;
+    word-wrap: break-word;
+    word-break: break-all; }
+.scroll { height: 100%; }
+.imgItem {  }
