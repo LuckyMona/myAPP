@@ -22,7 +22,64 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   });
 })
+/*.directive('spyStyle',function(){
+  return {
+    link: function(scope, ele, attrs){
+      scope.$watch(function(){
+        //return ele.css(attrs['spyAttribute']);
+        return ele.css('height');
+      }, styleChangedCallBack, true);
 
+      function styleChangedCallBack(newValue, oldValue) {
+        console.log('here');
+                if (newValue !== oldValue) {
+                    // do something interesting here
+                    // invoking callback function:
+                    //scope[attrs['spyStyle']](newValue);
+                    console.log('styleChange');
+                    var ele = document.getElementById("lastEle");
+                    var newMarginBottom = parseInt(newValue - oldValue + 100) + "px";
+                    ele.style.marginBottom = newMarginBottom;
+                }
+            }
+
+
+    }
+  }
+})*/
+/*.directive('targetStyle', function(){
+  return {
+    link: function(scope, ele, attrs){
+      scope.$watch('_height', function(newH, oldH){
+        console.log('target');
+        ele.attr( 'style', 'margin-bottom: ' + (100 + newH - oldH) + 'px' );
+      })
+    }
+  }
+})
+.directive('spyStyle',function(){
+  return {
+    link: function(scope, ele, attrs){
+      scope.$watch(function(){
+        console.log('spy');
+        scope._height = ele.offsetHeight;
+      });*/
+
+      /*function styleChangedCallBack(newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    // do something interesting here
+                    // invoking callback function:
+                    //scope[attrs['spyStyle']](newValue);
+                    var ele = document.getElementById("lastEle");
+                    var newMarginBottom = parseInt(newValue - oldValue + 100) + "px";
+                    ele.style.marginBottom = newMarginBottom;
+                }
+            }
+
+
+    }
+  }
+})*/
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -164,7 +221,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('language', {
     url: '/language',
     templateUrl: 'templates/language.html',
-    controller: 'LanguageCtrl'
+    controller: 'newActCtrl'
     
   })
   .state('trade', {

@@ -1,5 +1,6 @@
 angular.module('starter.controllers', [])
 
+
 .controller('DashCtrl', function($scope) {})
 
 .controller('ChatsCtrl', function($scope, Chats) {
@@ -47,26 +48,29 @@ angular.module('starter.controllers', [])
     $scope.category = 'A';
     $scope.review = 'Allan';
 
-    var url = "http://" + $window.location.host + "#/tab/newAct";
+    var href = $window.location.href;
+    $scope.m_url = href.split('#')[0] + "#/tab/newAct";
    
+
     $scope.$watch("floor", function(newVal,oldVal){
         console.log('newVal:'+newVal);
         if(newVal==oldVal){
           return;
         }
         $timeout(function() {
-            $window.location.href = url;
+            $window.location.href =  $scope.m_url;
         }, 200);
     })
 
     // category.html页面单选后跳回来
     $scope.$watch("category", function(newVal,oldVal){
         console.log('newVal:'+newVal);
+        console.log('oldVal:'+oldVal);
         if(newVal==oldVal){
           return;
         }
         $timeout(function() {
-            $window.location.href = url;
+            $window.location.href =  $scope.m_url;
         }, 200);
     });
 
@@ -76,8 +80,30 @@ angular.module('starter.controllers', [])
         if(newVal==oldVal){
           return;
         }
+        /*var href = $window.location.href;
+        var url = href.split('#')[0] + "#/tab/newAct";
+        console.log('sm_url:'+ $scope.m_url);*/
         $timeout(function() {
-            $window.location.href = url;
+            $window.location.href =  $scope.m_url;
+            /*console.log('url:' + url);
+            console.log('sm_url:'+ $scope.m_url);*/
+        }, 200);
+    });
+
+    // language.html页面单选后跳回来
+    $scope.$watch("lan", function(newVal,oldVal){
+        console.log('newVal:'+newVal);
+        if(newVal==oldVal){
+          return;
+        }
+        
+        var href = $window.location.href;
+        var s_url = href.split('#')[0] + "#/tab/system";
+        /*console.log('sm_url:'+ $scope.m_url);*/
+        $timeout(function() {
+            $window.location.href =  s_url;
+            /*console.log('url:' + url);
+            console.log('sm_url:'+ $scope.m_url);*/
         }, 200);
     });
 
@@ -101,7 +127,7 @@ angular.module('starter.controllers', [])
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
       $scope.mockInputData = "";
-      $scope.style = {"color":"#000"}
+      $scope.style = {"color":"#000"};
       // $event.target.focus();
       /*$event.target.click();*/
       //return true;
@@ -115,6 +141,28 @@ angular.module('starter.controllers', [])
       
      // console.log($event);
     }
+
+    //监控log input高度变化
+    /*$scope.$watch("$scope.style.height", function(newVal,oldVal){
+        console.log('newVal:'+newVal);
+        if(newVal==oldVal){
+          return;
+        }
+    });*/
+
+   /* var ele = document.getElementById("mockinput");
+     //var h = ele.offsetHeight;
+     $scope.$watch('ele.offsetHeight', function(newVal, oldVal){
+       console.log('newVal:'+newVal);
+       console.log('oldVal:'+oldVal);
+     });
+     if(ele.offsetHeight>36){
+       console.log(ele.offsetHeight);
+       var h2 = ele.getBoundingClientRect().height;
+       console.log(h2);
+     }
+    */
+
 })
 .controller('BlockCtrl', function($scope){
  
