@@ -11,29 +11,30 @@
 		</ion-header-bar> -->
 		<div class="newAct">
 			<!-- <div class="thinBar"></div> -->
-			<div class="greyBar">New Activity / Photo</div>
+			<div class="greyBar">{{'NEW_ACT_TITLE' | translate }}</div>
 			<div class="list prevBlock">
 		    	<a class="item c3" href="#/block" nav-direction="forward">
 				    <span class="fl" style="width:40%;">Location</span>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
 				    <span style="width:55%" class="fz16 item-note c3 ellipsis">
-				      Block A / Ground Floor				      
+				      <!-- Block A / Ground Floor -->	
+				       {{ 'LOCATION' | translate }}		      
 				    </span>
 				</a>
 				<a class="item c3" href="#/category" nav-direction="forward">
 				    <span class="fl" style="width:40%;">Category</span>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
 				    <span style="width:55%" class="fz16 item-note c3 ellipsis">
-				      Progress record			      
+				      {{ 'PROGRESS_RECORD' | translate }}			      
 				    </span>
 				</a>
 		    </div>
 		    <!-- <div class="thinBar"></div> -->
 		    <div class="list mt24 prevBlock">
-		    	<ion-checkbox ng-model="isReviewShow">Request review</ion-checkbox>
+		    	<ion-checkbox ng-model="isReviewShow">{{ 'REQUEST_REVIEW' | translate }}</ion-checkbox>
 
 		    	<a class="item c3" href="#/review" nav-direction="forward" ng-show="isReviewShow">
-				    <span class="fl" style="width:40%;">Review by</span>
+				    <span class="fl" style="width:40%;">{{ 'REVIEW_BY' | translate }}</span>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
 				    <span style="width:55%" class="fz16 item-note c3">
 				      Alan Kong			      
@@ -42,19 +43,19 @@
 		    </div>
 		    <div class="list mt24 prevBlock">
 		    	<a class="item c3 tradeTitle" ng-click='toggleTradeShow()'; href="">
-				    <span class="fl" style="width:40%; position: relative; left: -3px;">Trade / Subcontractor</span>
+				    <span class="fl" style="width:40%; position: relative; left: -3px;">{{ 'TRADE_SUBCONTRACTOR' | translate }}</span>
 				    <i style="width:5%" class="fr icon ion-chevron-down cce"></i>
 				    
 				</a>
 				<a class="item c3" ng-show="isTradeShow" href="#/trade" nav-direction="forward">
-				    <span class="fl" style="width:40%;">Trade</span>
+				    <span class="fl" style="width:40%;">{{ 'TRADE' | translate }}</span>
 				    <i style="width:5%" class="fr icon ion-android-cancel fz20 cce"></i>
 				    <span style="width:55%" class="fz16 item-note c3 newLine">
 				      Concrete, Rebar, Brick, Concrete, Rebar, Brick	      
 				    </span>
 				</a>
 				<a class="item c3" ng-show="isTradeShow" href="#/subcontractor" nav-direction="forward">
-				    <span class="fl" style="width:40%;">Subcontractor</span>
+				    <span class="fl" style="width:40%;">{{ 'SUBCONTRACTOR' | translate }}</span>
 				    <i style="width:5%" class="fr icon ion-android-cancel fz20 cce"></i>
 				    <span style="width:55%" class="fz16 item-note c3 newLine">
 				      ABC Company, BBC Company, CBC Company			      
@@ -63,7 +64,7 @@
 			</div>
 			<div class="list mt24 prevBlock" id="lastEle" ng-style="lastEleStyle" style="margin-bottom:100px;">
 		    	<a class="item c3" href="#/photo">
-				    <span class="fl" style="width:40%; position: relative; left: -3px;">Photo <i>(8)</i></span>
+				    <span class="fl" style="width:40%; position: relative; left: -3px;">{{ 'PHOTO' | translate }} <i>(8)</i></span>
 				    <i style="width:5%" class="attach fr icon ion-android-attach"></i>
 				</a>
 				<div class="item horizScroll">
@@ -95,7 +96,7 @@
 	<div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;">
 		    <button class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
 			<!-- <input type="" id="realInput" name=""> -->
-		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{mockInputData}}</div>
+		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{ 'INPUT_LOG' | translate }} </div>
 		    <button class="fixbottom button button-clear send"></button>
 	</div>	
 </ion-view>

@@ -5,7 +5,16 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('starter', [
+  'ionic', 
+  'starter.controllers', 
+  'starter.services',
+  'pascalprecht.translate',
+  'LocalStorageModule',
+  'userPref',
+  'translation'
+
+])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -80,6 +89,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   }
 })*/
+
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -99,7 +109,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('login', {
     url: '/login',
     abstract: true,
-    templateUrl: 'templates/login.html'
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
     // views: {
     //   'login': {
     //     templateUrl: 'templates/login.html',

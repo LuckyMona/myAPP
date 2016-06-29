@@ -1,9 +1,9 @@
 angular.module('starter.controllers', [])
 
 
-.controller('DashCtrl', function($scope) {})
+// .controller('DashCtrl', function($scope) {})
 
-.controller('ChatsCtrl', function($scope, Chats) {
+// .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -12,16 +12,16 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
-})
+//   $scope.chats = Chats.all();
+//   $scope.remove = function(chat) {
+//     Chats.remove(chat);
+//   };
+// })
 .controller('taskListCtrl', function($scope) { 
 
 
 })
-.controller('UploadsCtrl', function($scope, $stateParams, Chats) {
+.controller('UploadsCtrl', function($scope, $stateParams) {
   // $scope.chat = Chats.get($stateParams.chatId);
 })
 
@@ -187,4 +187,10 @@ angular.module('starter.controllers', [])
 })
 .controller('ReviewCtrl', function($scope){
   $scope.review = 'Allan';
+})
+.controller('LoginCtrl', function($scope, $translate){
+  
+    $scope.changeLanguage = function (key) {
+      $translate.use(key);
+    };
 });
