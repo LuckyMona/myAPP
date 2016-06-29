@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['LocalStorageModule'])
 
 
 // .controller('DashCtrl', function($scope) {})
@@ -36,9 +36,10 @@ angular.module('starter.controllers', [])
 .controller('IdCtrl', function($scope){
   
 })
-.controller('newActCtrl', function($scope, $window, $timeout){
+.controller('newActCtrl', function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){
     $scope.isTradeShow = false;
     $scope.isReviewShow = false;
+    $scope.attachImgs = [];
     $scope.toggleTradeShow = function(){
       $scope.isTradeShow = !$scope.isTradeShow;
     }
@@ -123,7 +124,98 @@ angular.module('starter.controllers', [])
       })
     }
     $scope.afterSelect(siteName);*/
-    $scope.mockInputData = "Input activity log here ...";
+
+    /*
+     * translate log_input hint when change language
+     * @author Mary
+     */
+    $scope.mockInputData = "Input Diary entry here…";
+    $rootScope.$on('changeLanguage', function(e, lang){
+        
+      if(lang === "zh_hk"){
+        $scope.mockInputData = "请输入项目日志…";
+      } else {
+        $scope.mockInputData = "Input Diary entry here…";
+      }
+    });
+
+    /*
+     * attach photo to site by retrieving photos from image gallery
+     * @author Mary
+     */
+   
+   /* function _setOptions(srcType) {
+        var options = {
+            // Some common settings are 20, 50, and 100
+            quality: 50,
+            destinationType: Camera.DestinationType.FILE_URI,
+            // In this app, dynamically set the picture source, Camera or photo gallery
+            sourceType: srcType,
+            encodingType: Camera.EncodingType.JPEG,
+            mediaType: Camera.MediaType.PICTURE,
+            allowEdit: true,
+            correctOrientation: true  //Corrects Android orientation quirks
+        }
+        return options;
+    }*/
+    //新增图片
+   
+    $scope.getPhoto = function(){
+
+          //var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
+          var options = {
+            // Some common settings are 20, 50, and 100
+            quality: 50,
+            destinationType: Camera.DestinationType.FILE_URI,
+            // In this app, dynamically set the picture source, Camera or photo gallery
+            sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
+            encodingType: Camera.EncodingType.JPEG,
+            mediaType: Camera.MediaType.PICTURE,
+            allowEdit: false,
+            // targetWidth: 70,
+            // targetHeight: 70,
+            correctOrientation: true  //Corrects Android orientation quirks
+        }
+          //var func = createNewFileEntry;
+          /*options.targetHeight = 100;
+          options.targetWidth = 100;*/
+          // if (selection == "picker-thmb") {
+          //     // To downscale a selected image,
+          //     // Camera.EncodingType (e.g., JPEG) must match the selected image type.
+          //     options.targetHeight = 100;
+          //     options.targetWidth = 100;
+          // }
+
+          document.addEventListener("deviceready", onDeviceReady, false);
+          function onDeviceReady() {
+              /*navigator.camera.getPicture(function cameraSuccess(imageUri) {
+
+                  $scope.imgUri = imageUri;
+
+              }, function cameraError(error) {
+                  console.debug("Unable to obtain picture: " + error, "app");
+
+              }, options);*/
+
+              $cordovaCamera.getPicture(options).then(function(imgURI) {
+                //$scope.imgURI = imgURI;
+                $scope.attachImgs.push({
+                  'imgURI':imgURI
+                });
+              }, function(err) {
+                console.debug("Unable to obtain picture: " + error, "app");
+              });
+
+              /*$cordovaCamera.cleanup().then(function(){
+                console.log('cleanup success');
+              },function(){
+                console.log('cleanup err');
+              });*/
+          }
+    }
+    
+
+    
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
       $scope.mockInputData = "";

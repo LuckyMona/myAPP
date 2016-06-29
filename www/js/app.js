@@ -12,7 +12,8 @@ angular.module('starter', [
   'pascalprecht.translate',
   'LocalStorageModule',
   'userPref',
-  'translation'
+  'translation',
+  'ngCordova'
 
 ])
 

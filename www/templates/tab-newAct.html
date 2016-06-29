@@ -63,13 +63,20 @@
 				</a>
 			</div>
 			<div class="list mt24 prevBlock" id="lastEle" ng-style="lastEleStyle" style="margin-bottom:100px;">
-		    	<a class="item c3" href="#/photo">
-				    <span class="fl" style="width:40%; position: relative; left: -3px;">{{ 'PHOTO' | translate }} <i>(8)</i></span>
-				    <i style="width:5%" class="attach fr icon ion-android-attach"></i>
-				</a>
+		    	<div class="item c3 attachPhoto_W">
+				    <a class="fl" href="#/photo" nav-direction="forward" style="width:50%;">{{ 'PHOTO' | translate }} <i>(8)</i>
+				   	</a>
+				    <span class="fl" style="width:50%" ng-click="getPhoto('picker-thmb');">
+					    <i style="width:5%" class="attach fr icon ion-android-attach"></i>
+					</span>
+				</div>
 				<div class="item horizScroll">
-					<div class="imgItem">
-						<img src="img/one.jpg">
+					<div ng-repeat="attachImg in attachImgs" class="imgItem" ng-show = 'attachImg.imgURI !== undefined'>
+						<img ng-src = '{{ attachImg.imgURI }}'>
+						<a href="" class="deletePic"></a>
+					</div>
+					<!-- <div class="imgItem" ng-show = 'imgURI !== undefined'>
+						<img ng-src = '{{ imgURI }}'>
 						<a href="" class="deletePic"></a>
 					</div>
 					<div class="imgItem">
@@ -83,7 +90,7 @@
 					<div class="imgItem">
 						<img src="img/one.jpg">
 						<a href="" class="deletePic"></a>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			
@@ -96,7 +103,7 @@
 	<div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;">
 		    <button class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
 			<!-- <input type="" id="realInput" name=""> -->
-		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{ 'INPUT_LOG' | translate }} </div>
+		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{ mockInputData | translate }} </div>
 		    <button class="fixbottom button button-clear send"></button>
 	</div>	
 </ion-view>

@@ -23,7 +23,7 @@
             'SIGNOUT': 'Sign Out',
             'CLEAR': 'Clear',
 
-            /*request list*/
+            /*task list*/
             'REQUEST_TODO':'Request To Do',
 
             /*upload list*/
@@ -34,13 +34,13 @@
             'NEW_ACT_TITLE':'New Activity / Photo',
 			'LOCATION':'Block A / Ground Floor',
 			'PROGRESS_RECORD':'Progress record',
-			'REQUEST_REVIEW':'Request review',
+			'REQUEST_REVIEW':'Request review / Notify',
 			'REVIEW_BY':'Review by',
 			'TRADE_SUBCONTRACTOR':'Trade / Subcontractor',
 			'TRADE':'Trade',
 			'SUBCONTRACTOR':'Subcontractor',
 			'PHOTO':'photo',
-			'INPUT_LOG':'Input Diary entry here…',
+			//'mockInputData':'Input Diary entry here…',
 
 			/*system*/
 			'CURRENT_USER':'Current User',
@@ -99,13 +99,13 @@
             'NEW_ACT_TITLE':'新活动 / 照片',
 			'LOCATION':'A栋 / 1楼',
 			'PROGRESS_RECORD':'进展记录',
-			'REQUEST_REVIEW':'请求检查',
+			'REQUEST_REVIEW':'请求检查 / 通知',
 			'REVIEW_BY':'检查员',
 			'TRADE_SUBCONTRACTOR':'交易 / 分包商',
 			'TRADE':'交易',
 			'SUBCONTRACTOR':'分包商',
 			'PHOTO':'照片',
-			'INPUT_LOG':'请输入项目日志…',
+			//'mockInputData':'请输入项目日志…',
 
 			/*system*/
 			'CURRENT_USER':'当前用户',
@@ -142,7 +142,7 @@
         });
 
 	}
-	function TranslationsMainCtrl($scope, $translate, userPref){
+	function TranslationsMainCtrl($rootScope,$scope, $translate, userPref){
 		var _changeLanguage = function () {
 			console.log('change');
 			var lang = userPref.getLanguage() || 'us_en';
@@ -155,10 +155,9 @@
 			$translate.use(lang);
 			userPref.setLanguage(lang);
 			console.log('[Language] New Language : '+ lang);
+			$rootScope.$broadcast('changeLanguage', lang);
 		}
 		$scope.changeLanguage = _changeLanguage;
-		$scope.changeLanguage2 = function(){
-			console.log('2');
-		};
+		
 	}
 })()
