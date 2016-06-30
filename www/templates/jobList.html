@@ -1,0 +1,33 @@
+<ion-header-bar align-title="center" class="bg-img-cuz bar bar-header bar-stable bdr-color-cuz">
+	<div class="buttons">
+	  <a class="button button-clear" href="#/tab/system" nav-direction="back" ng-click="doSomething()">
+	  	<i class="icon ion-android-arrow-back" style="color:#BFC1C3;" ></i>
+	  </a>
+	</div>
+	<h1 class="title">Job List</h1>
+	<!-- <div class="buttons">
+	  <button class="button button-clear add-btn"><i class="ion-plus"></i></button>
+	</div> -->
+</ion-header-bar> 
+<ion-view>
+	<ion-content class="bg-grey has-header44">
+	  	
+	  	<div class="list mt24 blockFix prevBlock jobList">
+		  	<ion-list>
+			  	<ion-radio ng-model="$parent.jobList" nav-direction="back" ng-value="'J1'">
+			  		<h2>J1234</h2>
+			  		<p>Project AAA</p>
+			  	</ion-radio>
+			  	<ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J2'">
+			  		<h2>J2345</h2>
+			  		<p>Project BBB</p>
+			  	</ion-radio>
+			  	<ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J3'">
+			  		<h2>J3456</h2>
+			  		<p>Project CCC</p>
+			  	</ion-radio>
+			</ion-list>
+			
+		</div>
+	</ion-content>
+</ion-view>

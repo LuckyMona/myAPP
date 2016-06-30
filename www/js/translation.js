@@ -45,6 +45,7 @@
 			/*system*/
 			'CURRENT_USER':'Current User',
 			'LANGUAGE':'Language',
+			'JOB_NUMBER':'Job number',
 			'LANGUAGE_CONTENT':'English',
 			'ALLOW_3G':'Allow 3G Upload',
 			'NOTIFICATION':'Notification',
@@ -90,31 +91,32 @@
             'CLEAR': '清除',
 
 			/*request list*/
-            'REQUEST_TODO':'请求事项',
+            'REQUEST_TODO':'請求事項',
 			/*upload list*/
-            'UPLOAD_TITLE':'项待上传',
-            'START_UPLOAD':'开始上传',
+            'UPLOAD_TITLE':'項待上傳',
+            'START_UPLOAD':'開始上傳',
 
 			/*newAct*/
-            'NEW_ACT_TITLE':'新活动 / 照片',
-			'LOCATION':'A栋 / 1楼',
-			'PROGRESS_RECORD':'进展记录',
-			'REQUEST_REVIEW':'请求检查 / 通知',
-			'REVIEW_BY':'检查员',
-			'TRADE_SUBCONTRACTOR':'交易 / 分包商',
+            'NEW_ACT_TITLE':'新活動 / 照片',
+			'LOCATION':'A棟 / 地下',
+			'PROGRESS_RECORD':'進展記錄',
+			'REQUEST_REVIEW':'請求檢查 / 通知',
+			'REVIEW_BY':'檢查員',
+			'TRADE_SUBCONTRACTOR':'交易 / 外判商',
 			'TRADE':'交易',
 			'SUBCONTRACTOR':'分包商',
 			'PHOTO':'照片',
 			//'mockInputData':'请输入项目日志…',
 
 			/*system*/
-			'CURRENT_USER':'当前用户',
-			'LANGUAGE':'语言',
+			'CURRENT_USER':'當前用戶',
+			'LANGUAGE':'語言',
+			'JOB_NUMBER':'工作號碼',
 			'LANGUAGE_CONTENT':'中文',
-			'ALLOW_3G':'允许3G上传',
+			'ALLOW_3G':'允許3G上傳',
 			'NOTIFICATION':'通知',
 			'SIGN_OUT':'登出',
-			'SUPPORT_HOTLINE':'支持热线',
+			'SUPPORT_HOTLINE':'支持熱線',
             /*'TRANSLATE': '中',
             'LOADING': '載入中...',
             

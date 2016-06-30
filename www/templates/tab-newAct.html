@@ -12,19 +12,19 @@
 		<div class="newAct">
 			<!-- <div class="thinBar"></div> -->
 			<div class="greyBar">{{'NEW_ACT_TITLE' | translate }}</div>
-			<div class="list prevBlock">
+			<div class="list prevBlock no-mg">
 		    	<a class="item c3" href="#/block" nav-direction="forward">
-				    <span class="fl" style="width:40%;">Location</span>
+				    <i class="fl ion-android-pin fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-				    <span style="width:55%" class="fz16 item-note c3 ellipsis">
+				    <span style="width:85%" class="fz16 item-note c3 ellipsis">
 				      <!-- Block A / Ground Floor -->	
 				       {{ 'LOCATION' | translate }}		      
 				    </span>
 				</a>
 				<a class="item c3" href="#/category" nav-direction="forward">
-				    <span class="fl" style="width:40%;">Category</span>
+				    <i class="fl ion-ios-pricetag fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-				    <span style="width:55%" class="fz16 item-note c3 ellipsis">
+				    <span style="width:85%" class="fz16 item-note c3 ellipsis">
 				      {{ 'PROGRESS_RECORD' | translate }}			      
 				    </span>
 				</a>
@@ -34,16 +34,17 @@
 		    	<ion-checkbox ng-model="isReviewShow">{{ 'REQUEST_REVIEW' | translate }}</ion-checkbox>
 
 		    	<a class="item c3" href="#/review" nav-direction="forward" ng-show="isReviewShow">
-				    <span class="fl" style="width:40%;">{{ 'REVIEW_BY' | translate }}</span>
+				    <i class="fl ion-android-person fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-				    <span style="width:55%" class="fz16 item-note c3">
-				      Alan Kong			      
+				    <span style="width:85%" class="fz16 item-note c3">
+				      Alan Kong	      
 				    </span>
 				</a>
 		    </div>
 		    <div class="list mt24 prevBlock">
 		    	<a class="item c3 tradeTitle" ng-click='toggleTradeShow()'; href="">
-				    <span class="fl" style="width:40%; position: relative; left: -3px;">{{ 'TRADE_SUBCONTRACTOR' | translate }}</span>
+				    <i class="fl ion-android-person fz20" style="width:10%;"></i>
+				    <span class="fl" style="width:85%; position: relative; left: -3px;">{{ 'TRADE' | translate }}  (1)  / {{ 'SUBCONTRACTOR' | translate }}  (2)</span>
 				    <i style="width:5%" class="fr icon ion-chevron-down cce"></i>
 				    
 				</a>
@@ -64,9 +65,10 @@
 			</div>
 			<div class="list mt24 prevBlock" id="lastEle" ng-style="lastEleStyle" style="margin-bottom:100px;">
 		    	<div class="item c3 attachPhoto_W">
+		    		<i class="fl ion-image fz20" style="width:10%;"></i>
 				    <a class="fl" href="#/photo" nav-direction="forward" style="width:50%;">{{ 'PHOTO' | translate }} <i>(8)</i>
 				   	</a>
-				    <span class="fl" style="width:50%" ng-click="getPhoto('picker-thmb');">
+				    <span class="fl" style="width:40%" ng-click="getPhoto('picker-thmb');">
 					    <i style="width:5%" class="attach fr icon ion-android-attach"></i>
 					</span>
 				</div>
@@ -75,10 +77,7 @@
 						<img ng-src = '{{ attachImg.imgURI }}'>
 						<a href="" class="deletePic"></a>
 					</div>
-					<!-- <div class="imgItem" ng-show = 'imgURI !== undefined'>
-						<img ng-src = '{{ imgURI }}'>
-						<a href="" class="deletePic"></a>
-					</div>
+					
 					<div class="imgItem">
 						<img src="img/one.jpg">
 						<a href="" class="deletePic"></a>
@@ -90,7 +89,7 @@
 					<div class="imgItem">
 						<img src="img/one.jpg">
 						<a href="" class="deletePic"></a>
-					</div> -->
+					</div>
 				</div>
 			</div>
 			
@@ -101,7 +100,7 @@
 	</ion-content>
 	<!-- <div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;"> -->
 	<div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;">
-		    <button class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
+		    <button ng-click="takePhoto()" class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
 			<!-- <input type="" id="realInput" name=""> -->
 		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{ mockInputData | translate }} </div>
 		    <button class="fixbottom button button-clear send"></button>

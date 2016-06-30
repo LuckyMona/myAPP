@@ -253,6 +253,12 @@ angular.module('starter', [
     templateUrl: 'templates/review.html',
     controller: 'newActCtrl'
     
+  })
+  .state('jobList', {
+    url: '/jobList',
+    templateUrl: 'templates/jobList.html',
+    controller: 'SystemCtrl'
+    
   });
 
   // if none of the above states are matched, use this as the fallback

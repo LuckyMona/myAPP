@@ -25,10 +25,26 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   // $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('SystemCtrl', function($scope) {
+.controller('SystemCtrl', function($scope,$window,$timeout) {
   // $scope.settings = {
   //   enableFriends: true
   // };
+   $scope.jobList = 'J1';
+
+  // jobList.html页面单选后跳回来
+    var href = $window.location.href;
+    $scope.m_url = href.split('#')[0] + "#/tab/system";
+    $scope.$watch("jobList", function(newVal,oldVal){
+        console.log('newVal:'+newVal);
+        console.log('oldVal:'+oldVal);
+        if(newVal==oldVal){
+          return;
+        }
+        $timeout(function() {
+            $window.location.href =  $scope.m_url;
+        }, 200);
+    });
+
 })
 .controller('ActiveCtrl', function($scope){
   
@@ -133,7 +149,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     $rootScope.$on('changeLanguage', function(e, lang){
         
       if(lang === "zh_hk"){
-        $scope.mockInputData = "请输入项目日志…";
+        $scope.mockInputData = "請輸入項目日誌…";
       } else {
         $scope.mockInputData = "Input Diary entry here…";
       }
@@ -144,7 +160,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
      * @author Mary
      */
    
-   /* function _setOptions(srcType) {
+   function _setOptions(srcType) {
         var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
@@ -157,25 +173,38 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             correctOrientation: true  //Corrects Android orientation quirks
         }
         return options;
-    }*/
+    }
+
+    //拍照
+    $scope.takePhoto = function(){
+      var options = _setOptions(Camera.PictureSourceType.CAMERA);
+        document.addEventListener("deviceready", onDeviceReady, false);
+        function onDeviceReady() {
+             
+              $cordovaCamera.getPicture(options).then(function(imgURI) {
+                //$scope.imgURI = imgURI;
+                $scope.attachImgs.push({
+                  'imgURI':imgURI
+                });
+              }, function(err) {
+                console.debug("Unable to obtain picture: " + error, "app");
+              });
+
+              /*$cordovaCamera.cleanup().then(function(){
+                console.log('cleanup success');
+              },function(){
+                console.log('cleanup err');
+              });*/
+          }
+    }
+
     //新增图片
    
     $scope.getPhoto = function(){
 
           //var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
-          var options = {
-            // Some common settings are 20, 50, and 100
-            quality: 50,
-            destinationType: Camera.DestinationType.FILE_URI,
-            // In this app, dynamically set the picture source, Camera or photo gallery
-            sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
-            encodingType: Camera.EncodingType.JPEG,
-            mediaType: Camera.MediaType.PICTURE,
-            allowEdit: false,
-            // targetWidth: 70,
-            // targetHeight: 70,
-            correctOrientation: true  //Corrects Android orientation quirks
-        }
+          var options = _setOptions(Camera.PictureSourceType.SAVEDPHOTOALBUM);
+           
           //var func = createNewFileEntry;
           /*options.targetHeight = 100;
           options.targetWidth = 100;*/
