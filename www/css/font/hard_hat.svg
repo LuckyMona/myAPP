@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2016 by original authors @ fontello.com</metadata>
+<defs>
+<font id="hard_hat" horiz-adv-x="1000" >
+<font-face font-family="hard_hat" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="hard_hat" unicode="&#xe800;" d="M867 204c0 250-217 313-217 313l-67-125v166c0 25-16 42-41 42h-84c-25 0-41-17-41-42v-166l-63 125c0 0-216-63-216-313 0 0-50-8-50-104 0 0 125-42 416-42s417 42 417 42c-4 96-54 104-54 104z" horiz-adv-x="1000" />
+</font>
+</defs>
+</svg>

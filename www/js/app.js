@@ -13,7 +13,8 @@ angular.module('starter', [
   'LocalStorageModule',
   'userPref',
   'translation',
-  'ngCordova'
+  'ngCordova',
+  'loginCtrl'
 
 ])
 

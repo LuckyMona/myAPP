@@ -6,6 +6,8 @@
   },
   "dependencies": {
     "angular-local-storage": "^0.2.7",
-	"angular-translate": "^2.11.0"
+    "angular-translate": "^2.11.0",
+    "angular-translate-storage-local": "^2.11.0",
+    "angular-translate-storage-cookie": "^2.11.0"
   }
 }

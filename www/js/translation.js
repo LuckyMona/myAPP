@@ -1,12 +1,13 @@
 'use strict';
 (function(){
-	angular.module('translation',['pascalprecht.translate', 'userPref'])
+	angular.module('translation',['ngCookies','pascalprecht.translate', 'userPref'])
 		.config(TranslationConfig)
 		.controller('TranslationsMainCtrl',TranslationsMainCtrl);
 
 	function TranslationConfig ($translateProvider){
 
 		$translateProvider.preferredLanguage('us_en');
+		$translateProvider.useLocalStorage();
 		$translateProvider.useSanitizeValueStrategy('escapeParameters');
 
 		$translateProvider.translations('us_en',{
@@ -51,6 +52,19 @@
 			'NOTIFICATION':'Notification',
 			'SIGN_OUT':'SIGN OUT',
 			'SUPPORT_HOTLINE':'Support hotline',
+
+			/*category*/
+			'CATEGORY':'category',
+
+			/*location*/
+			'LOCATION':'location',
+			/*select user*/
+			'SELECT_USER':'select_user',
+			/*photo*/
+			'SELECTED':'selected',
+			/*job list*/
+			'JOB_LIST':'Job List',
+
             /*'TRANSLATE': 'EN',
             'LOADING': 'Loading...',
             
@@ -104,7 +118,7 @@
 			'REVIEW_BY':'檢查員',
 			'TRADE_SUBCONTRACTOR':'交易 / 外判商',
 			'TRADE':'交易',
-			'SUBCONTRACTOR':'分包商',
+			'SUBCONTRACTOR':'外判商',
 			'PHOTO':'照片',
 			//'mockInputData':'请输入项目日志…',
 
@@ -112,11 +126,23 @@
 			'CURRENT_USER':'當前用戶',
 			'LANGUAGE':'語言',
 			'JOB_NUMBER':'工作號碼',
-			'LANGUAGE_CONTENT':'中文',
+			'LANGUAGE_CONTENT':'繁體中文',
 			'ALLOW_3G':'允許3G上傳',
 			'NOTIFICATION':'通知',
 			'SIGN_OUT':'登出',
 			'SUPPORT_HOTLINE':'支持熱線',
+
+			/*category*/
+			'CATEGORY':'類別',
+			/*location*/
+			'LOCATION':'地址',
+			/*select user*/
+			'SELECT_USER':'选择用户',
+			/*photo*/
+			'SELECTED':'項被選中',
+			/*job list*/
+			'JOB_LIST':'工作號碼列表',
+
             /*'TRANSLATE': '中',
             'LOADING': '載入中...',
             
