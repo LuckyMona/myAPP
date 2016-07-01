@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['LocalStorageModule'])
+angular.module('starter.controllers', ['LocalStorageModule','userFactory'])
 
 
 // .controller('DashCtrl', function($scope) {})
@@ -318,10 +318,4 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 })
 .controller('ReviewCtrl', function($scope){
   $scope.review = 'Allan';
-})
-.controller('LoginCtrl', function($scope, $translate){
-  
-    $scope.changeLanguage = function (key) {
-      $translate.use(key);
-    };
 });

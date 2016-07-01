@@ -14,7 +14,8 @@ angular.module('starter', [
   'userPref',
   'translation',
   'ngCordova',
-  'loginCtrl'
+  'userFactory',
+  'LoginCtrl'
 
 ])
 
@@ -125,7 +126,7 @@ angular.module('starter', [
     views:{
       'login-active':{
         templateUrl:'templates/login-active.html',
-        controller:'ActiveCtrl'
+        controller:'LoginCtrl'
       }
     }
   })
@@ -134,7 +135,7 @@ angular.module('starter', [
     views:{
       'login-id':{
         templateUrl:'templates/login-id.html',
-        controller:'IdCtrl'
+        controller:'LoginCtrl'
       }
     }
   })

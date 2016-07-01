@@ -3,15 +3,15 @@
 		<div class="list">
 		  <label class="item item-input item-floating-label">
 		    <span class="input-label">{{'USERNAME' | translate }}</span>
-		    <input class="fz20" ng-model="username" type="text" placeholder="{{'USERNAME' | translate }}">
+		    <input class="fz20" type="text" ng-model="loginO.username" placeholder="{{'USERNAME' | translate }}">
 		  </label>
 		  <label class="item item-input item-floating-label">
 		    <span class="input-label">{{'PASSWORD' | translate }}</span>
-		    <input class="fz20" ng-model="password"  type="password" placeholder="{{'PASSWORD' | translate }}">
+		    <input class="fz20" ng-model="loginO.password"  type="password" placeholder="{{'PASSWORD' | translate }}">
 		  </label>
 		  <div class="btnWp">
-			<a href="#/tab/newAct" style="display:block;">
-				<button class="fr button login-button  button-royal">
+			<a href="" style="display:block;">
+				<button ng-click="activeSignIn()" class="fr button login-button  button-royal">
 				  {{'SIGNIN' | translate }}
 				</button>
 			</a>
