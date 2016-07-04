@@ -33,13 +33,15 @@
 
             /*newAct*/
             'NEW_ACT_TITLE':'New Activity / Photo',
-			'LOCATION':'Block A / Ground Floor',
-			'PROGRESS_RECORD':'Progress record',
+			'SELECT_LOCATION':'Select location',
+			'SELECT_CATEGORY':'Select category',
 			'REQUEST_REVIEW':'Request review / Notify',
-			'REVIEW_BY':'Review by',
+			'SELECT_REVIEWER':'Select reviewer',
 			'TRADE_SUBCONTRACTOR':'Trade / Subcontractor',
 			'TRADE':'Trade',
+			'SELECT_TRADE':'Select trade',
 			'SUBCONTRACTOR':'Subcontractor',
+			'SELECT_SUBCONTRACTOR':'Select subcontractor',
 			'PHOTO':'photo',
 			//'mockInputData':'Input Diary entry here…',
 
@@ -57,7 +59,7 @@
 			'CATEGORY':'category',
 
 			/*location*/
-			'LOCATION':'location',
+			'LOCATION':'Location',
 			/*select user*/
 			'SELECT_USER':'select_user',
 			/*photo*/
@@ -112,13 +114,14 @@
 
 			/*newAct*/
             'NEW_ACT_TITLE':'新活動 / 照片',
-			'LOCATION':'A棟 / 地下',
-			'PROGRESS_RECORD':'進展記錄',
+			'SELECT_LOCATION':'選擇地址',
+			'SELECT_CATEGORY':'選擇類別',
 			'REQUEST_REVIEW':'請求檢查 / 通知',
-			'REVIEW_BY':'檢查員',
+			'SELECT_REVIEWER':'選擇檢查員',
 			'TRADE_SUBCONTRACTOR':'交易 / 外判商',
-			'TRADE':'交易',
+			'SELECT_TRADE':'選擇交易',
 			'SUBCONTRACTOR':'外判商',
+			'SELECT_SUBCONTRACTOR':'選擇外判商',
 			'PHOTO':'照片',
 			//'mockInputData':'请输入项目日志…',
 

@@ -15,7 +15,8 @@ angular.module('starter', [
   'translation',
   'ngCordova',
   'userFactory',
-  'LoginCtrl'
+  'LoginCtrl',
+  'NewActCtrl',
 
 ])
 
@@ -180,40 +181,35 @@ angular.module('starter', [
   .state('tab.newAct', {
     url: '/newAct',
     /*templateUrl: 'templates/newAct.html',
-    controller: 'newActCtrl'*/
+    controller: 'NewActCtrl'*/
     views: {
       'tab-newAct': {
         templateUrl: 'templates/tab-newAct.html',
-        controller: 'newActCtrl'
+        controller: 'NewActCtrl'
       }
     }
   })
   .state('photo', {
     url: '/photo',
     templateUrl: 'templates/photo.html',
-    // controller: 'newActCtrl'
+    // controller: 'NewActCtrl'
     /*views: {
       'tab-newAct': {
         templateUrl: 'templates/tab-newAct.html',
-        controller: 'newActCtrl'
+        controller: 'NewActCtrl'
       }
     }*/
   })
   .state('block', {
     url: '/block',
     templateUrl: 'templates/block.html',
-    controller: 'BlockCtrl'
-    // views: {
-    //   'newAct': {
-    //     templateUrl: 'templates/block.html',
-    //     controller: 'BlockCtrl'
-    //   }
-    // }
+    controller: 'NewActCtrl'
+    
   })
   .state('floor', {
     url: '/floor',
     templateUrl: 'templates/floor.html',
-    controller: 'newActCtrl'
+    controller: 'NewActCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
@@ -224,7 +220,7 @@ angular.module('starter', [
   .state('category', {
     url: '/category',
     templateUrl: 'templates/category.html',
-    controller: 'newActCtrl'
+    controller: 'NewActCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
@@ -235,7 +231,7 @@ angular.module('starter', [
   .state('language', {
     url: '/language',
     templateUrl: 'templates/language.html',
-    controller: 'newActCtrl'
+    controller: 'NewActCtrl'
     
   })
   .state('trade', {
@@ -253,7 +249,7 @@ angular.module('starter', [
   .state('review', {
     url: '/review',
     templateUrl: 'templates/review.html',
-    controller: 'newActCtrl'
+    controller: 'NewActCtrl'
     
   })
   .state('jobList', {
