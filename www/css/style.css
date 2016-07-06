@@ -276,7 +276,7 @@
 .startUpload { 
     width: 70px;
     height: 70px;
-    background: #007aff;
+    background: rgb(51,51,51);
     border-radius: 50%;
     text-align: center;
     vertical-align: middle;
@@ -305,14 +305,19 @@
 }
 /*.mockinput:focus { cursor:cursor; }*/
 
-.attachPhoto_W { padding:0; }
-.attachPhoto_W span { padding:16px; }
+/*.attachPhoto_W { padding:0; }*/
+/*.attachPhoto_W span { padding:16px; }*/
 .attachPhoto_W span i { position: relative; right: 6px;}
-.attachPhoto_W > i  { padding:16px; }
-.attachPhoto_W a { padding:16px; text-decoration: none; position: relative; left: -3px; }
+/*.attachPhoto_W > i  { padding:16px; }*/
+.attachPhoto_W a { -padding:16px; text-decoration: none; -position: relative; -left: -3px; }
 
 .jobList .item-content { 
     padding: 10px 49px 10px 16px;
  }
 .jobList h2 { font-size: 18px; }
 .jobList p { font-size: 13px; }
+.curUserW { line-height: 2; }
+.curUser { line-height: 1; }
+.curUser p { text-align: right; }
+.curUser p:first-child { margin-bottom: 6px; }
+.curUser p:last-child { font-size:12px; }

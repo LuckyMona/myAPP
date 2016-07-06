@@ -3,6 +3,7 @@
 	angular.module('NewActCtrl', ['LocalStorageModule'])
 		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera',
 							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){
+	
 	$scope.isTradeShow = false;
     $scope.isReviewShow = false;
     $scope.attachImgs = [];
@@ -12,7 +13,7 @@
 
     // floor.html页面单选后跳回来
     $scope.floor = 'A';
-    $scope.category = 'A';
+    $scope.category = 'Select Category';
     $scope.review = 'Allan';
 
     var href = $window.location.href;
@@ -29,6 +30,11 @@
         }, 200);
     })
 
+    /*$scope.changeCategory = function(){
+    	console.log('changeCategory');
+    	$scope.category = "changeCategory";
+    }*/
+
     // category.html页面单选后跳回来
     $scope.$watch("category", function(newVal,oldVal){
         console.log('newVal:'+newVal);
@@ -36,6 +42,9 @@
         if(newVal==oldVal){
           return;
         }
+
+        $scope.category = newVal;
+        
         $timeout(function() {
             $window.location.href =  $scope.m_url;
         }, 200);
@@ -95,21 +104,20 @@
      * translate log_input hint when change language
      * @author Mary
      */
-    $scope.mockInputData = "Input Diary entry here…";
+    $scope.mockInputData = "Input Diary Entry Here…";
     $rootScope.$on('changeLanguage', function(e, lang){
         
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
       } else {
-        $scope.mockInputData = "Input Diary entry here…";
+        $scope.mockInputData = "Input Diary Entry Here…";
       }
     });
 
     /*
-     * attach photo to site by retrieving photos from image gallery
+     * 从图库选添加照片&&拍照
      * @author Mary
      */
-   
    function _setOptions(srcType) {
         var options = {
             // Some common settings are 20, 50, and 100
@@ -133,7 +141,7 @@
              
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
-                $scope.attachImgs.push({
+                $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
               }, function(err) {
@@ -188,7 +196,7 @@
 
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
-                $scope.attachImgs.push({
+                $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
               }, function(err) {
@@ -204,7 +212,7 @@
     }
     
 
-    
+    // log input clear content when focus
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
       $scope.mockInputData = "";

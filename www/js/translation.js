@@ -25,45 +25,46 @@
             'CLEAR': 'Clear',
 
             /*task list*/
-            'REQUEST_TODO':'Request To Do',
+            'REQUEST_TODO':'Todo List',
 
             /*upload list*/
             'UPLOAD_TITLE':'items pending to upload',
-            'START_UPLOAD':'Start upload',
+            'START_UPLOAD1':'Start',
+            'START_UPLOAD2':'Upload',
 
             /*newAct*/
             'NEW_ACT_TITLE':'New Activity / Photo',
-			'SELECT_LOCATION':'Select location',
-			'SELECT_CATEGORY':'Select category',
-			'REQUEST_REVIEW':'Request review / Notify',
-			'SELECT_REVIEWER':'Select reviewer',
+			'SELECT_LOCATION':'Select Location',
+			'SELECT_CATEGORY':'Select Category',
+			'REQUEST_REVIEW':'Request Review / Notify',
+			'SELECT_REVIEWER':'Select Reviewer',
 			'TRADE_SUBCONTRACTOR':'Trade / Subcontractor',
 			'TRADE':'Trade',
-			'SELECT_TRADE':'Select trade',
+			'SELECT_TRADE':'Select Trade',
 			'SUBCONTRACTOR':'Subcontractor',
-			'SELECT_SUBCONTRACTOR':'Select subcontractor',
-			'PHOTO':'photo',
+			'SELECT_SUBCONTRACTOR':'Select Subcontractor',
+			'PHOTO':'Photo',
 			//'mockInputData':'Input Diary entry here…',
 
 			/*system*/
 			'CURRENT_USER':'Current User',
 			'LANGUAGE':'Language',
-			'JOB_NUMBER':'Job number',
+			'JOB_NUMBER':'Job Number',
 			'LANGUAGE_CONTENT':'English',
 			'ALLOW_3G':'Allow 3G Upload',
 			'NOTIFICATION':'Notification',
 			'SIGN_OUT':'SIGN OUT',
-			'SUPPORT_HOTLINE':'Support hotline',
+			'SUPPORT_HOTLINE':'Support Hotline',
 
 			/*category*/
-			'CATEGORY':'category',
+			'CATEGORY':'Category',
 
 			/*location*/
 			'LOCATION':'Location',
 			/*select user*/
-			'SELECT_USER':'select_user',
+			'SELECT_USER':'Select User',
 			/*photo*/
-			'SELECTED':'selected',
+			'SELECTED':'Selected',
 			/*job list*/
 			'JOB_LIST':'Job List',
 
@@ -107,10 +108,11 @@
             'CLEAR': '清除',
 
 			/*request list*/
-            'REQUEST_TODO':'請求事項',
+            'REQUEST_TODO':'待辦事項',
 			/*upload list*/
             'UPLOAD_TITLE':'項待上傳',
-            'START_UPLOAD':'開始上傳',
+            'START_UPLOAD1':'開始',
+            'START_UPLOAD2':'上傳',
 
 			/*newAct*/
             'NEW_ACT_TITLE':'新活動 / 照片',

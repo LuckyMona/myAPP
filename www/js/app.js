@@ -17,7 +17,6 @@ angular.module('starter', [
   'userFactory',
   'LoginCtrl',
   'NewActCtrl',
-
 ])
 
 .run(function($ionicPlatform) {
@@ -185,7 +184,7 @@ angular.module('starter', [
     views: {
       'tab-newAct': {
         templateUrl: 'templates/tab-newAct.html',
-        controller: 'NewActCtrl'
+        // controller: 'NewActCtrl'
       }
     }
   })
@@ -220,7 +219,7 @@ angular.module('starter', [
   .state('category', {
     url: '/category',
     templateUrl: 'templates/category.html',
-    controller: 'NewActCtrl'
+    // controller: 'NewActCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
