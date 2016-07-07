@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['LocalStorageModule','userFactory'])
+angular.module('starter.controllers', ['LocalStorageModule'])
 
 
 // .controller('DashCtrl', function($scope) {})
@@ -69,8 +69,26 @@ angular.module('starter.controllers', ['LocalStorageModule','userFactory'])
     })
 })*/
 
-.controller('CategoryCtrl', function($scope){
-  $scope.category = 'A';
+.controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, $window, $timeout){
+  var href = $window.location.href;
+  var m_url = href.split('#')[0] + "#/tab/newAct";
+
+  // $scope.category = 'Category A';
+  $scope.$watch('category', function(newVal, oldVal){
+    console.log('newVal:'+newVal);
+    console.log('oldVal:'+oldVal);
+    if(newVal==oldVal){
+      return;
+    } 
+    categoryFactory.setCategory(newVal);
+    $rootScope.$broadcast('categoryChange','hh');
+    
+    $timeout(function() {
+        $window.location.href =  m_url;
+    }, 200);
+
+
+  });
 })
 .controller('LanguageCtrl', function($scope){
   $scope.lan = 'En';

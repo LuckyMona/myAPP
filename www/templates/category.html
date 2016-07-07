@@ -10,12 +10,12 @@
 	</div> -->
 </ion-header-bar> 
 <ion-view>
-	<ion-content class="bg-grey has-header44" ng-controller="NewActCtrl">
+	<ion-content class="bg-grey has-header44">
 		<div class="list mt24 blockFix prevBlock">
 		  	<ion-list>
-			  	<ion-radio ng-model="category" nav-direction="back" ng-checked="true" ng-value="'Category A'">Category A</ion-radio>
-			  	<ion-radio ng-model="category" nav-direction="back" ng-value="'Category B'">Category B</ion-radio>
-			  	<ion-radio ng-model="category" nav-direction="back" ng-value="'Category C'">Category C</ion-radio>
+			  	<ion-radio ng-model="$parent.category" nav-direction="back" ng-value="'Category A'">Category A</ion-radio>
+			  	<ion-radio ng-model="$parent.category" nav-direction="back" ng-value="'Category B'">Category B</ion-radio>
+			  	<ion-radio ng-model="$parent.category" nav-direction="back" ng-value="'Category C'">Category C</ion-radio>
 			</ion-list>
 		</div>
 	</ion-content>

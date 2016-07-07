@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','categoryFactory',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,categoryFactory){
 	
 	$scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -13,7 +13,7 @@
 
     // floor.html页面单选后跳回来
     $scope.floor = 'A';
-    $scope.category = 'Select Category';
+    
     $scope.review = 'Allan';
 
     var href = $window.location.href;
@@ -36,7 +36,13 @@
     }*/
 
     // category.html页面单选后跳回来
-    $scope.$watch("category", function(newVal,oldVal){
+    // $scope.category = 'Select Category';
+    $scope.category = categoryFactory.getCategory()||'Select Category';
+    $rootScope.$on('categoryChange', function(){
+      
+      $scope.category = categoryFactory.getCategory();
+    });
+    /*$scope.$watch("category", function(newVal,oldVal){
         console.log('newVal:'+newVal);
         console.log('oldVal:'+oldVal);
         if(newVal==oldVal){
@@ -48,7 +54,8 @@
         $timeout(function() {
             $window.location.href =  $scope.m_url;
         }, 200);
-    });
+    });*/
+
 
     // review.html页面单选后跳回来
     $scope.$watch("review", function(newVal,oldVal){

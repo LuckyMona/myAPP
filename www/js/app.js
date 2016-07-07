@@ -14,7 +14,6 @@ angular.module('starter', [
   'userPref',
   'translation',
   'ngCordova',
-  'userFactory',
   'LoginCtrl',
   'NewActCtrl',
 ])
@@ -219,7 +218,7 @@ angular.module('starter', [
   .state('category', {
     url: '/category',
     templateUrl: 'templates/category.html',
-    // controller: 'NewActCtrl'
+    controller: 'CategoryCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
