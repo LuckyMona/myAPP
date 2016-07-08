@@ -45,41 +45,12 @@
 
     // review.html页面单选后跳回来
     $scope.review = 'Select Reviewer';
-    $rootScope.$on('reviewChange', function(data, e){
-      
+    $rootScope.$on('reviewChange', function(d,data){
+      console.log('reviewChangeData:'+data);
+
       $scope.review = data;
     });
-    /*$scope.$watch("category", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
-        console.log('oldVal:'+oldVal);
-        if(newVal==oldVal){
-          return;
-        }
-
-        $scope.category = newVal;
-        
-        $timeout(function() {
-            $window.location.href =  $scope.m_url;
-        }, 200);
-    });*/
-
-
-    // review.html页面单选后跳回来
-    $scope.$watch("review", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
-        if(newVal==oldVal){
-          return;
-        }
-        /*var href = $window.location.href;
-        var url = href.split('#')[0] + "#/tab/newAct";
-        console.log('sm_url:'+ $scope.m_url);*/
-        $timeout(function() {
-            $window.location.href =  $scope.m_url;
-            /*console.log('url:' + url);
-            console.log('sm_url:'+ $scope.m_url);*/
-        }, 200);
-    });
-
+   
     // language.html页面单选后跳回来
     $scope.$watch("lan", function(newVal,oldVal){
         console.log('newVal:'+newVal);
@@ -123,8 +94,10 @@
         
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
+        $scope.review = "選擇檢察員"
       } else {
         $scope.mockInputData = "Input Diary Entry Here…";
+        $scope.review = "Select Reviewer"
       }
     });
 

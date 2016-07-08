@@ -17,23 +17,26 @@
                     var href = $window.location.href;
                     var m_url = href.split('#')[0] + "#/tab/newAct";
 
-                    console.log(attrs.selectItemName);
+                    //console.log(attrs.selectItemName);
                     // $scope.category = 'Category A';
-                    /*$scope.$watch(selectItemName, function(newVal, oldVal){
+                    
+                    scope.$watch(attrs.selectItemName, function(newVal, oldVal){
                     console.log('newVal:'+newVal);
                     console.log('oldVal:'+oldVal);
                     if(newVal==oldVal){
                       return;
                     } 
                     
-                    $rootScope.$broadcast(selectItemName+'change', newVal);
+                    var msgStr = attrs.selectItemName+'Change';
+                    console.log('msgStr:'+msgStr);
+                    $rootScope.$broadcast(msgStr, newVal);
 
                     $timeout(function() {
                         $window.location.href =  m_url;
                     }, 200);
 
 
-                    });*/
+                    });
 
                 }
             }
