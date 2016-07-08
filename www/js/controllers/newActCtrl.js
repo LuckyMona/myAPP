@@ -42,6 +42,13 @@
       
       $scope.category = categoryFactory.getCategory();
     });
+
+    // review.html页面单选后跳回来
+    $scope.review = 'Select Reviewer';
+    $rootScope.$on('reviewChange', function(data, e){
+      
+      $scope.review = data;
+    });
     /*$scope.$watch("category", function(newVal,oldVal){
         console.log('newVal:'+newVal);
         console.log('oldVal:'+oldVal);
