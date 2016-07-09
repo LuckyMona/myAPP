@@ -1,14 +1,15 @@
 'use strict';
 
 (function () {
-	angular.module('LoginCtrl', ['ionic'])
-		.controller('LoginCtrl', function($scope, $translate, userFactory, $window, $ionicPopup, $timeout){
+	angular.module('LoginCtrl', ['ionic','ngStorage'])
+		.controller('LoginCtrl', function($scope, $translate, userFactory, $window, $ionicPopup, $timeout,$localStorage){
       
 	      $scope.isShowWarning = false;
 	      var loginO = {
 	        username:"",
 	        password:""
 	      }
+
 	      $scope.loginO = loginO;
 	      $scope.activeSignIn = function(){
 
@@ -24,6 +25,7 @@
 	                var href = $window.location.href;
 	                var url = href.split('#')[0] + "#/tab/newAct";
 	                $window.location.href = url;
+	                $localStorage.token = result.token;
 	              } else {
 
 	                console.log('登录名或密码不正确');

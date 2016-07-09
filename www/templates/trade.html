@@ -6,17 +6,15 @@
 	</div>
 	<h1 class="title">{{ 'TRADE' | translate }}</h1>
 	<div class="buttons">
-	   <a href="#/tab/newAct" nav-direction="back" style="display:block"><button class="button button-clear button-positive">Done</button></a>
+	   <a ng-click="tradeDone();" nav-direction="back" style="display:block"><button class="button button-clear button-positive">Done</button></a>
 	</div>
 </ion-header-bar> 
 <ion-view>
 	<ion-content class="bg-grey has-header44">
 		<ion-list>
 
-		  <ion-checkbox>Concrete</ion-checkbox>
-		  <ion-checkbox>Rebar</ion-checkbox>
-		  <ion-checkbox>Brick</ion-checkbox>
-
+		  <ion-checkbox ng-repeat="checkb in tradeList" ng-model="checkb.checked">{{checkb.text}}</ion-checkbox>
+		 
 		</ion-list>
 	</ion-content>
 </ion-view>

@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','categoryFactory',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,categoryFactory){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){
 	
 	$scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -37,19 +37,31 @@
 
     // category.html页面单选后跳回来
     // $scope.category = 'Select Category';
-    $scope.category = categoryFactory.getCategory()||'Select Category';
-    $rootScope.$on('categoryChange', function(){
+    $scope.category = 'Select Category';
+    $rootScope.$on('categoryChange', function(d, data){
       
-      $scope.category = categoryFactory.getCategory();
+      $scope.category = data;
     });
 
-    // review.html页面单选后跳回来
-    $scope.review = 'Select Reviewer';
-    $rootScope.$on('reviewChange', function(d,data){
-      console.log('reviewChangeData:'+data);
-
+    $scope.review = 'Select User';
+    $rootScope.$on('reviewDone', function(d, data){
+     
+      $scope.reviewStyle = {"color":"#333"};
       $scope.review = data;
     });
+
+    $scope.trade = 'Select Trade';
+    $rootScope.$on('tradeDone', function(d, data){
+      
+      $scope.isTradeShow = true;
+      $scope.tradeStyle = {"color":"#333"};
+      $scope.trade = data;
+    });
+
+    $scope.clearTrade = function(){
+       $scope.tradeStyle = {"color":"#ceced2"};
+       $scope.trade = 'Select Trade';
+    }
    
     // language.html页面单选后跳回来
     $scope.$watch("lan", function(newVal,oldVal){
@@ -89,15 +101,20 @@
      * translate log_input hint when change language
      * @author Mary
      */
+    
     $scope.mockInputData = "Input Diary Entry Here…";
+
     $rootScope.$on('changeLanguage', function(e, lang){
         
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
-        $scope.review = "選擇檢察員"
+        $scope.category = "選擇類別";
+        $scope.review = "選擇用戶";
+
       } else {
         $scope.mockInputData = "Input Diary Entry Here…";
-        $scope.review = "Select Reviewer"
+        $scope.category = "Select Category";
+        $scope.review = "Select User";
       }
     });
 

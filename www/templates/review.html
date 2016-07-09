@@ -5,10 +5,19 @@
 	  </a>
 	</div>
 	<h1 class="title">{{ 'SELECT_USER' | translate }}</h1>
-	<!-- <div class="buttons">
-	  <button class="button button-clear add-btn"><i class="ion-plus"></i></button>
-	</div> -->
+	<div class="buttons">
+	  <a href="" ng-click="reviewDone();" nav-direction="back" style="display:block"><button class="button button-clear button-positive">Done</button></a>
+	</div>
 </ion-header-bar>
-<div my-select select-item-name='review' class="bg-grey">
-<!-- <div my-select>	 -->
-</div>
+<ion-view>
+	<ion-content class="bg-grey has-header44">
+	  	
+	  	<ion-list>
+
+		  <ion-checkbox ng-repeat="checkb in devList" ng-model="checkb.checked">{{checkb.text}}
+		  </ion-checkbox>
+		  
+
+		</ion-list>
+	</ion-content>
+</ion-view>

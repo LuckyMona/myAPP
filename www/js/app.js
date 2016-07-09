@@ -16,8 +16,8 @@ angular.module('starter', [
   'ngCordova',
   'LoginCtrl',
   'NewActCtrl',
+  'ngStorage'
 ])
-
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -92,7 +92,7 @@ angular.module('starter', [
   }
 })*/
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $localStorageProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
@@ -183,7 +183,7 @@ angular.module('starter', [
     views: {
       'tab-newAct': {
         templateUrl: 'templates/tab-newAct.html',
-        // controller: 'NewActCtrl'
+        controller: 'NewActCtrl'
       }
     }
   })
@@ -235,7 +235,7 @@ angular.module('starter', [
   .state('trade', {
     url: '/trade',
     templateUrl: 'templates/trade.html',
-    // controller: 'TradeCtrl'
+    controller: 'TradeCtrl'
     
   })
   .state('subcontractor', {
@@ -247,7 +247,7 @@ angular.module('starter', [
   .state('review', {
     url: '/review',
     templateUrl: 'templates/review.html',
-    controller: 'NewActCtrl'
+    controller: 'ReviewCtrl'
     
   })
   .state('jobList', {
@@ -259,6 +259,10 @@ angular.module('starter', [
 
   // if none of the above states are matched, use this as the fallback
   //$urlRouterProvider.otherwise('/tab/taskList');
-  $urlRouterProvider.otherwise('/login/active');
-
+  var token = $localStorageProvider.get('token');
+  if(token){
+    $urlRouterProvider.otherwise('/tab/newAct');
+  } else {
+    $urlRouterProvider.otherwise('/login/active');
+  }
 });

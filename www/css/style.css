@@ -107,6 +107,7 @@
 .c3 { color:#333 !important; }
 .c8e { color:#8e8e93 !important; }
 .cce { color:#ceced2 !important; }
+.cce0 { color:#ceced2; }
 .cred { color:#FF4A6D !important; }
 
 .hide { display: none; }
@@ -122,7 +123,8 @@
 .ml30- { margin-left: 30%; }
 .mt24 { margin:0; margin-top:10px !important; }
 .mb24 { margin-bottom:24px !important; }
-
+.t-r { text-align:right; }
+.no-decor { text-decoration: none; }
 
 
 .btnWp { margin-top:20px; }

@@ -1,3 +1,4 @@
+
 angular.module('starter.controllers', ['LocalStorageModule'])
 
 
@@ -58,17 +59,6 @@ angular.module('starter.controllers', ['LocalStorageModule'])
  
 })
 
-/*.controller('FloorCtrl', function($scope, $window){
-    $scope.floor = 'A';
-    var url = "http://" + $window.location.host + "#/tab/newAct";
-   
-    $scope.$watch("floor", function(newVal,oldVal){
-      console.log('newVal:'+newVal);
-      $window.location.href = url;
-     
-    })
-})*/
-
 .controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, $window, $timeout){
   var href = $window.location.href;
   var m_url = href.split('#')[0] + "#/tab/newAct";
@@ -80,8 +70,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     if(newVal==oldVal){
       return;
     } 
-    categoryFactory.setCategory(newVal);
-    $rootScope.$broadcast('categoryChange','hh');
+    
+    $rootScope.$broadcast('categoryChange',newVal);
     
     $timeout(function() {
         $window.location.href =  m_url;
@@ -93,6 +83,65 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 .controller('LanguageCtrl', function($scope){
   $scope.lan = 'En';
 })
-.controller('ReviewCtrl', function($scope){
-  $scope.review = 'Allan';
+.controller('ReviewCtrl', function($rootScope,$scope, $window, $timeout){
+  var href = $window.location.href;
+  var m_url = href.split('#')[0] + "#/tab/newAct";
+
+  // $scope.category = 'Category A';
+  $scope.review = "Select User";
+  $scope.devList = [
+    {text:'Alan', checked:false},
+    {text:'Ross', checked:false},
+    {text:'Ruby', checked:false}
+   
+  ];
+  $scope.reviewDone = function(){
+      
+      var reviewData = [];
+      var arr = $scope.devList;
+      for(var i=0, len=arr.length; i<len; i++){
+        if(arr[i].checked){
+          reviewData.push(arr[i].text);
+        } else continue;
+      }
+      console.log(reviewData);
+
+      $rootScope.$broadcast('reviewDone',reviewData.join(','));
+      $timeout(function() {
+        $window.location.href =  m_url;
+    }, 200);
+
+
+  }
+})
+.controller('TradeCtrl', function($rootScope,$scope, $window, $timeout){
+  var href = $window.location.href;
+  var m_url = href.split('#')[0] + "#/tab/newAct";
+
+  // $scope.category = 'Category A';
+  $scope.trade = "Select User";
+  $scope.tradeList = [
+    {text:'trade1', checked:false},
+    {text:'trade2', checked:false},
+    {text:'trade3', checked:false}
+   
+  ];
+  $scope.tradeDone = function(){
+      
+      var reviewData = [];
+      var arr = $scope.tradeList;
+      for(var i=0, len=arr.length; i<len; i++){
+        if(arr[i].checked){
+          reviewData.push(arr[i].text);
+        } else continue;
+      }
+      console.log(reviewData);
+
+      $rootScope.$broadcast('tradeDone',reviewData.join(','));
+      $timeout(function() {
+        $window.location.href =  m_url;
+    }, 200);
+
+
+  }
 });

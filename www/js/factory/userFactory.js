@@ -23,6 +23,7 @@
 				if(loginReq.username == 1 && loginReq.password == 1){
 					mockLoginData = {
 						success:true,
+						token:123
 					}
 				} else {
 					mockLoginData = {
@@ -33,10 +34,8 @@
 				return deferred.promise;
 			}
 
-
-
 			return {
-				login:login,
+				login:login
 			}
 		}
 })();
