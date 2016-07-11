@@ -1,14 +1,52 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory){
 	
-	$scope.isTradeShow = false;
+	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
     $scope.attachImgs = [];
     $scope.toggleTradeShow = function(){
       $scope.isTradeShow = !$scope.isTradeShow;
+    }
+
+    // 获取下拉菜单的数据
+    $scope.getDownlist = function(){
+      var token = localStorageService.get('token');
+      var getDownlistReq = {
+        token:token
+      }
+
+      newActFactory.getDownlist(getDownlistReq)
+        .then(function(result){
+          if(result.success){
+            console.log('downlistData:');
+            console.log(result.data);
+            localStorageService.set('downlistData', result.data);
+          }
+        });
+    }
+
+    $scope.getDownlist();
+
+    // 获取地址下拉菜单
+    $scope.getLocationBlock = function(){
+      var locations = localStorageService.get('downlistData').location;
+      var blockItems = [];
+      for(var i in locations){
+        console.log('i:'+i);
+        blockItems.push(i);
+      }
+      console.log('blockItems:' + blockItems);
+      localStorageService.set('blockItems', blockItems);
+
+      var href = $window.location.href;
+      var url_block = href.split('#')[0] + "#/block";
+      $timeout(function() {
+            $window.location.href =  url_block;
+      }, 100);
+      
     }
 
     // floor.html页面单选后跳回来
@@ -20,7 +58,7 @@
     $scope.m_url = href.split('#')[0] + "#/tab/newAct";
    
 
-    $scope.$watch("floor", function(newVal,oldVal){
+    /*$scope.$watch("floor", function(newVal,oldVal){
         console.log('newVal:'+newVal);
         if(newVal==oldVal){
           return;
@@ -28,7 +66,7 @@
         $timeout(function() {
             $window.location.href =  $scope.m_url;
         }, 200);
-    })
+    })*/
 
     /*$scope.changeCategory = function(){
     	console.log('changeCategory');

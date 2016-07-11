@@ -26,7 +26,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   // $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('SystemCtrl', function($scope,$window,$timeout) {
+.controller('SystemCtrl', function($scope,$window,$timeout,localStorageService) {
   // $scope.settings = {
   //   enableFriends: true
   // };
@@ -34,7 +34,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
   // jobList.html页面单选后跳回来
     var href = $window.location.href;
-    $scope.m_url = href.split('#')[0] + "#/tab/system";
+    m_url = href.split('#')[0] + "#/tab/system";
+    m_url_login  = href.split('#')[0] + "#/login/active";
     $scope.$watch("jobList", function(newVal,oldVal){
         console.log('newVal:'+newVal);
         console.log('oldVal:'+oldVal);
@@ -42,11 +43,16 @@ angular.module('starter.controllers', ['LocalStorageModule'])
           return;
         }
         $timeout(function() {
-            $window.location.href =  $scope.m_url;
+            $window.location.href =  m_url;
         }, 200);
     });
 
+    $scope.signOut = function(){
+        localStorageService.clearAll();
+        $window.location.href =  m_url_login;
+    }
 })
+
 .controller('ActiveCtrl', function($scope){
   
 })
@@ -55,8 +61,46 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 })
 .controller('newActCtrl', function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){ 
 })
-.controller('BlockCtrl', function($scope){
- 
+.controller('FloorCtrl', function($scope, localStorageService,$timeout){
+    
+    //$scope.a = {"floorModel":"aa"};
+    $scope.floorModel = ''; 
+    $scope.floorItems = localStorageService.get('floorItems');
+    
+    $scope.$watch('floorModel', function(newVal,oldVal){
+        console.log('floorNewVal:'+ newVal);
+        if(newVal==oldVal){
+          return;
+        }
+        // $timeout(function() {
+        //     //$window.location.href =  $scope.m_url;
+        // }, 200);
+    });
+
+    /*$scope.radioChange = function(){
+        console.log('radioChange');
+    }*/
+    // $scope.$watch('test', function(){
+    //     console.log('radioChange');
+    // });
+
+})
+.controller('BlockCtrl', function($scope,localStorageService,$window){
+    $scope.blockItems = localStorageService.get('blockItems');
+
+    $scope.getFloor = function(block){
+        // console.log('getFloor:'+block);
+        var locations = localStorageService.get('downlistData').location;
+        
+        for(var i in locations){
+            if(i === block){
+                localStorageService.set('floorItems', locations[i]);
+            }
+        }
+        localStorageService.set('blockSelected',block);
+        $window.location.href =  $window.location.href.split('#')[0] + "#/floor";
+    }
+    
 })
 
 .controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, $window, $timeout){

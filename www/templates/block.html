@@ -14,16 +14,12 @@
 	  	
 	  	<div class="list mt24 prevBlock">
 		  	
-			<a class="item c3" ng-click="" href="#/floor" nav-direction="forward">
-			    <span class="fl" style="width:95%;">Block A</span>
+			<a class="item c3" ng-repeat="block in blockItems" ng-click="getFloor(block)" nav-direction="forward">
+			    <span class="fl" style="width:95%;">{{block}}</span>
 			    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
 			    
 			</a>
-			<a class="item c3" href="#/floor" nav-direction="forward">
-			    <span class="fl" style="width:95%;">Block B</span>
-			    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-			   
-			</a>
+			
 		</div>
 	</ion-content>
 </ion-view>

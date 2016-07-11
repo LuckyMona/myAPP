@@ -201,13 +201,13 @@ angular.module('starter', [
   .state('block', {
     url: '/block',
     templateUrl: 'templates/block.html',
-    controller: 'NewActCtrl'
+    controller: 'BlockCtrl'
     
   })
   .state('floor', {
     url: '/floor',
     templateUrl: 'templates/floor.html',
-    controller: 'NewActCtrl'
+    controller: 'FloorCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
@@ -261,6 +261,7 @@ angular.module('starter', [
   //$urlRouterProvider.otherwise('/tab/taskList');
   var token = $localStorageProvider.get('token');
   if(token){
+
     $urlRouterProvider.otherwise('/tab/newAct');
   } else {
     $urlRouterProvider.otherwise('/login/active');
