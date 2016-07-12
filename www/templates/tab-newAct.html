@@ -102,8 +102,8 @@
 	<div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;">
 		    <button ng-click="takePhoto()" class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
 			<!-- <input type="" id="realInput" name=""> -->
-		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" contenteditable="true">{{ mockInputData }} </div>
-		    <button class="fixbottom button button-clear send"></button>
+		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" ng-blur="mockInputBlur()" contenteditable="true">{{ mockInputData }} </div>
+		    <button ng-click="saveAct()" class="fixbottom button button-clear send"></button>
 	</div>	
 </ion-view>
 

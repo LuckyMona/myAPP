@@ -18,12 +18,22 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 //     Chats.remove(chat);
 //   };
 // })
-.controller('taskListCtrl', function($scope) { 
+.controller('taskListCtrl', function($scope,$window, $timeout,localStorageService){
+    // var href =  $window.location.href.split('#')[0] + "#/tab/taskList";
+    var getTasklist = function(){
+       $scope.tasklists = localStorageService.get('tasklistData');
+       console.log($scope.tasklists);
+    }
+    getTasklist();
 
 
 })
-.controller('UploadsCtrl', function($scope, $stateParams) {
-  // $scope.chat = Chats.get($stateParams.chatId);
+.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService) {
+   $scope.uploadItems = localStorageService.get('actDatas');
+   console.log('$scope.uploadItems:'+$scope.uploadItems);
+   $rootScope.$on('saveAct', function(){
+        $scope.uploadItems = localStorageService.get('actDatas');
+   });
 })
 
 .controller('SystemCtrl', function($scope,$window,$timeout,localStorageService) {
@@ -129,6 +139,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 .controller('LanguageCtrl', function($scope){
     $scope.lan = 'En';
 })
+
 .controller('ReviewCtrl', function($rootScope,$scope, $window, $timeout,localStorageService){
 
     var reviewItems = localStorageService.get('reviewItems');
@@ -137,9 +148,9 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     $scope.reviewList = [];
 
     for(var i=0, len=reviewItems.length; i<len; i++){
-    $scope.reviewList.push({
-        text:reviewItems[i], checked:false
-    });
+        $scope.reviewList.push({
+            text:reviewItems[i], checked:false
+        });
     }
     // [{text:'Alan', checked:false}]
   
@@ -161,12 +172,41 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   }
 })
 .controller('TradeCtrl', function($rootScope,$scope, $window, $timeout){
+  
+  // $scope.category = 'Category A';
+  $scope.trade = "Select User";
+  $scope.tradeList = [
+    {text:'trade1', checked:false},
+    {text:'trade2', checked:false},
+    {text:'trade3', checked:false}
+   
+  ];
+  $scope.tradeDone = function(){
+      
+      var reviewData = [];
+      var arr = $scope.tradeList;
+      for(var i=0, len=arr.length; i<len; i++){
+        if(arr[i].checked){
+          reviewData.push(arr[i].text);
+        } else continue;
+      }
+      console.log(reviewData);
+
+      $rootScope.$broadcast('tradeDone',reviewData.join(','));
+      $timeout(function() {
+        $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
+    }, 200);
+
+
+  }
+})
+.controller('SubcontractorCtrl', function($rootScope,$scope, $window, $timeout){
   var href = $window.location.href;
   var m_url = href.split('#')[0] + "#/tab/newAct";
 
   // $scope.category = 'Category A';
-  $scope.trade = "Select User";
-  $scope.tradeList = [
+  $scope.subcontractor = "Select Subcontractor";
+  $scope.subcontractorList = [
     {text:'trade1', checked:false},
     {text:'trade2', checked:false},
     {text:'trade3', checked:false}
@@ -191,3 +231,9 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
   }
 });
+/*.controller('TabCtrl', function($scope,$window, $timeout,localStorageService){
+    var href =  $window.location.href.split('#')[0] + "#/tab/taskList";
+    $scope.tabGetTasklist = function(){
+        var taskListData = localStorageService.get('tasklistData');
+    }
+})*/

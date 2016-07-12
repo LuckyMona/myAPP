@@ -116,6 +116,8 @@
 .fz16 { font-size:16px !important; }
 .fr { float:right; }
 .fl { float: left; }
+
+.h20 { height:20px; }
 .no-bdr { border:none !important; }
 .no-mg { margin:0 !important; }
 .h56 { height:56px !important; line-height: 56px !important; }

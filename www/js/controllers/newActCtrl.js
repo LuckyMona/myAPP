@@ -10,6 +10,41 @@
     $scope.toggleTradeShow = function(){
       $scope.isTradeShow = !$scope.isTradeShow;
     }
+    // 获取APP Version
+    /*var chkAppVersion = function(){
+      var version = "";
+      document.addEventListener("deviceready", onDeviceReady, false);
+      function onDeviceReady() {
+        if (window.cordova){
+            cordova.getAppVersion.getVersionNumber().then(function (version) {
+               version = version;
+            });
+        }
+      }
+      var chkAppVersionReq = {
+        version:version
+      }
+    };
+    chkAppVersion();*/
+
+    // 获取Task List的数据
+    var getTasklist = function(){
+      console.log('getTasklist');
+      var token = localStorageService.get('token');
+      var getTasklistReq = {
+        token:token
+      }
+
+      newActFactory.getTasklist(getTasklistReq)
+        .then(function(result){
+            if(result.success){
+              console.log('tasklistData:');
+              console.log(result.data);
+              localStorageService.set('tasklistData', result.data);
+            }
+        })
+    }
+    getTasklist();
 
     // 获取下拉菜单的数据
     $scope.getDownlist = function(){
@@ -68,6 +103,10 @@
       }, 100);
     }
 
+
+    $scope.locationOn = false;    //是否选择
+    $scope.categoryOn = false;    //是否选择
+
     // floor.html页面单选后跳回来
     $scope.floor = 'A';
     var href = $window.location.href;
@@ -96,6 +135,8 @@
       var locationStr = block + " / " + data;
       $scope.locationStyle = {"color":"#333"};
       $scope.location = locationStr;
+      $scope.locationOn = true;
+
     });
 
  
@@ -106,8 +147,9 @@
      * @param  {Boolean} isMulti    [是否为多选]
      * @author Mary Tien
      */
+   
     var onSelect = function(selectName, isMulti){
-        $scope[selectName] = 'Select ' + selectName;
+        $scope[selectName] = 'Select ' + selectName.substring(0,1).toUpperCase()+selectName.substring(1);
         if(selectName === 'review')
         {
           $scope[selectName] = 'Select User';
@@ -119,12 +161,14 @@
                 $scope['is'+selectName+'Show'] = true;
                 $scope[selectName + 'Style'] = {"color":"#333"};
                 $scope[selectName] = data;
+                
             });
             return;
         }
         $rootScope.$on(selectName + 'Change', function(d, data){
             $scope[selectName + 'Style'] = {"color":"#333"};
             $scope[selectName] = data;
+            $scope[selectName + 'On'] = true;  //是否选择
         });
     }
     onSelect('review', true);
@@ -207,6 +251,7 @@
             encodingType: Camera.EncodingType.JPEG,
             mediaType: Camera.MediaType.PICTURE,
             allowEdit: false,
+            saveToPhotoAlbum:true,
             correctOrientation: true  //Corrects Android orientation quirks
         }
         return options;
@@ -250,6 +295,7 @@
             encodingType: Camera.EncodingType.JPEG,
             mediaType: Camera.MediaType.PICTURE,
             allowEdit: false,
+            saveToPhotoAlbum:true,
             correctOrientation: true  //Corrects Android orientation quirks
         }
           //var func = createNewFileEntry;
@@ -275,6 +321,7 @@
 
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
+                
                 $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
@@ -292,6 +339,7 @@
     
 
     // log input clear content when focus
+    $scope.isMockInputVal = false; // 是否填写
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
       $scope.mockInputData = "";
@@ -309,6 +357,17 @@
       
      // console.log($event);
     }
+    $scope.mockInputBlur = function(){
+      var mockInputCont = document.getElementById("mockinput").innerHTML;
+
+      if(mockInputCont){
+          $scope.isMockInputVal = true;
+          console.log('mockinputCont:'+mockInputCont);
+          console.log('$scope.isMockInputVal:'+$scope.isMockInputVal);
+          $scope.mockInputData = mockInputCont;
+      }
+    }
+
 
     //监控log input高度变化
     /*$scope.$watch("$scope.style.height", function(newVal,oldVal){
@@ -330,6 +389,59 @@
        console.log(h2);
      }
     */
+
+    var showTime = function(){
+      var d = new Date();
+      var date = (d.getFullYear()) + "-" + 
+           (d.getMonth() + 1) + "-" +
+           (d.getDate()) + " " + 
+           (d.getHours()) + ":" + 
+           (d.getMinutes());
+
+      console.log('date:'+ date);
+      return date;
+    }
+
+    // 保存数据
+    var actDatas = [];
+    $scope.saveAct = function(){
+      console.log('start saveAct');
+      $timeout(function() {
+          var confirmBy = $scope.locationOn && $scope.categoryOn && ( $scope.attachImgs.length>0 || $scope.isMockInputVal)
+          /*console.log($scope.locationOn);
+          console.log($scope.categoryOn);
+          console.log($scope.attachImgs.length>0 || $scope.isMockInputVal);
+          console.log($scope.isMockInputVal);
+
+          console.log('confirmBy：'+ confirmBy);*/
+          if(confirmBy){
+            console.log('saveAct');
+            
+            var time = showTime();
+            
+            var actData = {
+
+              location: $scope.location,
+              category: $scope.category,
+              review: $scope.review || "",
+              trade: $scope.trade || "",
+              subcontractor: $scope.Subcontractor || "",
+              photos:$scope.attachImgs || "",
+              photoLength:$scope.attachImgs.length,
+              log: $scope.mockInputData || "",
+              time:time,
+            }
+            actDatas.unshift(actData);
+            console.log('actDatas:');
+            console.log(actDatas);
+            localStorageService.set('actDatas', actDatas);
+            $rootScope.$broadcast('saveAct');
+          }
+      }, 100);
+
+     
+      
+    }
 
 		}]);
 

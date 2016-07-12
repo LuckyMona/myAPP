@@ -5,6 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
+var appVersion = "0.0.0";
 angular.module('starter', [
   'ionic', 
   'starter.controllers', 
@@ -31,6 +32,9 @@ angular.module('starter', [
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+    cordova.getAppVersion(function(version) {
+        appVersion = version;
+    })
   });
 })
 /*.directive('spyStyle',function(){
@@ -104,7 +108,8 @@ angular.module('starter', [
     .state('tab', {
     url: '/tab',
     abstract: true,
-    templateUrl: 'templates/tabs.html'
+    templateUrl: 'templates/tabs.html',
+    // controller: 'TabCtrl'
   })
 
   // Each tab has its own nav history stack:
@@ -241,7 +246,7 @@ angular.module('starter', [
   .state('subcontractor', {
     url: '/subcontractor',
     templateUrl: 'templates/subcontractor.html',
-    // controller: 'TradeCtrl'
+    controller: 'SubcontractorCtrl'
     
   })
   .state('review', {
