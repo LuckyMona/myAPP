@@ -207,7 +207,7 @@ angular.module('starter', [
   .state('floor', {
     url: '/floor',
     templateUrl: 'templates/floor.html',
-    controller: 'FloorCtrl'
+    // controller: 'FloorCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',
@@ -218,7 +218,7 @@ angular.module('starter', [
   .state('category', {
     url: '/category',
     templateUrl: 'templates/category.html',
-    controller: 'CategoryCtrl'
+    // controller: 'CategoryCtrl'
     // views: {
     //   'newAct': {
     //     templateUrl: 'templates/floor.html',

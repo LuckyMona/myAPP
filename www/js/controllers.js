@@ -61,20 +61,23 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 })
 .controller('newActCtrl', function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){ 
 })
-.controller('FloorCtrl', function($scope, localStorageService,$timeout){
+.controller('FloorCtrl', function($rootScope, $scope, localStorageService,$timeout,$window){
     
-    //$scope.a = {"floorModel":"aa"};
+    //$scope.a = {"floorModel":""};
     $scope.floorModel = ''; 
     $scope.floorItems = localStorageService.get('floorItems');
     
     $scope.$watch('floorModel', function(newVal,oldVal){
         console.log('floorNewVal:'+ newVal);
-        if(newVal==oldVal){
+        if(newVal === oldVal){
           return;
         }
-        // $timeout(function() {
-        //     //$window.location.href =  $scope.m_url;
-        // }, 200);
+        // localStorageService.set('floorSelected', newVal);
+        $rootScope.$broadcast('floorChange', newVal);
+        $timeout(function() {
+            $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
+            // $state.go('tab.newAct');
+        }, 200);
     });
 
     /*$scope.radioChange = function(){
@@ -103,14 +106,13 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     
 })
 
-.controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, $window, $timeout){
-  var href = $window.location.href;
-  var m_url = href.split('#')[0] + "#/tab/newAct";
-
-  // $scope.category = 'Category A';
-  $scope.$watch('category', function(newVal, oldVal){
+.controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, $window, $timeout,localStorageService){
+    
+    $scope.category = "";
+    $scope.categoryItems = localStorageService.get('categoryItems');
+    $scope.$watch('category', function(newVal, oldVal){
     console.log('newVal:'+newVal);
-    console.log('oldVal:'+oldVal);
+    // console.log('oldVal:'+oldVal);
     if(newVal==oldVal){
       return;
     } 
@@ -118,31 +120,33 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     $rootScope.$broadcast('categoryChange',newVal);
     
     $timeout(function() {
-        $window.location.href =  m_url;
+        $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
     }, 200);
 
 
   });
 })
 .controller('LanguageCtrl', function($scope){
-  $scope.lan = 'En';
+    $scope.lan = 'En';
 })
-.controller('ReviewCtrl', function($rootScope,$scope, $window, $timeout){
-  var href = $window.location.href;
-  var m_url = href.split('#')[0] + "#/tab/newAct";
+.controller('ReviewCtrl', function($rootScope,$scope, $window, $timeout,localStorageService){
 
-  // $scope.category = 'Category A';
-  $scope.review = "Select User";
-  $scope.devList = [
-    {text:'Alan', checked:false},
-    {text:'Ross', checked:false},
-    {text:'Ruby', checked:false}
-   
-  ];
-  $scope.reviewDone = function(){
+    var reviewItems = localStorageService.get('reviewItems');
+    console.log('reviewItems'+reviewItems);
+
+    $scope.reviewList = [];
+
+    for(var i=0, len=reviewItems.length; i<len; i++){
+    $scope.reviewList.push({
+        text:reviewItems[i], checked:false
+    });
+    }
+    // [{text:'Alan', checked:false}]
+  
+    $scope.reviewDone = function(){
       
       var reviewData = [];
-      var arr = $scope.devList;
+      var arr = $scope.reviewList;
       for(var i=0, len=arr.length; i<len; i++){
         if(arr[i].checked){
           reviewData.push(arr[i].text);
@@ -152,10 +156,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
       $rootScope.$broadcast('reviewDone',reviewData.join(','));
       $timeout(function() {
-        $window.location.href =  m_url;
+        $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
     }, 200);
-
-
   }
 })
 .controller('TradeCtrl', function($rootScope,$scope, $window, $timeout){

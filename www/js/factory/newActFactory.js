@@ -21,7 +21,7 @@
                             'blockB':['floorB1','floorB2','floorB3'],
                         },
                         category:['category1', 'category2', 'category3'],
-                        reviewUser:['reviewUser1', 'reviewUser2', 'reviewUser3'],
+                        review:['reviewUser1', 'reviewUser2', 'reviewUser3'],
                         trade:['trade1', 'trade2', 'trade3'],
                         subcontractor:['subcontractor1','subcontractor2'],
                         jobNumber:{

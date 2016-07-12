@@ -13,6 +13,7 @@
 
     // 获取下拉菜单的数据
     $scope.getDownlist = function(){
+      console.log('getDownlist');
       var token = localStorageService.get('token');
       var getDownlistReq = {
         token:token
@@ -41,19 +42,34 @@
       console.log('blockItems:' + blockItems);
       localStorageService.set('blockItems', blockItems);
 
-      var href = $window.location.href;
-      var url_block = href.split('#')[0] + "#/block";
       $timeout(function() {
-            $window.location.href =  url_block;
+          $window.location.href =  $window.location.href.split('#')[0] + "#/block";
       }, 100);
       
     }
 
+    // 获取Category下拉菜单
+    $scope.getCategory = function(){
+      var categoryItems = localStorageService.get('downlistData').category;
+      localStorageService.set('categoryItems', categoryItems);
+      $timeout(function() {
+          $window.location.href =  $window.location.href.split('#')[0] + "#/category";
+      }, 100);
+    }
+    
+    // 获取值为数组的下拉菜单
+    $scope.getArrayList = function(listName){
+      console.log('listName:'+listName);
+      var listItems = localStorageService.get('downlistData')[listName];
+           
+      localStorageService.set(listName+'Items', listItems);
+      $timeout(function() {
+          $window.location.href =  $window.location.href.split('#')[0] + "#/" + listName;
+      }, 100);
+    }
+
     // floor.html页面单选后跳回来
     $scope.floor = 'A';
-    
-    $scope.review = 'Allan';
-
     var href = $window.location.href;
     $scope.m_url = href.split('#')[0] + "#/tab/newAct";
    
@@ -73,28 +89,47 @@
     	$scope.category = "changeCategory";
     }*/
 
-    // category.html页面单选后跳回来
-    // $scope.category = 'Select Category';
-    $scope.category = 'Select Category';
-    $rootScope.$on('categoryChange', function(d, data){
-      
-      $scope.category = data;
+
+    $scope.location = 'Select Location';
+    $rootScope.$on('floorChange', function(d, data){
+      var block = localStorageService.get('blockSelected');
+      var locationStr = block + " / " + data;
+      $scope.locationStyle = {"color":"#333"};
+      $scope.location = locationStr;
     });
 
-    $scope.review = 'Select User';
-    $rootScope.$on('reviewDone', function(d, data){
-     
-      $scope.reviewStyle = {"color":"#333"};
-      $scope.review = data;
-    });
-
-    $scope.trade = 'Select Trade';
-    $rootScope.$on('tradeDone', function(d, data){
-      
-      $scope.isTradeShow = true;
-      $scope.tradeStyle = {"color":"#333"};
-      $scope.trade = data;
-    });
+ 
+   
+    /*
+     * [onSelect 监听选项改变]
+     * @param  {string}  selectName [选项名]
+     * @param  {Boolean} isMulti    [是否为多选]
+     * @author Mary Tien
+     */
+    var onSelect = function(selectName, isMulti){
+        $scope[selectName] = 'Select ' + selectName;
+        if(selectName === 'review')
+        {
+          $scope[selectName] = 'Select User';
+        }
+        
+        if(isMulti){
+            $rootScope.$on(selectName + 'Done', function(d, data){
+          
+                $scope['is'+selectName+'Show'] = true;
+                $scope[selectName + 'Style'] = {"color":"#333"};
+                $scope[selectName] = data;
+            });
+            return;
+        }
+        $rootScope.$on(selectName + 'Change', function(d, data){
+            $scope[selectName + 'Style'] = {"color":"#333"};
+            $scope[selectName] = data;
+        });
+    }
+    onSelect('review', true);
+    onSelect('trade', true);
+    onSelect('category', false);
 
     $scope.clearTrade = function(){
        $scope.tradeStyle = {"color":"#ceced2"};
@@ -148,11 +183,13 @@
         $scope.mockInputData = "請輸入項目日誌…";
         $scope.category = "選擇類別";
         $scope.review = "選擇用戶";
+        $scope.location = "選擇地址";
 
       } else {
         $scope.mockInputData = "Input Diary Entry Here…";
         $scope.category = "Select Category";
         $scope.review = "Select User";
+        $scope.location = "Select Location";
       }
     });
 
