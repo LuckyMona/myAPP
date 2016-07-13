@@ -1,12 +1,19 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
     $scope.attachImgs = [];
+    $scope.isGray_location = true;
+    $scope.isGray_category = true;
+    $scope.isGray_review = true;
+    $scope.isGray_trade = true;
+    $scope.isGray_subcontractor = true;
+    $scope.isGray_mockinput = true;
+
     $scope.toggleTradeShow = function(){
       $scope.isTradeShow = !$scope.isTradeShow;
     }
@@ -133,7 +140,7 @@
     $rootScope.$on('floorChange', function(d, data){
       var block = localStorageService.get('blockSelected');
       var locationStr = block + " / " + data;
-      $scope.locationStyle = {"color":"#333"};
+      $scope.isGray_location = false;
       $scope.location = locationStr;
       $scope.locationOn = true;
 
@@ -147,7 +154,10 @@
      * @param  {Boolean} isMulti    [是否为多选]
      * @author Mary Tien
      */
-   
+    
+    $scope.reviewOn = false;
+    $scope.tradeOn = false;
+    $scope.subcontractorOn = false;
     var onSelect = function(selectName, isMulti){
         $scope[selectName] = 'Select ' + selectName.substring(0,1).toUpperCase()+selectName.substring(1);
         if(selectName === 'review')
@@ -157,16 +167,16 @@
         
         if(isMulti){
             $rootScope.$on(selectName + 'Done', function(d, data){
-          
+
                 $scope['is'+selectName+'Show'] = true;
-                $scope[selectName + 'Style'] = {"color":"#333"};
+                $scope['isGray_'+ selectName] = false;
                 $scope[selectName] = data;
-                
+                $scope[selectName + 'On'] = true;  //是否选择
             });
             return;
         }
         $rootScope.$on(selectName + 'Change', function(d, data){
-            $scope[selectName + 'Style'] = {"color":"#333"};
+            $scope['isGray_'+ selectName] = false;
             $scope[selectName] = data;
             $scope[selectName + 'On'] = true;  //是否选择
         });
@@ -343,7 +353,7 @@
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
       $scope.mockInputData = "";
-      $scope.style = {"color":"#000"};
+      $scope.isGray_mockinput = false;
       // $event.target.focus();
       /*$event.target.click();*/
       //return true;
@@ -392,8 +402,8 @@
 
     var showTime = function(){
       var d = new Date();
-      var date = (d.getFullYear()) + "-" + 
-           (d.getMonth() + 1) + "-" +
+      var date = (d.getFullYear()) + "/" + 
+           (d.getMonth() + 1) + "/" +
            (d.getDate()) + " " + 
            (d.getHours()) + ":" + 
            (d.getMinutes());
@@ -403,7 +413,7 @@
     }
 
     // 保存数据
-    var actDatas = [];
+    var actDatas = localStorageService.get('actDatas') || [];
     $scope.saveAct = function(){
       console.log('start saveAct');
       $timeout(function() {
@@ -415,34 +425,79 @@
 
           console.log('confirmBy：'+ confirmBy);*/
           if(confirmBy){
-            console.log('saveAct');
+            console.log('saveAct confirmBy');
             
-            var time = showTime();
-            
+            var time = showTime(),
+                review = $scope.reviewOn? $scope.review:"",
+                trade = $scope.tradeOn? $scope.trade:"",
+                subcontractor = $scope.subcontractorOn? $scope.subcontractor:"",
+                log = $scope.isMockInputVal? $scope.mockInputData:"";
+              
             var actData = {
-
               location: $scope.location,
               category: $scope.category,
-              review: $scope.review || "",
-              trade: $scope.trade || "",
-              subcontractor: $scope.Subcontractor || "",
-              photos:$scope.attachImgs || "",
+              review: review,
+              trade: trade,
+              subcontractor: subcontractor,
+              photos: $scope.attachImgs || "",
               photoLength:$scope.attachImgs.length,
-              log: $scope.mockInputData || "",
+              log: log,
               time:time,
             }
             actDatas.unshift(actData);
             console.log('actDatas:');
             console.log(actDatas);
+
             localStorageService.set('actDatas', actDatas);
             $rootScope.$broadcast('saveAct');
-          }
-      }, 100);
+            clearNewAct();
+          } else {
 
-     
+          }
+      }, 100);     
       
     }
 
+    // newAct页面清空
+    var clearNewAct = function(){
+        console.log('clearNewAct');
+        var keyLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+        console.log('keyLang:'+keyLang);
+
+        if(keyLang === "zh_hk"){
+          //console.log('zh_hk');
+          $scope.mockInputData = "請輸入項目日誌…";
+          //$scope.category = "選擇類別";
+          $scope.review = "選擇用戶";
+          $scope.trade = "選擇交易";
+          $scope.subcontractor = "選擇分判商";
+          //$scope.location = "選擇地址";
+
+        } else {
+          //console.log('us_en');
+          $scope.mockInputData = "Input Diary Entry Here…";
+          console.log($scope.mockInputData);
+          //$scope.category = "Select Category";
+          $scope.review = "Select User";
+          $scope.trade = "Select Trade";
+          $scope.subcontractor = "Select Subcontractor";
+          
+          //$scope.location = "Select Location";
+        }
+        //$scope.isGray_location = true;
+        //$scope.isGray_category = true;
+        $scope.isGray_review = true;
+        $scope.isGray_trade = true;
+        $scope.isGray_subcontractor = true;
+        $scope.isGray_mockinput = true;
+
+    }
+
+    // 上传
+    
+
+
+    
 		}]);
 
 })();

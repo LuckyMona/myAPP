@@ -16,7 +16,7 @@
 		    	<a class="item c3" ng-click="getLocationBlock()" nav-direction="forward">
 				    <i class="fl ion-android-pin fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-				    <span style="width:85%" ng-style="locationStyle" class="fz16 item-note cce0 ellipsis">
+				    <span style="width:85%" class="fz16 item-note ellipsis" ng-class="{true:'cce0', false:'c30'}[isGray_location]">
 				      <!-- Block A / Ground Floor -->	
 				       {{ location }}		      
 				    </span>
@@ -24,7 +24,7 @@
 				<a class="item c3" ng-click="getCategory()" nav-direction="forward">
 				    <i class="fl ion-ios-pricetag fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-				    <span style="width:85%" ng-style="categoryStyle" class="fz16 item-note cce0 ellipsis">
+				    <span style="width:85%" class="fz16 item-note ellipsis" ng-class="{true:'cce0', false:'c30'}[isGray_category]">
 				      {{ category }}      
 				    </span>
 				</a>
@@ -36,7 +36,7 @@
 		    	<a class="item c3" ng-click="getArrayList('review')" nav-direction="forward" ng-show="isReviewShow">
 				    <i class="fl ion-android-person fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
-				    <span style="width:85%" ng-style="reviewStyle" class="fz16 item-note cce0">
+				    <span style="width:85%" class="fz16 item-note" ng-class="{true:'cce0', false:'c30'}[isGray_review]">
 				     {{ review | translate }} 
 				    </span>
 				</a>
@@ -51,14 +51,14 @@
 				<span class="item c3" ng-show="isTradeShow" >
 				    <span class="fl" style="width:40%;">{{ 'TRADE' | translate }}</span>
 				    <i style="width:10%" ng-click="clearTrade()" class="t-r fr icon ion-android-cancel fz20 cce"></i>
-				    <a style="width:50%" href="#/trade" nav-direction="forward" ng-style="tradeStyle" class="no-decor fz16 item-note cce0 newLine">
-				      {{ trade | translate }}     
+				    <a style="width:50%" href="#/trade" nav-direction="forward"  class="no-decor fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_trade]"> 
+				      {{ trade }}     
 				    </a>
 				</span>
 				<a class="item c3" ng-show="isTradeShow" href="#/subcontractor" nav-direction="forward">
 				    <span class="fl" style="width:40%;">{{ 'SUBCONTRACTOR' | translate }}</span>
 				    <i style="width:5%" class="fr icon ion-android-cancel fz20 cce"></i>
-				    <span style="width:55%" class="fz16 item-note cce newLine">
+				    <span style="width:55%" class="fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_subcontractor]">
 				      {{ 'SELECT_SUBCONTRACTOR' | translate }}  		      
 				    </span>
 				</a>
@@ -102,7 +102,7 @@
 	<div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;">
 		    <button ng-click="takePhoto()" class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>
 			<!-- <input type="" id="realInput" name=""> -->
-		    <div class="mockinput" ng-style="style" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" ng-blur="mockInputBlur()" contenteditable="true">{{ mockInputData }} </div>
+		    <div class="mockinput" ng-class="{true:'c7', false:'c30'}[isGray_mockinput]" id="mockinput" tabindex="0" ng-focus="mockInputFocus($event)" ng-blur="mockInputBlur()" contenteditable="true">{{ mockInputData }} </div>
 		    <button ng-click="saveAct()" class="fixbottom button button-clear send"></button>
 	</div>	
 </ion-view>

@@ -105,9 +105,11 @@
 .item-floating-label { border-top: none; }
 
 .c3 { color:#333 !important; }
-.c8e { color:#8e8e93 !important; }
+.c30 { color:#333; }  /*选项提示黑色*/
+.c7 { color:#c7c7cc; }  /*提示log灰色*/
 .cce { color:#ceced2 !important; }
-.cce0 { color:#ceced2; }
+.cce0 { color:#ceced2; }  /*选项提示灰色*/
+.c8e { color:#8e8e93 !important; }
 .cred { color:#FF4A6D !important; }
 
 .hide { display: none; }
@@ -207,7 +209,7 @@
     min-height: 32px;
     line-height: 1.2;
     border: 1px solid #adadad;
-    color:#c7c7cc;
+    
     padding: 9px 5px;
     border-radius:4px;
     margin:0 40px;

@@ -29,6 +29,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
 })
 .controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService) {
+   console.log('UploadsCtrl');
    $scope.uploadItems = localStorageService.get('actDatas');
    console.log('$scope.uploadItems:'+$scope.uploadItems);
    $rootScope.$on('saveAct', function(){
@@ -37,10 +38,9 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 })
 
 .controller('SystemCtrl', function($scope,$window,$timeout,localStorageService) {
-  // $scope.settings = {
-  //   enableFriends: true
-  // };
+  
    $scope.jobList = 'J1';
+   $scope.allow3G = false;
 
   // jobList.html页面单选后跳回来
     var href = $window.location.href;
@@ -56,6 +56,12 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             $window.location.href =  m_url;
         }, 200);
     });
+
+    // 监听是否选中Allow 3G
+    $scope.$watch('allow3G', function(newVal, oldVal){
+        console.log('allow3G newVal：'+newVal);
+
+    })
 
     $scope.signOut = function(){
         localStorageService.clearAll();
@@ -163,12 +169,14 @@ angular.module('starter.controllers', ['LocalStorageModule'])
           reviewData.push(arr[i].text);
         } else continue;
       }
-      console.log(reviewData);
-
-      $rootScope.$broadcast('reviewDone',reviewData.join(','));
+      console.log('reviewData:'+reviewData.join(','));
+      
+      if(reviewData.length >0 ){
+        $rootScope.$broadcast('reviewDone',reviewData.join(','));
+      }
       $timeout(function() {
         $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
-    }, 200);
+      }, 200);
   }
 })
 .controller('TradeCtrl', function($rootScope,$scope, $window, $timeout){
@@ -190,9 +198,10 @@ angular.module('starter.controllers', ['LocalStorageModule'])
           reviewData.push(arr[i].text);
         } else continue;
       }
-      console.log(reviewData);
-
-      $rootScope.$broadcast('tradeDone',reviewData.join(','));
+    
+      if ( reviewData.length>0){
+        $rootScope.$broadcast('tradeDone',reviewData.join(','));
+      }
       $timeout(function() {
         $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
     }, 200);

@@ -6,11 +6,11 @@
         <a class="upload item item-button-right" href="" ng-repeat="upload in uploadItems">
           <h2>{{upload.time}}</h2>
           <p class="h20">{{upload.log}}</p>
-          <div class="r-img">
-             <img src="{{upload.photos[0].imgURI}}" class="fl">
+          <div class="r-img" ng-show="{{upload.photos.length}}">
+             <img  src="{{upload.photos[0].imgURI}}" class="fl">
             <div class="fl">
               <h2><img src="img/img.gif"></h2>
-              <p>15</p>
+              <p>{{upload.photos.length}}</p>
             </div>
           </div>  
         </a>
