@@ -30,7 +30,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 })
 .controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService) {
    console.log('UploadsCtrl');
-   $scope.uploadItems = localStorageService.get('actDatas');
+   $scope.uploadItems = localStorageService.get('actDatas') || [];
    console.log('$scope.uploadItems:'+$scope.uploadItems);
    $rootScope.$on('saveAct', function(){
         $scope.uploadItems = localStorageService.get('actDatas');

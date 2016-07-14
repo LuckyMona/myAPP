@@ -61,9 +61,39 @@
                 return deferred.promise;
             }
 
+            var _uploadAct = function(uploadActReq){
+                console.log(uploadActReq);
+                var deferred = $q.defer();
+                /*$http.post(url, req)
+                    .then(function(result){
+                        deferred.resolve(result);
+                    });*/
+                var uploadActData = {
+                    success:true,
+                }
+                deferred.resolve(uploadActData);
+                return deferred.promise;
+            }
+
+            var _uploadPhotoAct = function(uploadPhotoAct){
+                console.log(uploadPhotoAct);
+                var deferred = $q.defer();
+                /*$http.post(url, req)
+                    .then(function(result){
+                        deferred.resolve(result);
+                    });*/
+                var uploadPhotoActData = {
+                    success:true,
+                }
+                deferred.resolve(uploadPhotoActData);
+                return deferred.promise;
+            }
+
             return {
                getDownlist:_getDownlist,
-               getTasklist:_getTasklist
+               getTasklist:_getTasklist,
+               uploadAct:_uploadAct,
+               uploadPhotoAct:_uploadPhotoAct,
             }
         }
 

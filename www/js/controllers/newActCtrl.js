@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -413,7 +413,7 @@
     }
 
     // 保存数据
-    var actDatas = localStorageService.get('actDatas') || [];
+    $scope.actDatas = localStorageService.get('actDatas') || [];
     $scope.saveAct = function(){
       console.log('start saveAct');
       $timeout(function() {
@@ -444,12 +444,14 @@
               log: log,
               time:time,
             }
-            actDatas.unshift(actData);
+            $scope.actDatas.unshift(actData);
             console.log('actDatas:');
-            console.log(actDatas);
+            console.log($scope.actDatas);
 
-            localStorageService.set('actDatas', actDatas);
+            localStorageService.set('actDatas', $scope.actDatas);
             $rootScope.$broadcast('saveAct');
+            doUpload();
+
             clearNewAct();
           } else {
 
@@ -490,11 +492,116 @@
         $scope.isGray_trade = true;
         $scope.isGray_subcontractor = true;
         $scope.isGray_mockinput = true;
-
+        $scope.attachImgs = [];
     }
 
     // 上传
-    
+    doUpload();
+    function doUpload(){
+        document.addEventListener("deviceready", function () {
+
+          var type = $cordovaNetwork.getNetwork();
+          console.log('getNetwork:'+ type);
+          //var isOnline = $cordovaNetwork.isOnline();
+          //var isOffline = $cordovaNetwork.isOffline();
+          var uploadActReqs = [];
+          if($scope.actDatas.length>0){
+                console.log('actDatas.length>0');
+                for(var i=0, len=$scope.actDatas.length; i<len; i++ )
+                {   
+                    var uploadActReq = {
+                          activityId:123, // activityId怎么获取的？
+                          projectId:111,
+                          location: $scope.actDatas[i].location,
+                          category: $scope.actDatas[i].category,
+                          review: $scope.actDatas[i].review,
+                          trade: $scope.actDatas[i].trade,
+                          subcontractor: $scope.actDatas[i].subcontractor,
+                          log: $scope.actDatas[i].log,
+                          time:$scope.actDatas[i].time,
+                    }
+
+                    var uploadActPhotosReq = [];
+                    if($scope.actDatas[i].photos.length>0){
+                        for(var j = 0, lenPhoto =$scope.actDatas[i].photos.length; j<lenPhoto; j++ ){
+                        uploadActPhotosReq.push({
+                          activityId:123,
+                          photo:$scope.actDatas[i].photos[j]
+                        });
+                    }
+                  }
+                  /* var uploadActPhotosReqs = {
+                      activityId:123,
+                      photos: actDatas[i].photos,
+                  }*/
+                  uploadActReqs.push({
+                      uploadActReq: uploadActReq,
+                      uploadActPhotosReq: uploadActPhotosReq
+                  });
+              };
+              console.log('uploadActReqs:'+ uploadActReqs);
+              
+              if(type === 'wifi'){
+                console.log('wifi');
+
+                // 上传每一条数据，递归
+                var n = 0;
+                uploadActRecur(n);
+                function uploadActRecur(n){
+                  if(n<uploadActReqs.length){
+                    newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
+                      .then(function(result){
+                        if(result.success){
+
+                          console.log('the  NO. '+n+' uploadAct success!');
+
+                          // 上传每一条数据中的照片部分，递归
+                          var k = 0;
+                          uploadPhotoRecur(k);
+                          function uploadPhotoRecur(k){
+                              if(k < uploadActReqs[n].uploadActPhotosReq.length){
+                                  newActFactory.uploadPhotoAct(uploadActReqs[n].uploadActPhotosReq[k])
+                                    .then(function(result){
+                                        if(result.success){
+                                          console.log('th NO. '+k+' photo upload success!');
+                                          uploadPhotoRecur(k+1);
+                                        }
+                                    });
+                              } else {
+                                  // 这条数据全部上传完毕
+                                  console.log('the NO.' +n +'data_s all photos upload!');
+                                  // 更新Task List，从列表中减去这条数据
+                                  $scope.actDatas.shift();
+                                  localStorageService.set('actDatas', $scope.actDatas);
+                                  $rootScope.$broadcast('saveAct');
+                                  
+                                  // 隔3s上传下一条数据
+                                  $timeout(function() {
+                                    uploadActRecur(n+1);
+                                  }, 3000);
+                              }
+                          }
+                        }
+                      })
+                   } else return;
+                }
+
+              }
+          }
+          
+          // listen for Online event
+          /*$rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+            var onlineState = networkState;
+          })
+
+          // listen for Offline event
+          $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+            var offlineState = networkState;
+          })*/
+
+        }, false);
+
+    }
 
 
     
