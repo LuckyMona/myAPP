@@ -77,7 +77,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 })
 .controller('newActCtrl', function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera){ 
 })
-.controller('FloorCtrl', function($rootScope, $scope, localStorageService,$timeout,$window){
+.controller('FloorCtrl', function($rootScope, $scope, localStorageService, $state, $ionicViewSwitcher){
     
     //$scope.a = {"floorModel":""};
     $scope.floorModel = ''; 
@@ -90,10 +90,10 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         }
         // localStorageService.set('floorSelected', newVal);
         $rootScope.$broadcast('floorChange', newVal);
-        $timeout(function() {
-            $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
-            // $state.go('tab.newAct');
-        }, 200);
+        // console.log('$state');
+        $state.go('tab.newAct');
+        $ionicViewSwitcher.nextDirection("back");
+
     });
 
     /*$scope.radioChange = function(){
@@ -104,7 +104,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     // });
 
 })
-.controller('BlockCtrl', function($scope,localStorageService,$window){
+.controller('BlockCtrl', function($scope,localStorageService,$state){
     $scope.blockItems = localStorageService.get('blockItems');
 
     $scope.getFloor = function(block){
@@ -117,12 +117,12 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             }
         }
         localStorageService.set('blockSelected',block);
-        $window.location.href =  $window.location.href.split('#')[0] + "#/floor";
+        $state.go('floor');
     }
     
 })
 
-.controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, $window, $timeout,localStorageService){
+.controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, localStorageService, $state, $ionicViewSwitcher){
     
     $scope.category = "";
     $scope.categoryItems = localStorageService.get('categoryItems');
@@ -134,19 +134,16 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     } 
     
     $rootScope.$broadcast('categoryChange',newVal);
+    $state.go('tab.newAct');
+    $ionicViewSwitcher.nextDirection("back");
     
-    $timeout(function() {
-        $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
-    }, 200);
-
-
   });
 })
 .controller('LanguageCtrl', function($scope){
     $scope.lan = 'En';
 })
 
-.controller('ReviewCtrl', function($rootScope,$scope, $window, $timeout,localStorageService){
+.controller('ReviewCtrl', function($rootScope,$scope, localStorageService, $state, $ionicViewSwitcher){
 
     var reviewItems = localStorageService.get('reviewItems');
     console.log('reviewItems'+reviewItems);
@@ -174,12 +171,11 @@ angular.module('starter.controllers', ['LocalStorageModule'])
       if(reviewData.length >0 ){
         $rootScope.$broadcast('reviewDone',reviewData.join(','));
       }
-      $timeout(function() {
-        $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
-      }, 200);
+      $state.go('tab.newAct');
+      $ionicViewSwitcher.nextDirection("back");
   }
 })
-.controller('TradeCtrl', function($rootScope,$scope, $window, $timeout){
+.controller('TradeCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher){
   
   // $scope.category = 'Category A';
   $scope.trade = "Select User";
@@ -202,17 +198,14 @@ angular.module('starter.controllers', ['LocalStorageModule'])
       if ( reviewData.length>0){
         $rootScope.$broadcast('tradeDone',reviewData.join(','));
       }
-      $timeout(function() {
-        $window.location.href =  $window.location.href.split('#')[0] + "#/tab/newAct";
-    }, 200);
+      $state.go('tab.newAct');
+      $ionicViewSwitcher.nextDirection("back");
 
 
   }
 })
-.controller('SubcontractorCtrl', function($rootScope,$scope, $window, $timeout){
-  var href = $window.location.href;
-  var m_url = href.split('#')[0] + "#/tab/newAct";
-
+.controller('SubcontractorCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher){
+ 
   // $scope.category = 'Category A';
   $scope.subcontractor = "Select Subcontractor";
   $scope.subcontractorList = [
@@ -233,9 +226,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
       console.log(reviewData);
 
       $rootScope.$broadcast('tradeDone',reviewData.join(','));
-      $timeout(function() {
-        $window.location.href =  m_url;
-    }, 200);
+      $state.go('tab.newAct');
+      $ionicViewSwitcher.nextDirection("back");
 
 
   }

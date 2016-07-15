@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -411,6 +411,26 @@
       console.log('date:'+ date);
       return date;
     }
+    //$scope.test_a = 'aa';
+    // dbFactory.dropTbl('test');
+    // dbFactory.createTbl('test',['aa','bb']);
+    // dbFactory.save('test',{
+    //   aa:'123aaa'
+    // });
+   
+    /*db.transaction(function(tx){
+      tx.executeSql('DROP TABLE fe_Activity');
+      tx.executeSql('DROP TABLE fe_Activity2');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity'+
+        ' (ActivityID_fake unique, Project, Location, Category, Review, Trade, Subcontractor, CreatedOn, Description)');
+      //tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity4 (ActivityID_fake unique, Location, Category)');
+      // tx.executeSql('INSERT INTO PHOTOS (id, testArr) VALUES (2, "1,2,3")');
+      //tx.executeSql('INSERT INTO fe_Activity (ActivityID_fake, Location) VALUES (23, ?)',[$scope.test_a]);
+      //tx.executeSql('INSERT INTO fe_Activity4 (ActivityID_fake, Location) VALUES (23, ?)',[$scope.test_a]);
+    });*/
+
+    
+
 
     // 保存数据
     $scope.actDatas = localStorageService.get('actDatas') || [];
@@ -432,8 +452,21 @@
                 trade = $scope.tradeOn? $scope.trade:"",
                 subcontractor = $scope.subcontractorOn? $scope.subcontractor:"",
                 log = $scope.isMockInputVal? $scope.mockInputData:"";
-              
-            var actData = {
+            
+
+                          
+            /*db.transaction(function(tx){
+              tx.executeSql('SELECT * FROM fe_Activity', [], function(tx, results){
+                console.log('results');
+                for(var i=0, rowLen = results.rows.length; i<rowLen; i++){
+                  console.log('Location:'+results.rows.item(i).Location);
+                  console.log('Category:'+results.rows.item(i).Category);
+                }
+                
+              });
+            })*/
+
+            /*var actData = {
               location: $scope.location,
               category: $scope.category,
               review: review,
@@ -452,7 +485,7 @@
             $rootScope.$broadcast('saveAct');
             doUpload();
 
-            clearNewAct();
+            clearNewAct();*/
           } else {
 
           }
@@ -460,6 +493,7 @@
       
     }
 
+    
     // newAct页面清空
     var clearNewAct = function(){
         console.log('clearNewAct');
