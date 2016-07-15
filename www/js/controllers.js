@@ -28,12 +28,15 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
 
 })
-.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService) {
+.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory) {
    console.log('UploadsCtrl');
-   $scope.uploadItems = localStorageService.get('actDatas') || [];
-   console.log('$scope.uploadItems:'+$scope.uploadItems);
+   //$scope.uploadItems = localStorageService.get('actDatas') || [];
+   $scope.uploadItems = dbFactory.findAll('fe_Activity') || [];
+   //console.log('$scope.uploadItems:'+$scope.uploadItems);
    $rootScope.$on('saveAct', function(){
-        $scope.uploadItems = localStorageService.get('actDatas');
+        //$scope.uploadItems = localStorageService.get('actDatas');
+        $scope.uploadItems = dbFactory.findAll('fe_Activity');
+        
    });
 })
 

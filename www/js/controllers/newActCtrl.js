@@ -412,7 +412,8 @@
       return date;
     }
     //$scope.test_a = 'aa';
-    // dbFactory.dropTbl('test');
+  
+    //dbFactory.dropTbl('test');
     // dbFactory.createTbl('test',['aa','bb']);
     // dbFactory.save('test',{
     //   aa:'123aaa'
@@ -433,7 +434,8 @@
 
 
     // 保存数据
-    $scope.actDatas = localStorageService.get('actDatas') || [];
+    //$scope.actDatas = localStorageService.get('actDatas') || [];
+    dbFactory.dropTbl('fe_Activity');
     $scope.saveAct = function(){
       console.log('start saveAct');
       $timeout(function() {
@@ -466,7 +468,8 @@
               });
             })*/
 
-            /*var actData = {
+            var fieldArr = [];
+            var actData = {
               location: $scope.location,
               category: $scope.category,
               review: review,
@@ -474,18 +477,27 @@
               subcontractor: subcontractor,
               photos: $scope.attachImgs || "",
               photoLength:$scope.attachImgs.length,
-              log: log,
-              time:time,
+              description: log,
+              createdOn:time,
             }
-            $scope.actDatas.unshift(actData);
-            console.log('actDatas:');
-            console.log($scope.actDatas);
 
-            localStorageService.set('actDatas', $scope.actDatas);
+            for(var i_fld in actData){
+              fieldArr.push(i_fld);
+            }
+
+            console.log('fieldArr:'+fieldArr);
+            dbFactory.createTbl('fe_Activity',fieldArr);
+            dbFactory.save('fe_Activity',actData);
+
+            //$scope.actDatas.unshift(actData);
+            //console.log('actDatas:');
+            //console.log($scope.actDatas);
+
+            //localStorageService.set('actDatas', $scope.actDatas);
             $rootScope.$broadcast('saveAct');
-            doUpload();
+            //doUpload();
 
-            clearNewAct();*/
+            //clearNewAct();
           } else {
 
           }

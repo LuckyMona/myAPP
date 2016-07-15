@@ -55,10 +55,26 @@
                 });
             }
 
+            var _findAll = function(tblName){
+                var rowArr = [];
+                db.transaction(function(tx){
+                    tx.executeSql('SELECT * FROM '+tblName, [], function(tx, results){
+                       
+                        var rowLen = results.rows.length,i;
+                        for(i=0; i<len; i++){
+                            rowArr.push(results.rows.item(i));
+                        }
+
+                    });
+                 });
+                return rowArr;
+            }
+
             return {
                 createTbl : _createTbl,
                 save : _save,
                 dropTbl:_dropTbl,
+                findAll:_findAll,
             }
         }
 })();
