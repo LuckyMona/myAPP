@@ -74,8 +74,16 @@
                 for(var iCondi in condiObj){
                     condiStr += (iCondi +" = "+condiObj[iCondi]);
                 }
+                
+                var updateStr = 'UPDATE '+tblName+' SET '+setStr+' WHERE '+ condiStr;
+                // console.log('updateStr:'+updateStr);
                 db.transaction(function(tx){
-                    tx.executeSql('UPDATE '+tblName+' SET '+setStr+' WHERE '+ condiStr);
+                    tx.executeSql(updateStr, [], function(){
+                    // tx.executeSql('UPDATE fe_Activity SET ActivityId = 123 WHERE ActivityId = 2', [], function(){
+                        console.log('update succe');
+                    },function(){
+                        console.log('update fail');
+                    });
                 });
             }
 
@@ -85,7 +93,12 @@
                     condiStr += (iCondi +" = "+condiObj[iCondi]);
                 }
                 db.transaction(function(tx){
-                    tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr);
+                    tx.executeSql('DELETE FROM fe_Activity WHERE ActivityID = 123',[],function(){
+                        console.log('delete success');
+                    },function(){
+                        console.log('delete fail');
+                    })
+                    //tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr);
                 });
             }
 

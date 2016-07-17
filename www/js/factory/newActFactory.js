@@ -68,9 +68,10 @@
                     .then(function(result){
                         deferred.resolve(result);
                     });*/
+
                 var uploadActData = {
                     success:true,
-                    ActivityID:123,
+                    ActivityId:123,
                 }
                 deferred.resolve(uploadActData);
                 return deferred.promise;
@@ -90,7 +91,7 @@
                 return deferred.promise;
             }
 
-            
+
 
             return {
                getDownlist:_getDownlist,

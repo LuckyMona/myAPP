@@ -64,8 +64,8 @@
       newActFactory.getDownlist(getDownlistReq)
         .then(function(result){
           if(result.success){
-            console.log('downlistData:');
-            console.log(result.data);
+            // console.log('downlistData:');
+            // console.log(result.data);
             localStorageService.set('downlistData', result.data);
           }
         });
@@ -136,13 +136,14 @@
     }*/
 
 
-    $scope.location = 'Select Location';
+    $scope.location =  localStorageService.get('location') || 'Select Location';
     $rootScope.$on('floorChange', function(d, data){
       var block = localStorageService.get('blockSelected');
       var locationStr = block + " / " + data;
       $scope.isGray_location = false;
       $scope.location = locationStr;
       $scope.locationOn = true;
+      localStorageService.set('location', locationStr);
 
     });
 
@@ -164,6 +165,9 @@
         {
           $scope[selectName] = 'Select User';
         }
+        if(selectName ==="category"){
+          $scope.category =  localStorageService.get('category') || 'Select Category';
+        }
         
         if(isMulti){
             $rootScope.$on(selectName + 'Done', function(d, data){
@@ -178,6 +182,9 @@
         $rootScope.$on(selectName + 'Change', function(d, data){
             $scope['isGray_'+ selectName] = false;
             $scope[selectName] = data;
+            if(selectName === 'category'){
+              localStorageService.set('category', data);
+            }
             $scope[selectName + 'On'] = true;  //是否选择
         });
     }
@@ -235,15 +242,15 @@
         
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
-        $scope.category = "選擇類別";
+        $scope.category = localStorageService.get('category') || "選擇類別";
         $scope.review = "選擇用戶";
-        $scope.location = "選擇地址";
+        $scope.location = localStorageService.get('location') || "選擇地址";
 
       } else {
         $scope.mockInputData = "Input Diary Entry Here…";
-        $scope.category = "Select Category";
+        $scope.category = localStorageService.get('category') || "Select Category";
         $scope.review = "Select User";
-        $scope.location = "Select Location";
+        $scope.location = localStorageService.get('location') || "Select Location";
       }
     });
 
@@ -336,7 +343,7 @@
                   'imgURI':imgURI
                 });
               }, function(err) {
-                console.debug("Unable to obtain picture: " + error, "app");
+                console.debug("Unable to obtain picture: " + err, "app");
               });
 
               /*$cordovaCamera.cleanup().then(function(){
@@ -434,8 +441,8 @@
 
 
     // 保存数据
-    //$scope.actDatas = localStorageService.get('actDatas') || [];
-    //dbFactory.dropTbl('fe_Activity');
+    
+    // dbFactory.dropTbl('fe_Activity');
     $scope.saveAct = function(){
       console.log('start saveAct');
       $timeout(function() {
@@ -455,8 +462,13 @@
                 subcontractor = $scope.subcontractorOn? $scope.subcontractor:"",
                 log = $scope.isMockInputVal? $scope.mockInputData:"";
             
+            var ActivityId_fake = localStorageService.get('ActivityId_fake') || 0;
+            var attPhotos = $scope.attachImgs;
+            var photosArr = [];
+            for(var m=0, phLen = attPhotos.length; m<phLen; m++ ){
+                photosArr.push(attPhotos[m].imgURI);
 
-                          
+            }             
             /*db.transaction(function(tx){
               tx.executeSql('SELECT * FROM fe_Activity', [], function(tx, results){
                 console.log('results');
@@ -470,13 +482,14 @@
 
             var fieldArr = [];
             var actData = {
+              ActivityId:ActivityId_fake,
               projectId:123,
               location: $scope.location,
               category: $scope.category,
               review: review,
               trade: trade,
               subcontractor: subcontractor,
-              photos: $scope.attachImgs || "",
+              photos: photosArr.join(',') || "",
               photoLength:$scope.attachImgs.length,
               description: log,
               createdOn:time,
@@ -489,13 +502,14 @@
             // console.log('fieldArr:'+fieldArr);
             dbFactory.createTbl('fe_Activity',fieldArr);
             dbFactory.save('fe_Activity',actData);
+            ActivityId_fake ++;
+            localStorageService.set('ActivityId_fake',ActivityId_fake);
 
             $timeout(function() {
               $rootScope.$broadcast('saveAct');
             }, 100);
             
             doUpload();
-
             clearNewAct();
           } else {
             //TODO
@@ -541,121 +555,129 @@
     }
 
     // 上传
-    // doUpload();
+    doUpload();
+    
     function doUpload(){
-        document.addEventListener("deviceready", function () {
-
+        document.addEventListener("deviceready",onDeviceReady, false);
+        //devicereadyFunc();
+        function onDeviceReady(){
           var type = $cordovaNetwork.getNetwork();
           console.log('getNetwork:'+ type);
+          console.log('getNetwork');
           //var isOnline = $cordovaNetwork.isOnline();
           //var isOffline = $cordovaNetwork.isOffline();
           
           // N条内容数组
           var uploadActReqs = [];
-          var actDatas = dbFactory.findAll('fe_Activity');
-          var len = actDatas.length;
-          if(len>0){
-              console.log('actDatas.length>0');
-              for(var i=0; i<len; i++ )
-              {   
-                  // 单条内容中不包括photo的部分
-                  var uploadActReq = {
-                        //activityId:123, // activityId怎么获取的？
-                        projectId:actDatas.item[i].projectId,
-                        location: actDatas.item[i].location,
-                        category: actDatas.item[i].category,
-                        review: actDatas.item[i].review,
-                        trade: actDatas.item[i].trade,
-                        subcontractor: actDatas.item[i].subcontractor,
-                        description: actDatas.item[i].description,
-                        createdOn:actDatas.item[i].createdOn,
-                  }
+          var actDatas = [];
+          dbFactory.findAll('fe_Activity', function(results){
+            actDatas = results;
+            console.log(results[0]);
+            var len = actDatas.length;
+            
+            if(len>0){
+                console.log('actDatas.length>0');
+                for(var i=0; i<len; i++ )
+                {   
+                    // 单条内容中不包括photo的部分
+                    var uploadActReq = {
+                          ActivityId: actDatas[i].ActivityId, // activityId怎么获取的？
+                          projectId: actDatas[i].projectId,
+                          location: actDatas[i].location,
+                          category: actDatas[i].category,
+                          review: actDatas[i].review,
+                          trade: actDatas[i].trade,
+                          subcontractor: actDatas[i].subcontractor,
+                          description: actDatas[i].description,
+                          createdOn: actDatas[i].createdOn,
+                    }
 
-                  // 单条内容中的photos数组
-                  var actPhotos = actDatas.item[i].photos;
-                  /*var lenPhoto = actDatas.item[i].photos.length;
-                  if(lenPhoto>0){
-                      for(var j = 0; j<lenPhoto; j++ ){
-                      uploadActPhotosReq.push({
-                        activityId:123,
-                        photo:actDatas.item[i].photos[j]
-                      });
-                  }*/
-              }
+                    // 单条内容中的photos数组
+                    
+                    // 单条内容由数据和photos组成
+                    uploadActReqs.push({
+                        uploadActReq: uploadActReq,
+                        actPhotos: actDatas[i].photos.split(',')
+                    });
+                }                
+            };
+          
+            console.log('uploadActReqs:'+ uploadActReqs);
+                
+            if(type === 'wifi')
+            //if(true)
+            {
+              console.log('wifi');
 
-              // 单条内容由数据和photos组成
-              uploadActReqs.push({
-                  uploadActReq: uploadActReq,
-                  actPhotos: actPhotos
-              });
-          };
-          console.log('uploadActReqs:'+ uploadActReqs);
-              
-          if(type === 'wifi')
-          {
-            console.log('wifi');
+              // 上传每一条数据，递归
+              var n = 0;
+              uploadActRecur(n);
+              function uploadActRecur(n){
+                // console.log('n:'+n);
+                if(n<uploadActReqs.length){
+                  
+                  newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
+                    .then(function(result){
+                      if(result.success){
 
-            // 上传每一条数据，递归
-            var n = 0;
-            uploadActRecur(n);
-            function uploadActRecur(n){
-              if(n<uploadActReqs.length){
-                newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
-                  .then(function(result){
-                    if(result.success){
+                        console.log('the  NO. '+n+' uploadAct success!');
+                        //console.log('ActivityID:'+ result.ActivityID);
 
-                      console.log('the  NO. '+n+' uploadAct success!');
-                      console.log('ActivityID:'+ result.ActivityID);
+                        // 把ActivityID存入本地数据库
+                        dbFactory.update('fe_Activity',
+                          {ActivityId:result.ActivityId},
+                          // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
+                          {ActivityId:uploadActReqs[n].uploadActReq.ActivityId});
 
-                      // 把ActivityID存入本地数据库
-                      dbFactory.update('fe_Activity',
-                        {ActivityID:result.ActivityID},
-                        {createdOn:uploadActReqs[n].uploadActReq.createdOn});
+                        var lenPhoto = uploadActReqs[n].actPhotos.length;
+                        var uploadActPhotosReq = [];
+                        if(lenPhoto>0){
+                            for(var j = 0; j<lenPhoto; j++ ){
+                            uploadActPhotosReq.push({
+                              ActivityID:result.ActivityId,
+                              photo:uploadActReqs[n].actPhotos[j],
+                            });
+                          }
+                        }
 
-                      var lenPhoto = uploadActReqs[n].actPhotos.length;
-                      var uploadActPhotosReq = [];
-                      if(lenPhoto>0){
-                          for(var j = 0; j<lenPhoto; j++ ){
-                          uploadActPhotosReq.push({
-                            ActivityID:result.ActivityID,
-                            photo:uploadActReqs[n].actPhotos[j],
-                          });
+                        // 上传每一条数据中的照片部分，递归
+                        var k = 0;
+                        uploadPhotoRecur(k);
+                        function uploadPhotoRecur(k){
+                            if(k < uploadActPhotosReq.length){
+                                newActFactory.uploadPhotoAct(uploadActPhotosReq[k])
+                                  .then(function(result){
+                                      if(result.success){
+                                        console.log('th NO. '+k+' photo upload success!');
+                                        uploadPhotoRecur(k+1);
+                                      }
+                                  });
+                            } else {
+                                // 这条数据全部上传完毕
+                                console.log('the NO.' +n +'data_s all photos upload!');
+                                
+                                // 更新Task List，从本地列表中减去这条数据
+
+                                dbFactory.delete('fe_Activity',{ActivityID:result.ActivityID});
+                                $timeout(function(){
+                                  $rootScope.$broadcast('saveAct');
+                                },100);
+                                
+                                // 隔3s上传下一条数据
+                                $timeout(function() {
+                                  uploadActRecur(n+1);
+                                }, 3000);
+                            }
                         }
                       }
+                    })
+                 } else return;
+              }
 
-                      // 上传每一条数据中的照片部分，递归
-                      var k = 0;
-                      uploadPhotoRecur(k);
-                      function uploadPhotoRecur(k){
-                          if(k < uploadActPhotosReq.length){
-                              newActFactory.uploadPhotoAct(uploadActPhotosReq[k])
-                                .then(function(result){
-                                    if(result.success){
-                                      console.log('th NO. '+k+' photo upload success!');
-                                      uploadPhotoRecur(k+1);
-                                    }
-                                });
-                          } else {
-                              // 这条数据全部上传完毕
-                              console.log('the NO.' +n +'data_s all photos upload!');
-                              
-                              // 更新Task List，从本地列表中减去这条数据
-                              dbFactory.delete('fe_Activity',{ActivityID:result.ActivityID});
-                              $rootScope.$broadcast('saveAct');
-                              
-                              // 隔3s上传下一条数据
-                              $timeout(function() {
-                                uploadActRecur(n+1);
-                              }, 3000);
-                          }
-                      }
-                    }
-                  })
-               } else return;
             }
-
-          }
-      }, false);
+          });
+     
+        }
           
           // listen for Online event
           /*$rootScope.$on('$cordovaNetwork:online', function(event, networkState){
