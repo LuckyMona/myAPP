@@ -70,6 +70,7 @@
                     });*/
                 var uploadActData = {
                     success:true,
+                    ActivityID:123,
                 }
                 deferred.resolve(uploadActData);
                 return deferred.promise;

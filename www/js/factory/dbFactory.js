@@ -9,7 +9,6 @@
             
 
             var _createTbl = function(tblName, fieldArr){
-
                 var fieldStr = fieldArr.join(',');
                 db.transaction(function(tx){
                     tx.executeSql('CREATE TABLE IF NOT EXISTS ' + tblName + ' ('+ fieldStr +')' );
@@ -17,16 +16,14 @@
             }
 
             var _dropTbl = function(tblName){
-
+                console.log('drop');
                 db.transaction(function(tx){
                     tx.executeSql('DROP TABLE '+tblName);
                 });
             }
 
             var _save = function(tblName, dataObj){
-
                 db.transaction(function(tx){
-                                      
                     var saveStr = "(",
                         saveStrQ = "(",
                         saveArr = [];
@@ -35,39 +32,61 @@
                         saveStrQ += '?,';
                         saveArr.push(dataObj[i]);
                     }
-
                     saveStr = saveStr.substring(0, saveStr.length-1)+')';
                     saveStrQ = saveStrQ.substring(0, saveStrQ.length-1)+')';
                     var insertStr = 'INSERT INTO '+tblName+' '+saveStr+' VALUES '+saveStrQ;
-                    
                     // console.log('saveStr:'+saveStr);
                     // console.log('saveStrQ:'+saveStrQ);
-
                     // console.log('insertStr:'+insertStr);
                     // console.log('saveArr:'+saveArr);
                     // console.log('type saveArr:'+ Array.isArray(saveArr));
-
                     //dbFactory.save('test', { aa:'123aaa' });
-
                     tx.executeSql(insertStr, saveArr);
                     //tx.executeSql('INSERT INTO test (aa) VALUES (?)', ['123aaa']);
-                    
                 });
             }
 
-            var _findAll = function(tblName){
+            var _findAll = function(tblName, successCb){
                 var rowArr = [];
                 db.transaction(function(tx){
                     tx.executeSql('SELECT * FROM '+tblName, [], function(tx, results){
-                       
                         var rowLen = results.rows.length,i;
-                        for(i=0; i<len; i++){
+                        for(i=0; i<rowLen; i++){
+                            // console.log('results.rows.item(i)'+results.rows.item(i));
                             rowArr.push(results.rows.item(i));
                         }
-
+                        // console.log('rowArr:'+rowArr);
+                        if(successCb){
+                            successCb(rowArr);
+                        }
                     });
                  });
-                return rowArr;
+                
+            }
+
+            var _update = function(tblName, setObj, condiObj){
+                var setStr = "",
+                    condiStr = "";
+                for(var iSet in setObj){
+                    setStr += (iSet + " = "+ setObj[iSet] +",");
+                }
+                setStr = setStr.substring(0, setStr.length-1);
+                for(var iCondi in condiObj){
+                    condiStr += (iCondi +" = "+condiObj[iCondi]);
+                }
+                db.transaction(function(tx){
+                    tx.executeSql('UPDATE '+tblName+' SET '+setStr+' WHERE '+ condiStr);
+                });
+            }
+
+            var _delete = function(tblName, condiObj){
+                var condiStr = "";
+                for(var iCondi in condiObj){
+                    condiStr += (iCondi +" = "+condiObj[iCondi]);
+                }
+                db.transaction(function(tx){
+                    tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr);
+                });
             }
 
             return {
@@ -75,6 +94,8 @@
                 save : _save,
                 dropTbl:_dropTbl,
                 findAll:_findAll,
+                update:_update,
+                delete:_delete,
             }
         }
 })();
