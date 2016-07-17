@@ -1,5 +1,9 @@
 # Site Diary
 
+
+***To protect project privacy, key files have been wrote in the .gitignore file, 
+so if you downloaded the app it would not run***
+
 This app use [Apache Cordova](https://cordova.apache.org/) to develop mobile app using HTML/Javascript/CSS.
 
 This app use the following technologies to fullfill the interaction interface:
@@ -24,4 +28,6 @@ ionic serve
 ### Build an Android package
 ```
 ionic platform add android
+ionic build android
 ```
+

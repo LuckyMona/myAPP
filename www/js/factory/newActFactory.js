@@ -90,11 +90,14 @@
                 return deferred.promise;
             }
 
+            
+
             return {
                getDownlist:_getDownlist,
                getTasklist:_getTasklist,
                uploadAct:_uploadAct,
                uploadPhotoAct:_uploadPhotoAct,
+               
             }
         }
 
