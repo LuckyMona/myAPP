@@ -51,10 +51,10 @@
             }
         })
     }
-    getTasklist();
+    
 
     // 获取下拉菜单的数据
-    $scope.getDownlist = function(){
+    var getDownlist = function(){
       console.log('getDownlist');
       var token = localStorageService.get('token');
       var getDownlistReq = {
@@ -71,7 +71,15 @@
         });
     }
 
-    $scope.getDownlist();
+    var initNewAct = function(){
+      getTasklist();
+      getDownlist();
+    }
+
+    initNewAct();
+    $rootScope.$on('loginSuccess', function(){
+      initNewAct();
+    })
 
     // 获取地址下拉菜单
     $scope.getLocationBlock = function(){
@@ -135,8 +143,19 @@
     	$scope.category = "changeCategory";
     }*/
 
-
-    $scope.location =  localStorageService.get('location') || 'Select Location';
+    if(localStorageService.get('location') ){
+      $scope.location =  localStorageService.get('location');
+      $scope.locationOn = true;
+    } else {
+      var localLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+      //if(localStorageService.get('NG_TRANSLATE_LANG_KEY'))
+      if(localLang == 'zh_hk'){
+        $scope.location = '選擇地址';
+      } else {
+        $scope.location = 'Select Location';
+      }
+    }
+    
     $rootScope.$on('floorChange', function(d, data){
       var block = localStorageService.get('blockSelected');
       var locationStr = block + " / " + data;
@@ -166,7 +185,17 @@
           $scope[selectName] = 'Select User';
         }
         if(selectName ==="category"){
-          $scope.category =  localStorageService.get('category') || 'Select Category';
+          if(localStorageService.get('category')){
+            $scope.category =  localStorageService.get('category');
+            $scope.categoryOn = true;
+          } else {
+            var localLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+            if(localLang ==="zh_hk"){
+              $scope.category = '選擇類別';
+            } else {
+              $scope.category = 'Select Category';
+            }
+          }
         }
         
         if(isMulti){
@@ -242,10 +271,14 @@
         
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
-        $scope.category = localStorageService.get('category') || "選擇類別";
         $scope.review = "選擇用戶";
-        $scope.location = localStorageService.get('location') || "選擇地址";
+        if(!localStorageService.get('location')){
+          $scope.location = "選擇地址";
+        }
 
+        if(!localStorageService.get('category')){
+          $scope.category = "選擇類別";
+        }
       } else {
         $scope.mockInputData = "Input Diary Entry Here…";
         $scope.category = localStorageService.get('category') || "Select Category";
@@ -258,7 +291,7 @@
      * 从图库选添加照片&&拍照
      * @author Mary
      */
-   function _setOptions(srcType) {
+    function _setOptions(srcType) {
         var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
@@ -513,6 +546,7 @@
             clearNewAct();
           } else {
             //TODO
+            alert('Please select location and category, fill in log or attach images');
           }
       }, 100);     
       
@@ -554,130 +588,149 @@
         $scope.attachImgs = [];
     }
 
-    // 上传
+    // 根据网络情况调用上传
     doUpload();
     
     function doUpload(){
         document.addEventListener("deviceready",onDeviceReady, false);
         //devicereadyFunc();
         function onDeviceReady(){
-          var type = $cordovaNetwork.getNetwork();
-          console.log('getNetwork:'+ type);
-          console.log('getNetwork');
-          //var isOnline = $cordovaNetwork.isOnline();
-          //var isOffline = $cordovaNetwork.isOffline();
-          
-          // N条内容数组
-          var uploadActReqs = [];
-          var actDatas = [];
-          dbFactory.findAll('fe_Activity', function(results){
-            actDatas = results;
-            console.log(results[0]);
-            var len = actDatas.length;
+            var type = $cordovaNetwork.getNetwork();
+            console.log('getNetwork:'+ type);
+            console.log('getNetwork');
+            //var isOnline = $cordovaNetwork.isOnline();
+            //var isOffline = $cordovaNetwork.isOffline(); 
             
-            if(len>0){
-                console.log('actDatas.length>0');
-                for(var i=0; i<len; i++ )
-                {   
-                    // 单条内容中不包括photo的部分
-                    var uploadActReq = {
-                          ActivityId: actDatas[i].ActivityId, // activityId怎么获取的？
-                          projectId: actDatas[i].projectId,
-                          location: actDatas[i].location,
-                          category: actDatas[i].category,
-                          review: actDatas[i].review,
-                          trade: actDatas[i].trade,
-                          subcontractor: actDatas[i].subcontractor,
-                          description: actDatas[i].description,
-                          createdOn: actDatas[i].createdOn,
-                    }
-
-                    // 单条内容中的photos数组
-                    
-                    // 单条内容由数据和photos组成
-                    uploadActReqs.push({
-                        uploadActReq: uploadActReq,
-                        actPhotos: actDatas[i].photos.split(',')
-                    });
-                }                
-            };
-          
-            console.log('uploadActReqs:'+ uploadActReqs);
-                
-            if(type === 'wifi')
-            //if(true)
-            {
-              console.log('wifi');
-
-              // 上传每一条数据，递归
-              var n = 0;
-              uploadActRecur(n);
-              function uploadActRecur(n){
-                // console.log('n:'+n);
-                if(n<uploadActReqs.length){
-                  
-                  newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
-                    .then(function(result){
-                      if(result.success){
-
-                        console.log('the  NO. '+n+' uploadAct success!');
-                        //console.log('ActivityID:'+ result.ActivityID);
-
-                        // 把ActivityID存入本地数据库
-                        dbFactory.update('fe_Activity',
-                          {ActivityId:result.ActivityId},
-                          // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
-                          {ActivityId:uploadActReqs[n].uploadActReq.ActivityId});
-
-                        var lenPhoto = uploadActReqs[n].actPhotos.length;
-                        var uploadActPhotosReq = [];
-                        if(lenPhoto>0){
-                            for(var j = 0; j<lenPhoto; j++ ){
-                            uploadActPhotosReq.push({
-                              ActivityID:result.ActivityId,
-                              photo:uploadActReqs[n].actPhotos[j],
-                            });
-                          }
-                        }
-
-                        // 上传每一条数据中的照片部分，递归
-                        var k = 0;
-                        uploadPhotoRecur(k);
-                        function uploadPhotoRecur(k){
-                            if(k < uploadActPhotosReq.length){
-                                newActFactory.uploadPhotoAct(uploadActPhotosReq[k])
-                                  .then(function(result){
-                                      if(result.success){
-                                        console.log('th NO. '+k+' photo upload success!');
-                                        uploadPhotoRecur(k+1);
-                                      }
-                                  });
-                            } else {
-                                // 这条数据全部上传完毕
-                                console.log('the NO.' +n +'data_s all photos upload!');
-                                
-                                // 更新Task List，从本地列表中减去这条数据
-
-                                dbFactory.delete('fe_Activity',{ActivityID:result.ActivityID});
-                                $timeout(function(){
-                                  $rootScope.$broadcast('saveAct');
-                                },100);
-                                
-                                // 隔3s上传下一条数据
-                                $timeout(function() {
-                                  uploadActRecur(n+1);
-                                }, 3000);
-                            }
-                        }
-                      }
-                    })
-                 } else return;
+            //设备联网事件
+            $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+              if(networkState === "wifi"){
+                coreUpload();
               }
-
-            }
-          });
-     
+            });  
+            
+              
+            
         }
+    }
+
+    //上传
+    function coreUpload(){
+      
+      // N条内容数组
+      var uploadActReqs = [];
+      
+      // may error
+      dbFactory.findAll('fe_Activity', function(results){
+        
+        console.log(results[0]);
+        var len = results.length;
+        if(len>0){
+            console.log('results.length>0');
+            for(var i=0; i<len; i++ )
+            {   
+                // 单条内容中不包括photo的部分
+                var uploadActReq = {
+                      ActivityId: results[i].ActivityId, // activityId怎么获取的？
+                      projectId: results[i].projectId,
+                      location: results[i].location,
+                      category: results[i].category,
+                      review: results[i].review,
+                      trade: results[i].trade,
+                      subcontractor: results[i].subcontractor,
+                      description: results[i].description,
+                      createdOn: results[i].createdOn,
+                }
+
+                // 单条内容中的photos数组
+                
+                // 单条内容由数据和photos组成
+                uploadActReqs.push({
+                    uploadActReq: uploadActReq,
+                    actPhotos: results[i].photos.split(',')
+                });
+            }                
+        };
+      
+        console.log('uploadActReqs:'+ uploadActReqs);
+            
+        //  if(type === 'wifi')
+        //  if(true)
+        //  {
+        //  console.log('wifi');
+
+        // 上传每一条数据，递归
+        var n = 0;
+        uploadActRecur(n);
+        function uploadActRecur(n){
+          // console.log('n:'+n);
+      
+          if(n<uploadActReqs.length){
+            // may error
+            newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
+              .then(function(result){
+                if(result.success){
+
+                  console.log('the  NO. '+n+' uploadAct success!');
+                  //console.log('ActivityID:'+ result.ActivityID);
+
+                  // may error
+                  // 把ActivityID存入本地数据库
+                  dbFactory.update('fe_Activity',
+                    {ActivityId:result.ActivityId},
+                    // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
+                    {ActivityId:uploadActReqs[n].uploadActReq.ActivityId});
+
+                  var lenPhoto = uploadActReqs[n].actPhotos.length;
+                  var uploadActPhotosReq = [];
+                  if(lenPhoto>0){
+                      for(var j = 0; j<lenPhoto; j++ ){
+                      uploadActPhotosReq.push({
+                        ActivityID:result.ActivityId,
+                        photo:uploadActReqs[n].actPhotos[j],
+                      });
+                    }
+                  }
+
+                  // 上传每一条数据中的照片部分，递归
+                  var k = 0;
+                  uploadPhotoRecur(k);
+                  function uploadPhotoRecur(k){
+                      if(k < uploadActPhotosReq.length){
+
+                          // may error
+                          newActFactory.uploadPhotoAct(uploadActPhotosReq[k])
+                            .then(function(result){
+                                if(result.success){
+                                  console.log('th NO. '+k+' photo upload success!');
+                                  uploadPhotoRecur(k+1);
+                                }
+                            });
+                      } else {
+                          // 这条数据全部上传完毕
+                          console.log('the NO.' +n +'data_s all photos upload!');
+                          
+                          // 更新Task List，从本地列表中减去这条数据
+                          // may error
+                          dbFactory.delete('fe_Activity',{ActivityID:result.ActivityID});
+                          $timeout(function(){
+                            $rootScope.$broadcast('saveAct');
+                          },100);
+                          
+                          // 隔3s上传下一条数据
+                          $timeout(function() {
+                            uploadActRecur(n+1);
+                          }, 3000);
+                      }
+                  }
+                } else {
+                  uploadActRecur(n);
+                }
+              })
+           } else return;
+        }
+      });
+ 
+    }
           
           // listen for Online event
           /*$rootScope.$on('$cordovaNetwork:online', function(event, networkState){
@@ -691,7 +744,7 @@
 
        
 
-    }
+    
 
 
     

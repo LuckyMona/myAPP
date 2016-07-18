@@ -2,7 +2,7 @@
 
 (function () {
 	angular.module('LoginCtrl', ['ionic','ngStorage'])
-		.controller('LoginCtrl', function($scope, $translate, userFactory, $window, $ionicPopup, $timeout,$localStorage){
+		.controller('LoginCtrl', function($rootScope,$scope, $translate, userFactory, $window, $ionicPopup, $timeout,$localStorage,$state){
       
 	      $scope.isShowWarning = false;
 	      var loginO = {
@@ -22,10 +22,12 @@
 	            function(result){
 	              console.log(result);
 	              if(result.success){
-	                var href = $window.location.href;
-	                var url = href.split('#')[0] + "#/tab/newAct";
-	                $window.location.href = url;
+	                // var href = $window.location.href;
+	                // var url = href.split('#')[0] + "#/tab/newAct";
+	                // $window.location.href = url;
 	                $localStorage.token = result.token;
+	                $rootScope.$broadcast('loginSuccess');
+	                $state.go('tab.newAct');
 	              } else {
 
 	                console.log('登录名或密码不正确');
