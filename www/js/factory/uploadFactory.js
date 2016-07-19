@@ -4,10 +4,27 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc(dbFactory, newActFactory){
+        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork){
 
-            function _coreUpload(){
-      
+            function _coreUpload(isListenStop){
+                
+                document.addEventListener("deviceready",onDeviceReady, false);
+                function onDeviceReady(){
+
+                  //监听allow3G的改变,如果 not allow3G且手机连接的为3G网，就停止上传
+                  if(isListenStop){
+                    $rootScope.$on('allow3G_Change', function(d, data){
+                        var type = $cordovaNetwork.getNetwork();
+                        if(data === false && type==="CELL_3G"){
+                            stopUpload();
+                        }
+                    });
+                  }
+                }
+                
+                function stopUpload(){
+                    return;
+                }
                 // N条内容数组
                 var uploadActReqs = [];
 
@@ -103,6 +120,8 @@
                                             .then(function(result){
                                                 if(result.success){
                                                   console.log('th NO. '+k+' photo upload success!');
+                                                  //从本地删除已经上传的photo，防止如果没有完成整条数据上传，下次重试的时候，重复上传
+                                                  //dbFactory.update('fe_Activity',{ActivityId:result.ActivityId}, k);
                                                   uploadPhotoRecur(k+1);
                                                 } else {
                                                   console.log('th NO. '+k+' photo upload fail, retry!');

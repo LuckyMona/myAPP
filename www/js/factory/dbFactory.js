@@ -108,6 +108,21 @@
                     //tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr);
                 });
             }
+            /*var _deletePhoto = function(tblName, condiObj, k){
+                var condiStr = "";
+                for(var iCondi in condiObj){
+                    condiStr += (iCondi +" = "+condiObj[iCondi]);
+                }
+                db.transaction(function(tx){
+                    //tx.executeSql('DELETE FROM fe_Activity WHERE ActivityId = 123',[],function(){
+                    tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr,[],function(){
+                        console.log('delete success');
+                    },function(){
+                        console.log('delete fail');
+                    })
+                    //tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr);
+                });
+            }*/
 
             return {
                 createTbl : _createTbl,
@@ -116,6 +131,7 @@
                 findAll:_findAll,
                 update:_update,
                 delete:_delete,
+                //deletePhoto:_deletePhoto,
             }
         }
 })();

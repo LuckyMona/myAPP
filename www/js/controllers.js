@@ -28,13 +28,23 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
 
 })
-.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory) {
+.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory) {
    console.log('UploadsCtrl');
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
         $scope.uploadItems = results;
    });
-   
+   $scope.startUpload = function(){
+        console.log('startUpload clicked!');
+        
+        // isStartUpload 只有当allow3G=false并且手机连的是3G网才可以手动上传
+        var isStartUpload = localStorageService.get('isStartUpload');
+        if(isStartUpload ==="true"){
+            uploadFactory.coreUpload(false);
+            return;
+        }
+        console.log('not allowed manual upload');
+   }
    $rootScope.$on('saveAct', function(){
         //$scope.uploadItems = localStorageService.get('actDatas');
         // console.log('on saveAct');
@@ -53,8 +63,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
     // jobList.html页面单选后跳回来    
     $scope.$watch("jobList", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
-        console.log('oldVal:'+oldVal);
+        console.log('jobList newVal:'+newVal);
         if(newVal==oldVal){
           return;
         }
@@ -65,7 +74,9 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     $scope.$watch('allow3G', function(newVal, oldVal){
         console.log('allow3G newVal：'+newVal);
         localStorageService.set('allow3G',newVal);
-        $rootScope.$broadcast('allow3G_Change');
+
+        // 切换allow3G的时候，发广播，uploadFactory里开了on，接收到广播且值为false，就停止上传
+        $rootScope.$broadcast('allow3G_Change', newVal);
     })
 
     $scope.signOut = function(){
