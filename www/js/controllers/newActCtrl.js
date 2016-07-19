@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -463,11 +463,11 @@
       tx.executeSql('DROP TABLE fe_Activity');
       tx.executeSql('DROP TABLE fe_Activity2');
       tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity'+
-        ' (ActivityID_fake unique, Project, Location, Category, Review, Trade, Subcontractor, CreatedOn, Description)');
-      //tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity4 (ActivityID_fake unique, Location, Category)');
+        ' (ActivityId_fake unique, Project, Location, Category, Review, Trade, Subcontractor, CreatedOn, Description)');
+      //tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity4 (ActivityId_fake unique, Location, Category)');
       // tx.executeSql('INSERT INTO PHOTOS (id, testArr) VALUES (2, "1,2,3")');
-      //tx.executeSql('INSERT INTO fe_Activity (ActivityID_fake, Location) VALUES (23, ?)',[$scope.test_a]);
-      //tx.executeSql('INSERT INTO fe_Activity4 (ActivityID_fake, Location) VALUES (23, ?)',[$scope.test_a]);
+      //tx.executeSql('INSERT INTO fe_Activity (ActivityId_fake, Location) VALUES (23, ?)',[$scope.test_a]);
+      //tx.executeSql('INSERT INTO fe_Activity4 (ActivityId_fake, Location) VALUES (23, ?)',[$scope.test_a]);
     });*/
 
     
@@ -500,7 +500,6 @@
             var photosArr = [];
             for(var m=0, phLen = attPhotos.length; m<phLen; m++ ){
                 photosArr.push(attPhotos[m].imgURI);
-
             }             
             /*db.transaction(function(tx){
               tx.executeSql('SELECT * FROM fe_Activity', [], function(tx, results){
@@ -592,6 +591,9 @@
     doUpload();
     
     function doUpload(){
+
+        // 在chrome上测试
+        // uploadFactory.coreUpload();
         document.addEventListener("deviceready",onDeviceReady, false);
         //devicereadyFunc();
         function onDeviceReady(){
@@ -603,8 +605,16 @@
             
             //设备联网事件
             $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+              
+              console.log('device is online');
+              var allow3G = localStorageService.get('allow3G') || false;
+
               if(networkState === "wifi"){
-                coreUpload();
+                uploadFactory.coreUpload();
+              } else if(networkState === "CELL_3G" && allow3G === true){
+                uploadFactory.coreUpload();
+              } else if(networkState === "CELL_3G" && allow3G === false){
+                // TODO当用户点击start upload的时候再上传
               }
             });  
             
@@ -614,7 +624,7 @@
     }
 
     //上传
-    function coreUpload(){
+    /*function coreUpload(){
       
       // N条内容数组
       var uploadActReqs = [];
@@ -665,64 +675,79 @@
           // console.log('n:'+n);
       
           if(n<uploadActReqs.length){
-            // may error
+            // may error done dealing
             newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
               .then(function(result){
                 if(result.success){
 
                   console.log('the  NO. '+n+' uploadAct success!');
-                  //console.log('ActivityID:'+ result.ActivityID);
+                  //console.log('ActivityId:'+ result.ActivityId);
 
-                  // may error
-                  // 把ActivityID存入本地数据库
-                  dbFactory.update('fe_Activity',
-                    {ActivityId:result.ActivityId},
-                    // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
-                    {ActivityId:uploadActReqs[n].uploadActReq.ActivityId});
-
-                  var lenPhoto = uploadActReqs[n].actPhotos.length;
-                  var uploadActPhotosReq = [];
-                  if(lenPhoto>0){
-                      for(var j = 0; j<lenPhoto; j++ ){
-                      uploadActPhotosReq.push({
-                        ActivityID:result.ActivityId,
-                        photo:uploadActReqs[n].actPhotos[j],
-                      });
-                    }
+                  // may error done dealing
+                  // 把ActivityId存入本地数据库
+                  function updateActivityId(){
+                      dbFactory.update('fe_Activity',
+                        {ActivityId:result.ActivityId},
+                        // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
+                        {ActivityId:uploadActReqs[n].uploadActReq.ActivityId},updateActivityIdSuccess,
+                        function(){
+                          console.log('updateActivityId fail, do retry');
+                          updateActivityId();
+                        });
                   }
 
-                  // 上传每一条数据中的照片部分，递归
-                  var k = 0;
-                  uploadPhotoRecur(k);
-                  function uploadPhotoRecur(k){
-                      if(k < uploadActPhotosReq.length){
+                  function updateActivityIdSuccess(){
+                      var lenPhoto = uploadActReqs[n].actPhotos.length;
+                      var uploadActPhotosReq = [];
+                      if(lenPhoto>0){
+                          for(var j = 0; j<lenPhoto; j++ ){
+                          uploadActPhotosReq.push({
+                            ActivityId:result.ActivityId,
+                            photo:uploadActReqs[n].actPhotos[j],
+                          });
+                        }
+                      }
 
-                          // may error
-                          newActFactory.uploadPhotoAct(uploadActPhotosReq[k])
-                            .then(function(result){
-                                if(result.success){
-                                  console.log('th NO. '+k+' photo upload success!');
-                                  uploadPhotoRecur(k+1);
-                                }
-                            });
-                      } else {
-                          // 这条数据全部上传完毕
-                          console.log('the NO.' +n +'data_s all photos upload!');
-                          
-                          // 更新Task List，从本地列表中减去这条数据
-                          // may error
-                          dbFactory.delete('fe_Activity',{ActivityID:result.ActivityID});
-                          $timeout(function(){
-                            $rootScope.$broadcast('saveAct');
-                          },100);
-                          
-                          // 隔3s上传下一条数据
-                          $timeout(function() {
-                            uploadActRecur(n+1);
-                          }, 3000);
+                      // 上传每一条数据中的照片部分，递归
+                      var k = 0;
+                      uploadPhotoRecur(k);
+                      function uploadPhotoRecur(k){
+                          if(k < uploadActPhotosReq.length){
+
+                              // may error done dealing
+                              uploadPhotoAct(uploadActPhotosReq[k]);
+                              function uploadPhotoAct(uploadActPhotosReq){
+                                  newActFactory.uploadPhotoAct(uploadActPhotosReq)
+                                    .then(function(result){
+                                        if(result.success){
+                                          console.log('th NO. '+k+' photo upload success!');
+                                          uploadPhotoRecur(k+1);
+                                        } else {
+                                          console.log('th NO. '+k+' photo upload fail, retry!');
+                                          uploadPhotoAct(uploadActPhotosReq);
+                                        }
+                                    });
+                              }
+                          } else {
+                              // 这条数据全部上传完毕
+                              console.log('the NO.' +n +'data_s all photos upload!');
+                              
+                              // 更新Task List，从本地列表中减去这条数据
+                              // may error
+                              dbFactory.delete('fe_Activity',{ActivityId:result.ActivityId});
+                              $timeout(function(){
+                                $rootScope.$broadcast('saveAct');
+                              },100);
+                              
+                              // 隔3s上传下一条数据
+                              $timeout(function() {
+                                uploadActRecur(n+1);
+                              }, 3000);
+                          }
                       }
                   }
                 } else {
+                  console.log('the NO.' +n +'data_s upload fail, retry!');
                   uploadActRecur(n);
                 }
               })
@@ -730,7 +755,7 @@
         }
       });
  
-    }
+    }*/
           
           // listen for Online event
           /*$rootScope.$on('$cordovaNetwork:online', function(event, networkState){

@@ -46,35 +46,31 @@ angular.module('starter.controllers', ['LocalStorageModule'])
    });
 })
 
-.controller('SystemCtrl', function($scope,$window,$timeout,localStorageService) {
+.controller('SystemCtrl', function($rootScope, $scope,$window,$timeout,localStorageService, $state) {
   
    $scope.jobList = 'J1';
    $scope.allow3G = false;
 
-  // jobList.html页面单选后跳回来
-    var href = $window.location.href;
-    m_url = href.split('#')[0] + "#/tab/system";
-    m_url_login  = href.split('#')[0] + "#/login/active";
+    // jobList.html页面单选后跳回来    
     $scope.$watch("jobList", function(newVal,oldVal){
         console.log('newVal:'+newVal);
         console.log('oldVal:'+oldVal);
         if(newVal==oldVal){
           return;
         }
-        $timeout(function() {
-            $window.location.href =  m_url;
-        }, 200);
+        $state.go('tab.system');
     });
 
     // 监听是否选中Allow 3G
     $scope.$watch('allow3G', function(newVal, oldVal){
         console.log('allow3G newVal：'+newVal);
-
+        localStorageService.set('allow3G',newVal);
+        $rootScope.$broadcast('allow3G_Change');
     })
 
     $scope.signOut = function(){
         localStorageService.clearAll();
-        $window.location.href =  m_url_login;
+        $state.go('tab.newAct');
     }
 })
 

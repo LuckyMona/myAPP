@@ -64,7 +64,7 @@
                 
             }
 
-            var _update = function(tblName, setObj, condiObj){
+            var _update = function(tblName, setObj, condiObj, successCb, errorCb){
                 var setStr = "",
                     condiStr = "";
                 for(var iSet in setObj){
@@ -81,8 +81,14 @@
                     tx.executeSql(updateStr, [], function(){
                     // tx.executeSql('UPDATE fe_Activity SET ActivityId = 123 WHERE ActivityId = 2', [], function(){
                         console.log('update succe');
+                        if(successCb){
+                            successCb();
+                        }
                     },function(){
                         console.log('update fail');
+                        if(errorCb){
+                            errorCb();
+                        }
                     });
                 });
             }
@@ -93,7 +99,8 @@
                     condiStr += (iCondi +" = "+condiObj[iCondi]);
                 }
                 db.transaction(function(tx){
-                    tx.executeSql('DELETE FROM fe_Activity WHERE ActivityID = 123',[],function(){
+                    //tx.executeSql('DELETE FROM fe_Activity WHERE ActivityId = 123',[],function(){
+                    tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr,[],function(){
                         console.log('delete success');
                     },function(){
                         console.log('delete fail');
