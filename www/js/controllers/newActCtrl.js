@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -48,7 +48,7 @@
               console.log('tasklistData:');
               console.log(result.data);
               localStorageService.set('tasklistData', result.data);
-              //localStorageService.set('badgeTask',result.data.length);
+              localStorageService.set('badgeTask',result.data.length);
               $rootScope.$broadcast('updateBadgeTask',result.data.length);
             }
         })
@@ -228,22 +228,7 @@
        $scope.trade = 'Select Trade';
     }
    
-    // language.html页面单选后跳回来
-    $scope.$watch("lan", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
-        if(newVal==oldVal){
-          return;
-        }
-        
-        var href = $window.location.href;
-        var s_url = href.split('#')[0] + "#/tab/system";
-        /*console.log('sm_url:'+ $scope.m_url);*/
-        $timeout(function() {
-            $window.location.href =  s_url;
-            /*console.log('url:' + url);
-            console.log('sm_url:'+ $scope.m_url);*/
-        }, 200);
-    });
+    
 
     //重构选择跳转
     /*$scope.afterSelect = function(siteName){
@@ -263,14 +248,14 @@
     $scope.afterSelect(siteName);*/
 
     /*
-     * translate log_input hint when change language
+     * 当切换语言时，改变各个输入框的默认提示内容
      * @author Mary
      */
     
     $scope.mockInputData = "Input Diary Entry Here…";
 
     $rootScope.$on('changeLanguage', function(e, lang){
-        
+      //console.log('changeLanguage');  
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
         $scope.review = "選擇用戶";

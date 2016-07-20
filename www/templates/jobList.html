@@ -10,22 +10,22 @@
 	</div> -->
 </ion-header-bar> 
 <ion-view>
-	<ion-content class="bg-grey has-header44">
+	<ion-content class="bg-grey has-header44" ng-controller="JobListCtrl">
 	  	
 	  	<div class="list mt24 blockFix prevBlock jobList">
 		  	<ion-list>
-			  	<ion-radio ng-model="$parent.jobList" nav-direction="back" ng-value="'J1'">
-			  		<h2>J1234</h2>
-			  		<p>Project AAA</p>
+			  	<ion-radio ng-model="$parent.jobList" ng-repeat="jobItem in jobListArr" nav-direction="back" ng-value="jobItem.jobNumber">
+			  		<h2>{{jobItem.jobNumber}}</h2>
+			  		<p>{{jobItem.jobName}}</p>
 			  	</ion-radio>
-			  	<ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J2'">
+			  	<!-- <ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J2'">
 			  		<h2>J2345</h2>
 			  		<p>Project BBB</p>
 			  	</ion-radio>
 			  	<ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J3'">
 			  		<h2>J3456</h2>
 			  		<p>Project CCC</p>
-			  	</ion-radio>
+			  	</ion-radio> -->
 			</ion-list>
 			
 		</div>

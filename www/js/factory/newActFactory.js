@@ -7,6 +7,7 @@
         function newActFactoryFunc($q, $http){
 
             var _getDownlist = function(getDownlistReq){
+                console.log('getDownlistReq:');
                 console.log(getDownlistReq);
                 var deferred = $q.defer();
                 /*$http.post(url, req)
@@ -36,6 +37,7 @@
             }
 
             var _getTasklist = function(getTasklistReq){
+                console.log('getTasklistReq:');
                 console.log(getTasklistReq);
                 var deferred = $q.defer();
                 /*$http.post(url, req)

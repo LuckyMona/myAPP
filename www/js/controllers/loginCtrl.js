@@ -2,7 +2,7 @@
 
 (function () {
 	angular.module('LoginCtrl', ['ionic','ngStorage'])
-		.controller('LoginCtrl', function($rootScope,$scope, $translate, userFactory, $window, $ionicPopup, $timeout,$localStorage,$state){
+		.controller('LoginCtrl', function($rootScope,$scope, $translate, userFactory, $window, $ionicPopup, $timeout,localStorageService,$state){
       
 	      $scope.isShowWarning = false;
 	      var loginO = {
@@ -25,7 +25,8 @@
 	                // var href = $window.location.href;
 	                // var url = href.split('#')[0] + "#/tab/newAct";
 	                // $window.location.href = url;
-	                $localStorage.token = result.token;
+	                localStorageService.set('token',result.token);
+	                //$localStorage.token = result.token;
 	                $rootScope.$broadcast('loginSuccess');
 	                $state.go('tab.newAct');
 	              } else {
