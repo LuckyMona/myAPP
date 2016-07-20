@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork){
+        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService){
 
             function _coreUpload(isListenStop){
                 
@@ -139,7 +139,13 @@
                                       $timeout(function(){
                                         $rootScope.$broadcast('saveAct');
                                       },100);
-                                      
+                                      var badgeUpload = localStorageService.get('badgeUpload');
+                                      if(badgeUpload === 0){
+                                        return;
+                                      }
+                                      badgeUpload --;
+                                      localStorageService.set('badgeUpload', badgeUpload);
+                                      $rootScope.$broadcast('updateBadgeUpload',badgeUpload);
                                       // 隔3s上传下一条数据
                                       $timeout(function() {
                                         uploadActRecur(n+1);

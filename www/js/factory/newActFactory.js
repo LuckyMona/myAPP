@@ -42,7 +42,7 @@
                     .then(function(result){
                         deferred.resolve(result);
                     });*/
-                var mockTaklistData = {
+                var mockTasklistData = {
                     success:true,
                     data:[{
                        author:'Alan',
@@ -57,7 +57,7 @@
                        log:'Hello!! Please help me take some photos'
                     }]
                 }
-                deferred.resolve(mockTaklistData);
+                deferred.resolve(mockTasklistData);
                 return deferred.promise;
             }
 

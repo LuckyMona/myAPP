@@ -48,6 +48,8 @@
               console.log('tasklistData:');
               console.log(result.data);
               localStorageService.set('tasklistData', result.data);
+              //localStorageService.set('badgeTask',result.data.length);
+              $rootScope.$broadcast('updateBadgeTask',result.data.length);
             }
         })
     }
@@ -476,8 +478,11 @@
     // 保存数据
     
     // dbFactory.dropTbl('fe_Activity');
+    // upload消息数
+    var badgeUpload = localStorageService.get('badgeUpload')|| 0;
     $scope.saveAct = function(){
       console.log('start saveAct');
+      // 点击保存按钮后要间隔100ms,为了等一些耗时操作的完成，例如localStorage存数据
       $timeout(function() {
           var confirmBy = $scope.locationOn && $scope.categoryOn && ( $scope.attachImgs.length>0 || $scope.isMockInputVal)
           /*console.log($scope.locationOn);
@@ -536,7 +541,10 @@
             dbFactory.save('fe_Activity',actData);
             ActivityId_fake ++;
             localStorageService.set('ActivityId_fake',ActivityId_fake);
-
+            
+            badgeUpload ++;
+            localStorageService.set('badgeUpload',badgeUpload);
+            $rootScope.$broadcast('updateBadgeUpload',badgeUpload);
             $timeout(function() {
               $rootScope.$broadcast('saveAct');
             }, 100);
@@ -622,10 +630,12 @@
 
               if(networkState === "wifi"){
                 uploadFactory.coreUpload(true);
+                // TODO 开定时器，检测什么时候变到了3G
               } else if(networkState === "CELL_3G" && allow3G === true){
                 uploadFactory.coreUpload(true);
+                // TODO 开定时器，检测什么时候从3G变到了非wifi，就关掉上传
               } else if(networkState === "CELL_3G" && allow3G === false){
-                // TODO当用户点击start upload的时候再上传
+                // 当用户点击start upload的时候再上传
                 localStorageService.set('isStartUpload', true);
               }
 

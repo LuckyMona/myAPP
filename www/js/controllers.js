@@ -75,18 +75,31 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         console.log('allow3G newVal：'+newVal);
         localStorageService.set('allow3G',newVal);
 
-        // 切换allow3G的时候，发广播，uploadFactory里开了on，接收到广播且值为false，就停止上传
+        // 切换allow3G的时候，发广播，
+        // uploadFactory里开了$on，接收到广播且值为false，且连的是3G网，就停止上传
         $rootScope.$broadcast('allow3G_Change', newVal);
     })
 
     $scope.signOut = function(){
-        localStorageService.clearAll();
-        $state.go('tab.newAct');
+        // TODO 不应该clearAll，保留字段：ActivityId_fake/badgeUpload
+        // 删除字段：token
+        // localStorageService.clearAll();
+        localStorageService.remove('token','tasklistData');
+        $state.go('login.active');
     }
 })
 
-.controller('ActiveCtrl', function($scope){
+.controller('TabCtrl', function($rootScope, $scope, localStorageService){
   
+  $scope.badgeUpload = localStorageService.get('badgeUpload') || 0;
+  $rootScope.$on('updateBadgeUpload', function(d, data){
+    $scope.badgeUpload = data;
+  });
+
+  //$scope.badgeTask = localStorageService.get('badgeTask') || 0;
+  $rootScope.$on('updateBadgeTask',function(d, data){
+    $scope.badgeTask = data;
+  });
 })
 .controller('IdCtrl', function($scope){
   
