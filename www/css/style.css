@@ -126,6 +126,7 @@
 .ml10 { margin-left:10px; }
 .ml30- { margin-left: 30%; }
 .mt24 { margin:0; margin-top:10px !important; }
+.mt49 { margin-top:49px; }
 .mb24 { margin-bottom:24px !important; }
 .t-r { text-align:right; }
 .no-decor { text-decoration: none; }
@@ -289,16 +290,24 @@
     display: table-cell;
     line-height: 1.2;
     color: #fff;
-    position: absolute;
-    bottom: -80px;
-    right: 10px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index:100;
 }
 .startUpload p { margin-bottom: 0; margin-top: 19px; }
 .newLine {     white-space: normal;
     word-wrap: break-word;
     word-break: break-all; }
-.scroll { height: 100%; }
-
+/*.scroll { height: 100%; }*/
+.hackIonContent {
+  position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
 .horizScroll {
   border-top:none;
     width: 100%;

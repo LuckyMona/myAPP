@@ -23,7 +23,7 @@
                         },
                         category:['category1', 'category2', 'category3'],
                         review:['reviewUser1', 'reviewUser2', 'reviewUser3'],
-                        trade:['trade1', 'trade2', 'trade3'],
+                        trade:['trade1', 'trade2', 'trade3', 'trade4', 'trade5', 'trade6', 'trade7'],
                         subcontractor:['subcontractor1','subcontractor2'],
                         jobNumber:{
                             'J1234':'Project AAA',
@@ -47,6 +47,54 @@
                 var mockTasklistData = {
                     success:true,
                     data:[{
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
+                       author:'Alan',
+                       date:'2016/6/7', 
+                       time:'13:57',
+                       log:'Hello!! Please help me take some photos'
+                    },
+                    {
                        author:'Alan',
                        date:'2016/6/7', 
                        time:'13:57',

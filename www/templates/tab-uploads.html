@@ -1,6 +1,6 @@
 <ion-view view-title="Upload">
-  <ion-content class="has-header49 bg-grey">
-    <div class="greyBar">6 {{'UPLOAD_TITLE' | translate }}</div>
+  <ion-content class="has-header49 bg-grey hackIonContent">
+    <div class="greyBar mt49">6 {{'UPLOAD_TITLE' | translate }}</div>
     <div class="list prevBlock">
 
         <a class="upload item item-button-right" href="" ng-repeat="upload in uploadItems">
@@ -14,7 +14,7 @@
             </div>
           </div>  
         </a>
-        <a class="upload item item-button-right" href="">
+        <!-- <a class="upload item item-button-right" href="">
           <h2>2016/6/7 13:57</h2>
           <p class="h20">落緊石屎</p>
           <div class="r-img">
@@ -24,15 +24,16 @@
               <p>15</p>
             </div>
           </div>  
-        </a>
+        </a> -->
         
         
 
-        <div class="startUpload" ng-click="startUpload()">
-          <p>{{'START_UPLOAD1' | translate }}</p>
-          <p class="no-mg">{{'START_UPLOAD2' | translate }}</p>
-        </div>
+        
     </div>
 
   </ion-content>
+  <div class="startUpload" ng-click="startUpload()">
+      <p>{{'START_UPLOAD1' | translate }}</p>
+      <p class="no-mg">{{'START_UPLOAD2' | translate }}</p>
+    </div>
 </ion-view>

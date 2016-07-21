@@ -253,7 +253,12 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   $scope.tradeList = [
     {text:'trade1', checked:false},
     {text:'trade2', checked:false},
-    {text:'trade3', checked:false}
+    {text:'trade3', checked:false},
+    {text:'trade4', checked:false},
+    {text:'trade5', checked:false},
+    {text:'trade6', checked:false},
+    {text:'trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7', checked:false},
+    
    
   ];
   $scope.tradeDone = function(){
