@@ -4,17 +4,20 @@
     angular.module('starter')
         .factory('newActFactory', newActFactoryFunc);
 
-        function newActFactoryFunc($q, $http){
+        function newActFactoryFunc($q, $http, PARAMS){
 
             var _getDownlist = function(getDownlistReq){
                 console.log('getDownlistReq:');
                 console.log(getDownlistReq);
                 var deferred = $q.defer();
-                /*$http.post(url, req)
+                var url = PARAMS.BASE_URL + 'GetDataDict';
+                $http.post(url, getDownlistReq.token)
                     .then(function(result){
+                        console.log('GetDataDict result:'+result);
+                        console.log(result);
                         deferred.resolve(result);
-                    });*/
-                var mockDownlistData = {
+                    });
+                /*var mockDownlistData = {
                     success:true,
                     data:{
                         location:{
@@ -32,7 +35,7 @@
                         },
                     }
                 }
-                deferred.resolve(mockDownlistData);
+                deferred.resolve(mockDownlistData);*/
                 return deferred.promise;
             }
 

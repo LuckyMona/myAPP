@@ -63,11 +63,22 @@
         token:token
       }
 
+      //测试JSON.parse
+     /* var jsonStr = "{'name':'leinov','sex':'famle'}";
+      var jsonStr2 = '{"name":"leinov","sex":"famle","address":"beijing"}';
+      
+      console.log(jsonStr===jsonStr2);
+      var jsonObj = JSON.parse(jsonStr2);
+      console.log(jsonObj);*/
+
       newActFactory.getDownlist(getDownlistReq)
         .then(function(result){
+          //var jsonRes = JSON.parse(result.data);
+          //console.log(jsonRes);
+          
           if(result.success){
             // console.log('downlistData:');
-            // console.log(result.data);
+            console.log(result.data);
             localStorageService.set('downlistData', result.data);
           }
         });
@@ -320,11 +331,11 @@
     }
 
     //新增图片
-   
     $scope.getPhoto = function(){
 
           //var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
           //var options = _setOptions(Camera.PictureSourceType.SAVEDPHOTOALBUM);
+          // 注意：这个options必须写在这里，不能使用上面定义的_setOptions函数，否则在手机上测试会有bug
            var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
