@@ -116,7 +116,8 @@
            
       localStorageService.set(listName+'Items', listItems);
       $timeout(function() {
-          $window.location.href =  $window.location.href.split('#')[0] + "#/" + listName;
+          $state.go(listName);
+          $ionicViewSwitcher.nextDirection("forward");
       }, 100);
     }
 
@@ -222,10 +223,11 @@
     onSelect('review', true);
     onSelect('trade', true);
     onSelect('category', false);
+    onSelect('subcontractor', true);
 
-    $scope.clearTrade = function(){
-       $scope.tradeStyle = {"color":"#ceced2"};
-       $scope.trade = 'Select Trade';
+    $scope.clear = function(clearName){
+       $scope['isGray_'+clearName] = true;
+       $scope[clearName] = 'Select '+clearName;
     }
    
     

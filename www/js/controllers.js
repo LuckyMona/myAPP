@@ -246,21 +246,21 @@ angular.module('starter.controllers', ['LocalStorageModule'])
       $ionicViewSwitcher.nextDirection("back");
   }
 })
-.controller('TradeCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher){
+.controller('TradeCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher, localStorageService){
   
   // $scope.category = 'Category A';
-  $scope.trade = "Select User";
-  $scope.tradeList = [
-    {text:'trade1', checked:false},
-    {text:'trade2', checked:false},
-    {text:'trade3', checked:false},
-    {text:'trade4', checked:false},
-    {text:'trade5', checked:false},
-    {text:'trade6', checked:false},
-    {text:'trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7trade7', checked:false},
-    
-   
-  ];
+  $scope.trade = "Select Trade";
+  //$scope.tradeList = [];
+
+  var tradeItems = localStorageService.get('tradeItems');
+  var tradeList = [];
+  for(var i=0, len = tradeItems.length; i<len; i++){
+    tradeList.push({
+      text:tradeItems[i], 
+      checked:false
+    });
+  }
+  $scope.tradeList = tradeList;
   $scope.tradeDone = function(){
       
       var reviewData = [];
@@ -280,28 +280,36 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
   }
 })
-.controller('SubcontractorCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher){
+.controller('SubcontractorCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher,localStorageService){
  
   // $scope.category = 'Category A';
   $scope.subcontractor = "Select Subcontractor";
-  $scope.subcontractorList = [
+  var subcontractorList = [];
+  var subcontractorItems = localStorageService.get('subcontractorItems');
+  for(var i=0, len=subcontractorItems.length; i<len; i++ ){
+    subcontractorList.push({
+      text:subcontractorItems[i], 
+      checked:false
+    });
+  }
+  $scope.subcontractorList = subcontractorList;
+  /*var mock = [
     {text:'trade1', checked:false},
     {text:'trade2', checked:false},
     {text:'trade3', checked:false}
-   
-  ];
-  $scope.tradeDone = function(){
+  ];*/
+  $scope.subcontractorDone = function(){
       
-      var reviewData = [];
-      var arr = $scope.tradeList;
+      var subconData = [];
+      var arr = $scope.subcontractorList;
       for(var i=0, len=arr.length; i<len; i++){
         if(arr[i].checked){
-          reviewData.push(arr[i].text);
+          subconData.push(arr[i].text);
         } else continue;
       }
-      console.log(reviewData);
+      console.log(subconData);
 
-      $rootScope.$broadcast('tradeDone',reviewData.join(','));
+      $rootScope.$broadcast('subcontractorDone',subconData.join(','));
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("back");
 

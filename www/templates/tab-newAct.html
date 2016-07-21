@@ -50,18 +50,18 @@
 				</a>
 				<span class="item c3" ng-show="isTradeShow" >
 				    <span class="fl" style="width:40%;">{{ 'TRADE' | translate }}</span>
-				    <i style="width:10%" ng-click="clearTrade()" class="t-r fr icon ion-android-cancel fz20 cce"></i>
-				    <a style="width:50%" href="#/trade" nav-direction="forward"  class="no-decor fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_trade]"> 
+				    <i style="width:10%" ng-click="clear('trade')" class="t-r fr icon ion-android-cancel fz20 cce"></i>
+				    <a style="width:50%" ng-click="getArrayList('trade')" class="no-decor fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_trade]"> 
 				      {{ trade }}     
 				    </a>
 				</span>
-				<a class="item c3" ng-show="isTradeShow" href="#/subcontractor" nav-direction="forward">
+				<span class="item c3" ng-show="isTradeShow">
 				    <span class="fl" style="width:40%;">{{ 'SUBCONTRACTOR' | translate }}</span>
-				    <i style="width:5%" class="fr icon ion-android-cancel fz20 cce"></i>
-				    <span style="width:55%" class="fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_subcontractor]">
-				      {{ 'SELECT_SUBCONTRACTOR' | translate }}  		      
-				    </span>
-				</a>
+				    <i style="width:5%" ng-click="clear('subcontractor')" class="fr icon ion-android-cancel fz20 cce"></i>
+				    <a style="width:55%" ng-click="getArrayList('subcontractor')" class="fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_subcontractor]">
+				      {{ subcontractor }}  		      
+				    </a>
+				</span>
 			</div>
 			<div class="list mt24 prevBlock" id="lastEle" ng-style="lastEleStyle" style="margin-bottom:100px;">
 		    	<div class="item c3 attachPhoto_W">

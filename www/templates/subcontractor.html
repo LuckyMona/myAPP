@@ -6,16 +6,15 @@
 	</div>
 	<h1 class="title">{{ 'SUBCONTRACTOR' | translate }}</h1>
 	<div class="buttons">
-	  <a href="#/tab/newAct" nav-direction="back" style="display:block"><button class="button button-clear button-positive">Done</button></a>
+	  <a style="display:block" ng-click="subcontractorDone()"><button class="button button-clear button-positive">Done</button></a>
 	</div>
 </ion-header-bar> 
 <ion-view>
 	<ion-content class="bg-grey has-header44">
 	  	<ion-list>
 
-		  <ion-checkbox>ABC Company</ion-checkbox>
-		  <ion-checkbox>BBC Company</ion-checkbox>
-		  <ion-checkbox>CBC Company</ion-checkbox>
+		  <ion-checkbox ng-repeat="subItem in subcontractorList" ng-model="subItem.checked">{{subItem.text}}</ion-checkbox>
+		  
 
 		</ion-list>
 	</ion-content>

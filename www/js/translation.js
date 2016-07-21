@@ -121,6 +121,7 @@
 			'REQUEST_REVIEW':'請求檢查 / 通知',
 			'SELECT_REVIEWER':'選擇檢查員',
 			'TRADE_SUBCONTRACTOR':'交易 / 外判商',
+            'TRADE':'交易',
 			'SELECT_TRADE':'選擇交易',
 			'SUBCONTRACTOR':'外判商',
 			'SELECT_SUBCONTRACTOR':'選擇外判商',
