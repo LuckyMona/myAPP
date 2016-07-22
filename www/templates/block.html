@@ -14,8 +14,8 @@
 	  	
 	  	<div class="list mt24 prevBlock">
 		  	
-			<a class="item c3" ng-repeat="block in blockItems" ng-click="getFloor(block)" nav-direction="forward">
-			    <span class="fl" style="width:95%;">{{block}}</span>
+			<a class="item c3" ng-repeat="block in blockItems" ng-click="getFloor(block.ZoneName)" nav-direction="forward">
+			    <span class="fl" style="width:95%;">{{block.ZoneName}}</span>
 			    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
 			    
 			</a>

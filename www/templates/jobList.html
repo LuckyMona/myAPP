@@ -14,9 +14,9 @@
 	  	
 	  	<div class="list mt24 blockFix prevBlock jobList">
 		  	<ion-list>
-			  	<ion-radio ng-model="$parent.jobList" ng-repeat="jobItem in jobListArr" nav-direction="back" ng-value="jobItem.jobNumber">
-			  		<h2>{{jobItem.jobNumber}}</h2>
-			  		<p>{{jobItem.jobName}}</p>
+			  	<ion-radio ng-model="$parent.jobList" ng-repeat="jobItem in jobListArr" nav-direction="back" ng-value="jobItem.ProjectID">
+			  		<h2>{{jobItem.ProjectNO}}</h2>
+			  		<p>{{jobItem.ProjectName}}</p>
 			  	</ion-radio>
 			  	<!-- <ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J2'">
 			  		<h2>J2345</h2>

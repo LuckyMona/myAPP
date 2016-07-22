@@ -142,8 +142,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   }
 
 })
-.controller('JobListCtrl', function($rootScope, $scope,localStorageService,$state,$ionicViewSwitcher){
-    var jobList =  localStorageService.get('downlistData').jobNumber;
+.controller('JobListCtrl', function($rootScope, $scope,localStorageService,$state,$ionicViewSwitcher, $ionicHistory){
+    /*var jobList =  localStorageService.get('downlistData').jobNumber;
     console.log(jobList);
     var jobListArr = [];
     for(var i in jobList){
@@ -151,18 +151,22 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             jobNumber:i,
             jobName:jobList[i]
         });
-    }
-    $scope.jobListArr = jobListArr;
+    }*/
+    $scope.jobListArr = localStorageService.get('jobItems');
+    //console.log(typeof $scope.jobListArr);
 
     // jobList.html页面单选后跳回来
-    $scope.jobList = 'J1';    
+    $scope.jobList = 'J1';
     $scope.$watch("jobList", function(newVal,oldVal){
         console.log('jobList newVal:'+newVal);
         if(newVal==oldVal){
           return;
         }
         $rootScope.$broadcast('jobNumberSelect', newVal);
-        $state.go('tab.system');
+        localStorageService.set('projectID',newVal);
+        var back = $ionicHistory.backView().stateName;
+        console.log(back);
+        $state.go(back);
         $ionicViewSwitcher.nextDirection("back");
     });
 })
@@ -193,20 +197,27 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     // });
 
 })
-.controller('BlockCtrl', function($scope,localStorageService,$state){
+.controller('BlockCtrl', function($scope,localStorageService,$state, $ionicViewSwitcher){
     $scope.blockItems = localStorageService.get('blockItems');
 
     $scope.getFloor = function(block){
         // console.log('getFloor:'+block);
-        var locations = localStorageService.get('downlistData').location;
+        var locations = $scope.blockItems,
+            i,
+            len = locations.length,
+            areaArr = [];
         
-        for(var i in locations){
-            if(i === block){
-                localStorageService.set('floorItems', locations[i]);
+        for(i=0; i<len; i++){
+            if(locations[i].ZoneName === block){
+                areaArr.push(locations[i].AreaName);
+                //localStorageService.set('floorItems', locations[i]);
             }
         }
+        console.log(areaArr);
+        localStorageService.set('floorItems',areaArr);
         localStorageService.set('blockSelected',block);
         $state.go('floor');
+        $ionicViewSwitcher.nextDirection("forward");
     }
     
 })

@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -14,9 +14,63 @@
     $scope.isGray_subcontractor = true;
     $scope.isGray_mockinput = true;
 
+
+    // 获取下拉菜单的数据
+    var getDownlist = function(){
+      console.log('getDownlist');
+      var token = localStorageService.get('token');
+      var getDownlistReq = {
+        token:token
+      }
+
+      newActFactory.getDownlist(getDownlistReq)
+        .then(function(result){
+          //var jsonRes = JSON.parse(result.data);
+          //console.log(jsonRes);
+          console.log(result);
+          if(result.data.success==="true"){
+            // console.log('downlistData:');
+            console.log(result.data);
+            localStorageService.set('downlistData', result.data);
+          }
+        });
+    }
+    getDownlist(); 
+
+    // 获取jobList下拉菜单
+    var getJobList = function(){
+      var jobLists = localStorageService.get('downlistData').LU_Project;
+      console.log(jobLists);
+      /*var jobItems = [],
+          i,
+          len = jobLists.length;
+      for(i=0; i<len; i++){
+        jobItems.push(jobLists[i].ProjectName);
+      }
+      console.log(jobItems);*/
+      localStorageService.set('jobItems',jobLists);
+    }
+    
+
+    // 引导用户先选jobNubmer
+    $scope.showAlert = function(){
+      var myAlert = $ionicPopup.alert({
+          title: '请先选择Job Number',
+          template: '<a style="text-align:center;">点确定去选择Job Number</a>'
+          });
+          myAlert.then(function(res) {
+           console.log('ok');
+           getJobList();
+           $state.go('jobList');
+           $ionicViewSwitcher.nextDirection("forward");
+      });
+    }
+    $scope.showAlert();
+
     $scope.toggleTradeShow = function(){
       $scope.isTradeShow = !$scope.isTradeShow;
     }
+
     // 获取APP Version
     /*var chkAppVersion = function(){
       var version = "";
@@ -53,61 +107,32 @@
             }
         })
     }
-    
-
-    // 获取下拉菜单的数据
-    var getDownlist = function(){
-      console.log('getDownlist');
-      var token = localStorageService.get('token');
-      var getDownlistReq = {
-        token:token
-      }
-
-      //测试JSON.parse
-     /* var jsonStr = "{'name':'leinov','sex':'famle'}";
-      var jsonStr2 = '{"name":"leinov","sex":"famle","address":"beijing"}';
-      
-      console.log(jsonStr===jsonStr2);
-      var jsonObj = JSON.parse(jsonStr2);
-      console.log(jsonObj);*/
-
-      newActFactory.getDownlist(getDownlistReq)
-        .then(function(result){
-          //var jsonRes = JSON.parse(result.data);
-          //console.log(jsonRes);
-          
-          if(result.success){
-            // console.log('downlistData:');
-            console.log(result.data);
-            localStorageService.set('downlistData', result.data);
-          }
-        });
-    }
-
-    var initNewAct = function(){
-      getTasklist();
-      getDownlist();
-    }
-
-    initNewAct();
+    getTasklist();   
+   
     $rootScope.$on('loginSuccess', function(){
       initNewAct();
     })
 
     // 获取地址下拉菜单
     $scope.getLocationBlock = function(){
-      var locations = localStorageService.get('downlistData').location;
-      var blockItems = [];
-      for(var i in locations){
+      var locations = localStorageService.get('downlistData').LU_Location;
+      var projectID = localStorageService.get('projectID');
+      var blockItems = [],
+          i,
+          len = locations.length;
+
+      for(i=0; i<len; i++){
         console.log('i:'+i);
-        blockItems.push(i);
+        if(locations[i].ProjectID === projectID){
+          blockItems.push(locations[i]);
+        }
       }
       console.log('blockItems:' + blockItems);
       localStorageService.set('blockItems', blockItems);
-
-      $timeout(function() {
-          $window.location.href =  $window.location.href.split('#')[0] + "#/block";
-      }, 100);
+      $timeout(function(){
+        $state.go('block');  
+        $ionicViewSwitcher.nextDirection("forward");  
+      },100);
       
     }
 
