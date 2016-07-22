@@ -66,7 +66,7 @@
 			<div class="list mt24 prevBlock" id="lastEle" ng-style="lastEleStyle" style="margin-bottom:100px;">
 		    	<div class="item c3 attachPhoto_W">
 		    		<i class="fl ion-image fz20" style="width:10%;"></i>
-				    <a class="fl" href="#/photo" nav-direction="forward" style="width:50%;">{{ 'PHOTO' | translate }} <i>(8)</i>
+				    <a class="fl" href="#/photo" nav-direction="forward" style="width:50%;">{{ 'PHOTO' | translate }} <i>({{photoLength}})</i>
 				   	</a>
 				    <span class="fl" style="width:40%" ng-click="getPhoto('picker-thmb');">
 					    <i style="width:5%" class="attach fr icon ion-android-attach"></i>
@@ -74,22 +74,34 @@
 				</div>
 				<div class="item horizScroll">
 					<div ng-repeat="attachImg in attachImgs" class="imgItem" ng-show = 'attachImg.imgURI !== undefined'>
-						<img ng-src = '{{ attachImg.imgURI }}'>
-						<a href="" class="deletePic"></a>
+						<img ng-click="showBigImg(attachImg.imgURI)" ng-src = '{{ attachImg.imgURI }}'>
+						<a ng-click="delPhoto(attachImg.imgURI)" class="deletePic"></a>
 					</div>
 					
 					<div class="imgItem">
+						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
+						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
+					</div>
+					<div class="imgItem">
+						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
+						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
+					</div>
+					<div class="imgItem">
+						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
+						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
+					</div>
+					<div class="imgItem">
+						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
+						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
+					</div>
+					<!-- <div class="imgItem">
 						<img src="img/one.jpg">
 						<a href="" class="deletePic"></a>
 					</div>
 					<div class="imgItem">
 						<img src="img/one.jpg">
 						<a href="" class="deletePic"></a>
-					</div>
-					<div class="imgItem">
-						<img src="img/one.jpg">
-						<a href="" class="deletePic"></a>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			
@@ -98,6 +110,11 @@
 	    <!-- <h2>dsafdfad</h2> -->
     	    
 	</ion-content>
+
+	<!-- 显示大图 -->
+	<div ng-if="bigImage"  class="imgBackdrop" ng-click="hideBigImg()">
+		<img class="img-responsive bigImg" ng-src="{{bigImgUrl}}"/>
+	</div>
 	<!-- <div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;"> -->
 	<div class="bar bar-footer" spy-style spy-attribute="height"  style="height:auto !important;">
 		    <button ng-click="takePhoto()" class="fixbottom button button-clear"><i class="icon ion-camera" style="color:#858e99"></i></button>

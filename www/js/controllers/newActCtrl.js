@@ -307,6 +307,7 @@
         return options;
     }
 
+    $scope.photoLength = 0;
     //拍照
     $scope.takePhoto = function(){
       var options = _setOptions(Camera.PictureSourceType.CAMERA);
@@ -318,6 +319,8 @@
                 $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
+                localStorageService.set('photoList', $scope.attachImgs);
+                $scope.photoLength ++;
               }, function(err) {
                 console.debug("Unable to obtain picture: " + error, "app");
               });
@@ -371,10 +374,12 @@
 
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
-                
+                console.log(typeof imgURI);
                 $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
+                localStorageService.set('photoList', $scope.attachImgs);
+                $scope.photoLength++;
               }, function(err) {
                 console.debug("Unable to obtain picture: " + err, "app");
               });
@@ -387,6 +392,32 @@
           }
     }
     
+    // 点击图片放大
+    $scope.bigImage = false;
+    $scope.showBigImg = function(imgUri){
+      console.log(imgUri);
+      $scope.bigImgUrl = imgUri;
+      $scope.bigImage = true;
+    }
+    $scope.hideBigImg = function(){
+      console.log('hideBigImg');
+      $scope.bigImage = false;
+    }
+
+    // 点击红叉删除图片
+    $scope.delPhoto = function(imgUri){
+      console.log('del');
+      var i, len =  $scope.attachImgs.length;
+      console.log(len);
+      for(i=0; i<len; i++){
+        if($scope.attachImgs[i].imgURI === imgUri){
+          $scope.attachImgs.splice(i,1);
+          break;
+        }
+      }
+      $scope.photoLength--;
+      console.log(len);
+    }
 
     // log input clear content when focus
     $scope.isMockInputVal = false; // 是否填写
@@ -563,7 +594,7 @@
         console.log('clearNewAct');
         var keyLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
         console.log('keyLang:'+keyLang);
-
+        $scope.photoLength = 0;
         if(keyLang === "zh_hk"){
           //console.log('zh_hk');
           $scope.mockInputData = "請輸入項目日誌…";
@@ -603,7 +634,7 @@
         document.addEventListener("deviceready",onDeviceReady, false);
         function onDeviceReady(){
             //var type = $cordovaNetwork.getNetwork();
-            console.log('getNetwork:'+ type);
+            //console.log('getNetwork:'+ type);
             console.log('getNetwork');
             //var isOnline = $cordovaNetwork.isOnline();
             //var isOffline = $cordovaNetwork.isOffline(); 

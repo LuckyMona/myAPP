@@ -12,7 +12,15 @@
 <ion-view>
 	<ion-content class="bg-grey has-header44">
 	  	<div class="photoWall">
-		  	<div class="eachPhoto">
+		  	<div class="eachPhoto" ng-repeat="photo in photoList" ng-click="showBigImg(photo.imgURI)">
+				<img ng-src="{{photo.imgURI}}">
+				<a href="" class="selectedPic"></a>
+			</div>
+			 <div class="eachPhoto" ng-click="showBigImg('img/one.jpg')">
+				<img src="img/one.jpg">
+				<a href="" class="selectedPic"></a>
+			</div>
+			<!-- <div class="eachPhoto">
 				<img src="img/one.jpg">
 				<a href="" class="selectedPic"></a>
 			</div>
@@ -23,15 +31,11 @@
 			<div class="eachPhoto">
 				<img src="img/one.jpg">
 				<a href="" class="selectedPic"></a>
-			</div>
-			<div class="eachPhoto">
-				<img src="img/one.jpg">
-				<a href="" class="selectedPic"></a>
-			</div>
-			<div class="eachPhoto">
-				<img src="img/one.jpg">
-				<a href="" class="selectedPic"></a>
-			</div>
+			</div> -->
 		</div>
 	</ion-content>
+	<!-- 显示大图 -->
+	<div ng-if="bigImage" class="imgBackdrop" ng-click="hideBigImg()">
+		<img class="img-responsive bigImg" ng-src="{{bigImgUrl}}"/>
+	</div>
 </ion-view>

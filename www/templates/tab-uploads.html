@@ -1,16 +1,16 @@
 <ion-view view-title="Upload">
   <ion-content class="has-header49 bg-grey hackIonContent">
     <div class="greyBar mt49">6 {{'UPLOAD_TITLE' | translate }}</div>
-    <div class="list prevBlock">
+    <div class="list prevBlock mb100">
 
         <a class="upload item item-button-right" href="" ng-repeat="upload in uploadItems">
           <h2>{{upload.createdOn}}</h2>
           <p class="h20">{{upload.description}}</p>
           <div class="r-img" ng-show="{{upload.photos.length}}">
-             <img  src="{{upload.photos[0].imgURI}}" class="fl">
+             <img  ng-src="{{upload.photos[0]}}" class="fl">
             <div class="fl">
-              <h2><img src="img/img.gif"></h2>
-              <p>{{upload.photos.length}}</p>
+              <h2><img ng-src="img/img.gif"></h2>
+              <p>{{upload.photoLength}}</p>
             </div>
           </div>  
         </a>

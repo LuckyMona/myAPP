@@ -128,6 +128,7 @@
 .mt24 { margin:0; margin-top:10px !important; }
 .mt49 { margin-top:49px; }
 .mb24 { margin-bottom:24px !important; }
+.mb100 { margin-bottom:100px; }
 .t-r { text-align:right; }
 .no-decor { text-decoration: none; }
 
@@ -153,6 +154,7 @@
 .r-img p { text-align: center; color:#8e8e8e; }
 .upload > h2 { color:#333333; }
 .upload > p { color:#8e8e8e; margin-bottom: -4px; }
+
 
 .thinBar { background:#efeff4; height:10px; }
 .sign-btn { color:#ff3b30 !important; background: #fff !important; }
@@ -180,7 +182,7 @@
 	-webkit-transform:rotate(30deg); /* Safari 和 Chrome */
 	-o-transform:rotate(30deg);
 	color:#007aff;  }
-.imgItem { max-height: 70px; overflow:hidden; position: relative; display: inline-block;}
+.imgItem { margin-right:5px; max-height: 70px; overflow:hidden; position: relative; display: inline-block;}
 .imgItem img { max-height: 70px; }
 .imgItem a { position:absolute; right:0; top:0; background: url(../img/delete.png) no-repeat;
 	background-size: contain;
@@ -270,9 +272,10 @@
     width:calc((100% - 25px)/4);
     width:-moz-calc((100% - 25px)/4);
     width:-webkit-calc((100% - 25px)/4); 
-    height:auto;
+    height:80px;
+    overflow: hidden;
 }
-.photoWall .eachPhoto img { width:100%; }
+.photoWall .eachPhoto img { width:100%; height:auto; }
 .photoWall .eachPhoto a { position:absolute; z-index:99; right:0; top:0; display: block;
     background: url(../img/selected.png) no-repeat;
     background-size: contain;
@@ -336,3 +339,23 @@
 .curUser p { text-align: right; }
 .curUser p:first-child { margin-bottom: 6px; }
 .curUser p:last-child { font-size:12px; }
+
+.bigImg { position: absolute;
+    top: 10%;
+    left: 50%;
+    z-index: 100;
+    display: block;
+    margin-top: 18px;
+    margin-left: -165px;
+    height: auto;
+    width: 330px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+.imgBackdrop {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.701961);
+}

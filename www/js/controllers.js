@@ -32,6 +32,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
    console.log('UploadsCtrl');
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
+        //console.log();
         $scope.uploadItems = results;
    });
    $scope.startUpload = function(){
@@ -49,6 +50,11 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         //$scope.uploadItems = localStorageService.get('actDatas');
         // console.log('on saveAct');
         dbFactory.findAll('fe_Activity', function(results){
+            
+            var i, len = results.length;
+            for(i=0; i<len; i++){
+              results[i].photos = results[i].photos.split(',');
+            }
             $scope.uploadItems = results;
             // console.log('$scope.uploadItems:'+$scope.uploadItems);
         });
@@ -121,8 +127,20 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         $scope.jobNumber = data;
     })
 })
-.controller('IdCtrl', function($scope){
-  
+.controller('PhotoCtrl', function($scope,localStorageService){
+  $scope.photoList = localStorageService.get('photoList');
+  // 点击图片放大
+  $scope.bigImage = false;
+  $scope.showBigImg = function(imgUri){
+    console.log(imgUri);
+    $scope.bigImgUrl = imgUri;
+    $scope.bigImage = true;
+  }
+  $scope.hideBigImg = function(){
+    console.log('hideBigImg');
+    $scope.bigImage = false;
+  }
+
 })
 .controller('JobListCtrl', function($rootScope, $scope,localStorageService,$state,$ionicViewSwitcher){
     var jobList =  localStorageService.get('downlistData').jobNumber;
