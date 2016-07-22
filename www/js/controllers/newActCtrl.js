@@ -113,7 +113,7 @@
       initNewAct();
     })
 
-    // 获取地址下拉菜单
+    // 获取地址下拉菜单,需要根据ProjectID筛选
     $scope.getLocationBlock = function(){
       var locations = localStorageService.get('downlistData').LU_Location;
       var projectID = localStorageService.get('projectID');
@@ -138,15 +138,75 @@
 
     // 获取Category下拉菜单
     $scope.getCategory = function(){
-      var categoryItems = localStorageService.get('downlistData').category;
+      var categoryItems = localStorageService.get('downlistData').LU_Category;
+      var lang = localStorageService.get('NG_TRANSLATE_LANG_KEY');
+      //localStorageService.set('categoryItems', categoryItems);
+      
+      var i=0,
+          len = categoryItems.length;
+      for(i; i<len; i++){
+          //categoryItems[i].name = "";
+          if(lang = "us_en"){
+            categoryItems[i].name = categoryItems[i].CategoryName;
+          } else {
+            categoryItems[i].name = categoryItems[i].CategoryChineseName;
+          }
+      }
       localStorageService.set('categoryItems', categoryItems);
+
       $timeout(function() {
-          $window.location.href =  $window.location.href.split('#')[0] + "#/category";
+        $state.go('category');  
+        $ionicViewSwitcher.nextDirection("forward");  
       }, 100);
     }
+
+    /**
+     * 取得多选输入的下拉菜单
+     * @param  {string}  selectName       
+     * @param  {Boolean} isFilterByProject [是否按ProjectID分组]
+     * @param  {Boolean} isUseLang [是否分中英文]
+     */
+    $scope.getMulti = function(selectName, isFilterByProject, isUseLang){
+
+      // 第一个字母大写
+      var upperSelectName = selectName.substr(0,1).toUpperCase() + selectName.substr(1,selectName.length-1);
+      console.log(upperSelectName);
+      var itemList = localStorageService.get('downlistData')['LU_'+upperSelectName];
+      if(selectName === 'review'){
+        itemList = localStorageService.get('downlistData').tbl_UserProfile;
+      }
+      console.log(itemList);
+
+      //是否按ProjectID分组
+      if(isFilterByProject && isFilterByProject===true){
+          itemList = itemList.filter(function(item, index, arr){
+            return (item.ProjectID === localStorageService.get('projectID') );
+          });
+
+          //是否分中英文
+          if(isUseLang && isUseLang === true){
+            var langKey = localStorageService.get('NG_TRANSLATE_LANG_KEY');
+            itemList.forEach(function(item, index, arr){
+              if(langKey == 'us_en'){
+                item.langName = item[upperSelectName+'Name'];
+              } else {
+                item.langName = item[upperSelectName+'ChineseName'];
+              }
+              
+            });
+          }
+          
+      }
+      
+      console.log(itemList);
+      localStorageService.set(selectName+'Items', itemList);
+      $state.go(selectName);  
+      $ionicViewSwitcher.nextDirection("forward");  
+    }
     
+
     // 获取值为数组的下拉菜单
-    $scope.getArrayList = function(listName){
+    /*$scope.getArrayList = function(listName){
       console.log('listName:'+listName);
       var listItems = localStorageService.get('downlistData')[listName];
            
@@ -155,7 +215,7 @@
           $state.go(listName);
           $ionicViewSwitcher.nextDirection("forward");
       }, 100);
-    }
+    }*/
 
 
     $scope.locationOn = false;    //是否选择
@@ -239,10 +299,11 @@
         
         if(isMulti){
             $rootScope.$on(selectName + 'Done', function(d, data){
-
+                console.log(data);
                 $scope['is'+selectName+'Show'] = true;
                 $scope['isGray_'+ selectName] = false;
-                $scope[selectName] = data;
+                $scope[selectName] = data[selectName+'Data'];
+                $scope[selectName + 'ID'] = data[selectName+'ID'];
                 $scope[selectName + 'On'] = true;  //是否选择
             });
             return;

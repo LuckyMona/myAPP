@@ -11,12 +11,12 @@
                 console.log(getDownlistReq);
                 var deferred = $q.defer();
                 var url = PARAMS.BASE_URL + 'GetDataDict';
-                $http.post(url, getDownlistReq.token)
+                /*$http.post(url, getDownlistReq.token)
                     .then(function(result){
                         console.log('GetDataDict result:'+result);
                         console.log(result);
                         deferred.resolve(result);
-                    });
+                    });*/
                 /*var mockDownlistData = {
                     success:true,
                     data:{
@@ -34,8 +34,103 @@
                             'J3456':'Project CCC',
                         },
                     }
-                }
-                deferred.resolve(mockDownlistData);*/
+                }*/
+                var mockDownlistData = {data:{
+    "success": "true", 
+    "LU_Location": [
+        {
+            "LocationID": "1", 
+            "ProjectID": "1", 
+            "ZoneName": "1", 
+            "AreaName": "1"
+        }, 
+        {
+            "LocationID": "4", 
+            "ProjectID": "1", 
+            "ZoneName": "1", 
+            "AreaName": "2"
+        }, 
+        {
+            "LocationID": "6", 
+            "ProjectID": "1", 
+            "ZoneName": "2", 
+            "AreaName": "1"
+        }, 
+        {
+            "LocationID": "7", 
+            "ProjectID": "1", 
+            "ZoneName": "2", 
+            "AreaName": "2"
+        }, 
+        {
+            "LocationID": "9", 
+            "ProjectID": "2", 
+            "ZoneName": "1", 
+            "AreaName": "1"
+        }, 
+        {
+            "LocationID": "10", 
+            "ProjectID": "2", 
+            "ZoneName": "1", 
+            "AreaName": "2"
+        }
+    ], 
+    "LU_Category": [
+        {
+            "CategoryID": "1", 
+            "CategoryName": "Eng", 
+            "CategoryChineseName": "中文"
+        }, 
+        {
+            "CategoryID": "3", 
+            "CategoryName": "Eng2", 
+            "CategoryChineseName": "中文2"
+        }
+    ], 
+    "LU_Trade": [
+        {
+            "TradeID": "2", 
+            "ProjectID": "1", 
+            "TradeName": "ta", 
+            "TradeChineseName": "ta_zh"
+        }, 
+        {
+            "TradeID": "3", 
+            "ProjectID": "1", 
+            "TradeName": "tb", 
+            "TradeChineseName": "tb_zh"
+        }
+    ], 
+    "LU_Company": [
+        {
+            "CompanyID": "1", 
+            "ProjectID": "1", 
+            "CompanyName": "ca", 
+            "CompanyChineseName": "ca_zh"
+        }, 
+        {
+            "CompanyID": "2", 
+            "ProjectID": "1", 
+            "CompanyName": "cb", 
+            "CompanyChineseName": "cb_zh"
+        }
+    ], 
+    "LU_Project": [
+        {
+            "ProjectID": "1", 
+            "ProjectNO": "1", 
+            "ProjectName": "1"
+        }
+    ], 
+    "tbl_UserProfile": [
+        {
+            "StaffID": "StaffID1", 
+            "Name": "Name1", 
+            "ProjectID": "1"
+        }
+    ]
+}};
+                deferred.resolve(mockDownlistData);
                 return deferred.promise;
             }
 

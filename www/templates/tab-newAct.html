@@ -33,7 +33,7 @@
 		    <div class="list mt24 prevBlock">
 		    	<ion-checkbox ng-model="isReviewShow">{{ 'REQUEST_REVIEW' | translate }}</ion-checkbox>
 
-		    	<a class="item c3" ng-click="getArrayList('review')" nav-direction="forward" ng-show="isReviewShow">
+		    	<a class="item c3" ng-click="getMulti('review', true, false)" nav-direction="forward" ng-show="isReviewShow">
 				    <i class="fl ion-android-person fz20" style="width:10%;"></i>
 				    <i style="width:5%" class="fr icon ion-chevron-right cce"></i>
 				    <span style="width:85%" class="fz16 item-note" ng-class="{true:'cce0', false:'c30'}[isGray_review]">
@@ -51,14 +51,14 @@
 				<span class="item c3" ng-show="isTradeShow" >
 				    <span class="fl" style="width:40%;">{{ 'TRADE' | translate }}</span>
 				    <i style="width:10%" ng-click="clear('trade')" class="t-r fr icon ion-android-cancel fz20 cce"></i>
-				    <a style="width:50%" ng-click="getArrayList('trade')" class="no-decor fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_trade]"> 
+				    <a style="width:50%" ng-click="getMulti('trade', true, true)" class="no-decor fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_trade]"> 
 				      {{ trade }}     
 				    </a>
 				</span>
 				<span class="item c3" ng-show="isTradeShow">
 				    <span class="fl" style="width:40%;">{{ 'SUBCONTRACTOR' | translate }}</span>
 				    <i style="width:5%" ng-click="clear('subcontractor')" class="fr icon ion-android-cancel fz20 cce"></i>
-				    <a style="width:55%" ng-click="getArrayList('subcontractor')" class="fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_subcontractor]">
+				    <a style="width:55%" ng-click="getMulti('company', true, true)" class="fz16 item-note newLine" ng-class="{true:'cce0', false:'c30'}[isGray_subcontractor]">
 				      {{ subcontractor }}  		      
 				    </a>
 				</span>

@@ -181,6 +181,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         if(newVal === oldVal){
           return;
         }
+
         // localStorageService.set('floorSelected', newVal);
         $rootScope.$broadcast('floorChange', newVal);
         // console.log('$state');
@@ -231,9 +232,18 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     // console.log('oldVal:'+oldVal);
     if(newVal==oldVal){
       return;
+    }
+
+    var textVal ='';
+    var i=0, len = $scope.categoryItems.length;
+    for(var i=0; i<len; i++ ){
+      if($scope.categoryItems[i].CategoryID === newVal){
+        textVal = $scope.categoryItems[i].name;
+        break;
+      }
     } 
     
-    $rootScope.$broadcast('categoryChange',newVal);
+    $rootScope.$broadcast('categoryChange',textVal);
     $state.go('tab.newAct');
     $ionicViewSwitcher.nextDirection("back");
     
@@ -248,28 +258,31 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     var reviewItems = localStorageService.get('reviewItems');
     console.log('reviewItems'+reviewItems);
 
-    $scope.reviewList = [];
-
     for(var i=0, len=reviewItems.length; i<len; i++){
-        $scope.reviewList.push({
-            text:reviewItems[i], checked:false
-        });
+        reviewItems[i].checked = false;
     }
+     $scope.reviewList = reviewItems;
     // [{text:'Alan', checked:false}]
   
     $scope.reviewDone = function(){
       
-      var reviewData = [];
+      var reviewData = [],
+          reviewID = [];
       var arr = $scope.reviewList;
       for(var i=0, len=arr.length; i<len; i++){
         if(arr[i].checked){
-          reviewData.push(arr[i].text);
+          reviewData.push(arr[i].Name);
+          reviewID.push(arr[i].StaffID);
         } else continue;
       }
       console.log('reviewData:'+reviewData.join(','));
+      console.log('reviewID:'+reviewID.join(','));
       
       if(reviewData.length >0 ){
-        $rootScope.$broadcast('reviewDone',reviewData.join(','));
+        $rootScope.$broadcast('reviewDone',{
+          "reviewData":reviewData.join(','),
+          "reviewID":reviewID.join(','),
+        });
       }
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("back");
@@ -282,26 +295,28 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   //$scope.tradeList = [];
 
   var tradeItems = localStorageService.get('tradeItems');
-  var tradeList = [];
   for(var i=0, len = tradeItems.length; i<len; i++){
-    tradeList.push({
-      text:tradeItems[i], 
-      checked:false
-    });
+    console.log(tradeItems[i]);
+    tradeItems[i].checked = false;
   }
-  $scope.tradeList = tradeList;
+  $scope.tradeList = tradeItems;
   $scope.tradeDone = function(){
       
-      var reviewData = [];
+      var tradeData = [];
+      var tradeID = [];
       var arr = $scope.tradeList;
       for(var i=0, len=arr.length; i<len; i++){
         if(arr[i].checked){
-          reviewData.push(arr[i].text);
+          tradeData.push(arr[i].langName);
+          tradeID.push(arr[i].TradeID);
         } else continue;
       }
     
-      if ( reviewData.length>0){
-        $rootScope.$broadcast('tradeDone',reviewData.join(','));
+      if ( tradeData.length>0){
+        $rootScope.$broadcast('tradeDone',{
+          "tradeData":tradeData.join(','),
+          "tradeID":tradeID.join(','),
+        });
       }
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("back");
@@ -309,19 +324,15 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
   }
 })
-.controller('SubcontractorCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher,localStorageService){
+.controller('CompanyCtrl', function($rootScope,$scope,$state, $ionicViewSwitcher,localStorageService){
  
   // $scope.category = 'Category A';
-  $scope.subcontractor = "Select Subcontractor";
-  var subcontractorList = [];
-  var subcontractorItems = localStorageService.get('subcontractorItems');
-  for(var i=0, len=subcontractorItems.length; i<len; i++ ){
-    subcontractorList.push({
-      text:subcontractorItems[i], 
-      checked:false
-    });
+  $scope.company = "Select Subcontractor";
+  var companyItems = localStorageService.get('companyItems');
+  for(var i=0, len=companyItems.length; i<len; i++ ){
+    companyItems[i].checked =false;
   }
-  $scope.subcontractorList = subcontractorList;
+  $scope.companyList = companyItems;
   /*var mock = [
     {text:'trade1', checked:false},
     {text:'trade2', checked:false},
