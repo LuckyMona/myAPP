@@ -41,38 +41,38 @@
         {
             "LocationID": "1", 
             "ProjectID": "1", 
-            "ZoneName": "1", 
-            "AreaName": "1"
+            "ZoneName": "ZoneName1", 
+            "AreaName": "AreaName1"
         }, 
         {
             "LocationID": "4", 
             "ProjectID": "1", 
-            "ZoneName": "1", 
-            "AreaName": "2"
+            "ZoneName": "ZoneName2", 
+            "AreaName": "AreaName2"
         }, 
         {
             "LocationID": "6", 
             "ProjectID": "1", 
-            "ZoneName": "2", 
-            "AreaName": "1"
+            "ZoneName": "ZoneName3", 
+            "AreaName": "AreaName3"
         }, 
         {
             "LocationID": "7", 
             "ProjectID": "1", 
-            "ZoneName": "2", 
-            "AreaName": "2"
+            "ZoneName": "ZoneName4", 
+            "AreaName": "AreaName4"
         }, 
         {
             "LocationID": "9", 
             "ProjectID": "2", 
-            "ZoneName": "1", 
-            "AreaName": "1"
+            "ZoneName": "ZoneName5", 
+            "AreaName": "AreaName5"
         }, 
         {
             "LocationID": "10", 
             "ProjectID": "2", 
-            "ZoneName": "1", 
-            "AreaName": "2"
+            "ZoneName": "ZoneName6", 
+            "AreaName": "AreaName6"
         }
     ], 
     "LU_Category": [
@@ -124,7 +124,7 @@
     ], 
     "tbl_UserProfile": [
         {
-            "StaffID": "StaffID1", 
+            "StaffID": "1", 
             "Name": "Name1", 
             "ProjectID": "1"
         }
@@ -155,54 +155,6 @@
                        date:'2016/6/7', 
                        time:'13:57',
                        log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
-                    },
-                    {
-                       author:'Alan',
-                       date:'2016/6/7', 
-                       time:'13:57',
-                       log:'Hello!! Please help me take some photos'
                     }]
                 }
                 deferred.resolve(mockTasklistData);
@@ -211,15 +163,19 @@
 
             var _uploadAct = function(uploadActReq){
                 console.log(uploadActReq);
+                var url = PARAMS.BASE_URL + 'UploadActivity';
                 var deferred = $q.defer();
-                /*$http.post(url, req)
+                var quoteReq = "\""+uploadActReq+"\"";
+                console.log(quoteReq);
+                /*$http.post(url, quoteReq)
                     .then(function(result){
-                        deferred.resolve(result);
+                        console.log(result);
+                        deferred.resolve(result.data);
                     });*/
 
                 var uploadActData = {
                     success:true,
-                    ActivityId:123,
+                    ActivityID:123,
                 }
                 deferred.resolve(uploadActData);
                 return deferred.promise;

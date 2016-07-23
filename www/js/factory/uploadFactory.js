@@ -4,10 +4,10 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService){
+        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout){
 
             function _coreUpload(isListenStop){
-                
+                //onDeviceReady();
                 document.addEventListener("deviceready",onDeviceReady, false);
                 function onDeviceReady(){
 
@@ -38,7 +38,7 @@
                     for(var i=0; i<len; i++ )
                     {   
                         // 单条内容中不包括photo的部分
-                        var uploadActReq = {
+                        /*var uploadActReq = {
                               ActivityId: results[i].ActivityId, // activityId怎么获取的？
                               projectId: results[i].projectId,
                               location: results[i].location,
@@ -48,14 +48,18 @@
                               subcontractor: results[i].subcontractor,
                               description: results[i].description,
                               createdOn: results[i].createdOn,
-                        }
-
+                        }*/
+                        var uploadActReq = results[i].idData;
+                        //console.log(uploadActReq);
+                        uploadActReq = uploadActReq.replace(/\"/g,"\'");
+                        //console.log(uploadActReq);
                         // 单条内容中的photos数组
                         
                         // 单条内容由数据和photos组成
                         uploadActReqs.push({
                             uploadActReq: uploadActReq,
-                            actPhotos: results[i].photos.split(',')
+                            actPhotos: results[i].photos.split(','),
+                            ActivityID:results[i].ActivityId,
                         });
                     }                
                 };
@@ -77,40 +81,26 @@
                     // may error done dealing
                     newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
                       .then(function(result){
+                        console.log(result);
                         if(result.success){
-
                           console.log('the  NO. '+n+' uploadAct success!');
                           //console.log('ActivityId:'+ result.ActivityId);
 
-                          // may error done dealing
-                          // 把ActivityId存入本地数据库
-                          function updateActivityId(){
-                              dbFactory.update('fe_Activity',
-                                {ActivityId:result.ActivityId},
-                                // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
-                                {ActivityId:uploadActReqs[n].uploadActReq.ActivityId},updateActivityIdSuccess,
-                                function(){
-                                  console.log('updateActivityId fail, do retry');
-                                  updateActivityId();
-                                });
-                          }
-
-                          function updateActivityIdSuccess(){
+                          // 把ActivityId存入本地数据库，调用在定义后面
+                          var updateActivityIdSuccess = function(){
                               var lenPhoto = uploadActReqs[n].actPhotos.length;
                               var uploadActPhotosReq = [];
                               if(lenPhoto>0){
                                   for(var j = 0; j<lenPhoto; j++ ){
                                   uploadActPhotosReq.push({
-                                    ActivityId:result.ActivityId,
+                                    ActivityId:uploadActReqs[n].ActivityID,
                                     photo:uploadActReqs[n].actPhotos[j],
                                   });
                                 }
                               }
 
                               // 上传每一条数据中的照片部分，递归
-                              var k = 0;
-                              uploadPhotoRecur(k);
-                              function uploadPhotoRecur(k){
+                              var uploadPhotoRecur = function(k){
                                   if(k < uploadActPhotosReq.length){
 
                                       // may error done dealing
@@ -121,7 +111,7 @@
                                                 if(result.success){
                                                   console.log('th NO. '+k+' photo upload success!');
                                                   //从本地删除已经上传的photo，防止如果没有完成整条数据上传，下次重试的时候，重复上传
-                                                  //dbFactory.update('fe_Activity',{ActivityId:result.ActivityId}, k);
+                                                  //dbFactory.update('fe_Activity',{ActivityId:uploadActReqs[n].ActivityID}, k);
                                                   uploadPhotoRecur(k+1);
                                                 } else {
                                                   console.log('th NO. '+k+' photo upload fail, retry!');
@@ -135,7 +125,7 @@
                                       
                                       // 更新Task List，从本地列表中减去这条数据
                                       // may error
-                                      dbFactory.delete('fe_Activity',{ActivityId:result.ActivityId});
+                                      dbFactory.delete('fe_Activity',{ActivityId:result.ActivityID});
                                       $timeout(function(){
                                         $rootScope.$broadcast('saveAct');
                                       },100);
@@ -152,10 +142,27 @@
                                       }, 3000);
                                   }
                               }
+                              var k = 0;
+                              uploadPhotoRecur(k);
                           }
+
+                          // may error done dealing
+                          
+                          var updateActivityId = function(){
+                              dbFactory.update('fe_Activity',
+                                {ActivityId:result.ActivityID},
+                                // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
+                                {ActivityId:uploadActReqs[n].ActivityID},
+                                updateActivityIdSuccess,
+                                function(){
+                                  console.log('updateActivityId fail, do retry');
+                                  //updateActivityId();
+                                });
+                          }
+                          updateActivityId();
                         } else {
                           console.log('the NO.' +n +'data_s upload fail, retry!');
-                          uploadActRecur(n);
+                          // uploadActRecur(n);
                         }
                       })
                    } else return;

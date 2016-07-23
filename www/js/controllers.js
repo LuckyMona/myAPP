@@ -174,16 +174,25 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     
     //$scope.a = {"floorModel":""};
     $scope.floorModel = ''; 
-    $scope.floorItems = localStorageService.get('floorItems');
+    var floorItems = localStorageService.get('floorItems');
+    var floorNameArr = [];
+    floorItems.forEach(function(item, index, arr){
+      floorNameArr.push(item.AreaName);
+    });
+    $scope.floorItems = floorNameArr;
     
     $scope.$watch('floorModel', function(newVal,oldVal){
         console.log('floorNewVal:'+ newVal);
         if(newVal === oldVal){
           return;
         }
+        floorItems.some(function(item, index, arr){
+          return (item.AreaName ===newVal)
+        });
 
+        console.log(floorItems);
         // localStorageService.set('floorSelected', newVal);
-        $rootScope.$broadcast('floorChange', newVal);
+        $rootScope.$broadcast('floorChange', floorItems);
         // console.log('$state');
         $state.go('tab.newAct');
         $ionicViewSwitcher.nextDirection("back");
@@ -207,15 +216,24 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             i,
             len = locations.length,
             areaArr = [];
+        //var selectedBlockID ='';
         
         for(i=0; i<len; i++){
             if(locations[i].ZoneName === block){
-                areaArr.push(locations[i].AreaName);
+                areaArr.push({
+                  AreaName:locations[i].AreaName,
+                  locationID:locations[i].LocationID
+                });
+                //selectedBlockID = locations[i].LocationID;
                 //localStorageService.set('floorItems', locations[i]);
             }
         }
         console.log(areaArr);
         localStorageService.set('floorItems',areaArr);
+        /*localStorageService.set('blockSelected',{
+          selectBlock:block,
+          selectedBlockID:selectedBlockID
+        });*/
         localStorageService.set('blockSelected',block);
         $state.go('floor');
         $ionicViewSwitcher.nextDirection("forward");
@@ -243,7 +261,11 @@ angular.module('starter.controllers', ['LocalStorageModule'])
       }
     } 
     
-    $rootScope.$broadcast('categoryChange',textVal);
+    $rootScope.$broadcast('categoryChange',{
+      categoryData:textVal,
+      categoryID:newVal,
+
+    });
     $state.go('tab.newAct');
     $ionicViewSwitcher.nextDirection("back");
     
@@ -338,18 +360,23 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     {text:'trade2', checked:false},
     {text:'trade3', checked:false}
   ];*/
-  $scope.subcontractorDone = function(){
+  $scope.companyDone = function(){
       
-      var subconData = [];
-      var arr = $scope.subcontractorList;
+      var companyData = [];
+      var companyID = [];
+      var arr = $scope.companyList;
       for(var i=0, len=arr.length; i<len; i++){
         if(arr[i].checked){
-          subconData.push(arr[i].text);
+          companyData.push(arr[i].langName);
+          companyID.push(arr[i].CompanyID);
         } else continue;
       }
-      console.log(subconData);
+      console.log(companyData);
 
-      $rootScope.$broadcast('subcontractorDone',subconData.join(','));
+      $rootScope.$broadcast('companyDone',{
+        companyData:companyData.join(','),
+        companyID:companyID.join(','),
+      });
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("back");
 

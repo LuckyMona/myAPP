@@ -11,7 +11,7 @@
     $scope.isGray_category = true;
     $scope.isGray_review = true;
     $scope.isGray_trade = true;
-    $scope.isGray_subcontractor = true;
+    $scope.isGray_company = true;
     $scope.isGray_mockinput = true;
 
 
@@ -122,7 +122,7 @@
           len = locations.length;
 
       for(i=0; i<len; i++){
-        console.log('i:'+i);
+       
         if(locations[i].ProjectID === projectID){
           blockItems.push(locations[i]);
         }
@@ -139,7 +139,7 @@
     // 获取Category下拉菜单
     $scope.getCategory = function(){
       var categoryItems = localStorageService.get('downlistData').LU_Category;
-      var lang = localStorageService.get('NG_TRANSLATE_LANG_KEY');
+      var lang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
       //localStorageService.set('categoryItems', categoryItems);
       
       var i=0,
@@ -161,7 +161,7 @@
     }
 
     /**
-     * 取得多选输入的下拉菜单
+     * 取得多选输入框的下拉菜单
      * @param  {string}  selectName       
      * @param  {Boolean} isFilterByProject [是否按ProjectID分组]
      * @param  {Boolean} isUseLang [是否分中英文]
@@ -185,11 +185,12 @@
 
           //是否分中英文
           if(isUseLang && isUseLang === true){
-            var langKey = localStorageService.get('NG_TRANSLATE_LANG_KEY');
+            var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+            console.log(langKey);
             itemList.forEach(function(item, index, arr){
-              if(langKey == 'us_en'){
+              if(langKey === 'us_en'){
                 item.langName = item[upperSelectName+'Name'];
-              } else {
+              } else if(langKey === "zh_hk"){
                 item.langName = item[upperSelectName+'ChineseName'];
               }
               
@@ -223,25 +224,7 @@
 
     // floor.html页面单选后跳回来
     $scope.floor = 'A';
-    var href = $window.location.href;
-    $scope.m_url = href.split('#')[0] + "#/tab/newAct";
-   
-
-    /*$scope.$watch("floor", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
-        if(newVal==oldVal){
-          return;
-        }
-        $timeout(function() {
-            $window.location.href =  $scope.m_url;
-        }, 200);
-    })*/
-
-    /*$scope.changeCategory = function(){
-    	console.log('changeCategory');
-    	$scope.category = "changeCategory";
-    }*/
-
+    
     if(localStorageService.get('location') ){
       $scope.location =  localStorageService.get('location');
       $scope.locationOn = true;
@@ -257,9 +240,10 @@
     
     $rootScope.$on('floorChange', function(d, data){
       var block = localStorageService.get('blockSelected');
-      var locationStr = block + " / " + data;
+      var locationStr = block + " / " + data[0].AreaName;
       $scope.isGray_location = false;
       $scope.location = locationStr;
+      $scope.locationID = data[0].locationID;
       $scope.locationOn = true;
       localStorageService.set('location', locationStr);
 
@@ -276,7 +260,7 @@
     
     $scope.reviewOn = false;
     $scope.tradeOn = false;
-    $scope.subcontractorOn = false;
+    $scope.companyOn = false;
     var onSelect = function(selectName, isMulti){
         $scope[selectName] = 'Select ' + selectName.substring(0,1).toUpperCase()+selectName.substring(1);
         if(selectName === 'review')
@@ -310,21 +294,26 @@
         }
         $rootScope.$on(selectName + 'Change', function(d, data){
             $scope['isGray_'+ selectName] = false;
-            $scope[selectName] = data;
+            $scope[selectName] = data[selectName+'Data'];
+            $scope[selectName + 'ID'] = data[selectName+'ID'];
+            console.log(data);
             if(selectName === 'category'){
-              localStorageService.set('category', data);
+              localStorageService.set('category', data.categoryData);
             }
             $scope[selectName + 'On'] = true;  //是否选择
         });
     }
+
+    // saveAct
     onSelect('review', true);
     onSelect('trade', true);
     onSelect('category', false);
-    onSelect('subcontractor', true);
+    onSelect('company', true);
 
     $scope.clear = function(clearName){
        $scope['isGray_'+clearName] = true;
-       $scope[clearName] = 'Select '+clearName;
+       var upperClearName = clearName.charAt(0).toUpperCase() + clearName.slice(1);
+       $scope[clearName] = 'Select '+upperClearName;
     }
    
     
@@ -580,7 +569,7 @@
       tx.executeSql('DROP TABLE fe_Activity');
       tx.executeSql('DROP TABLE fe_Activity2');
       tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity'+
-        ' (ActivityId_fake unique, Project, Location, Category, Review, Trade, Subcontractor, CreatedOn, Description)');
+        ' (ActivityId_fake unique, Project, Location, Category, Review, Trade, company, CreatedOn, Description)');
       //tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity4 (ActivityId_fake unique, Location, Category)');
       // tx.executeSql('INSERT INTO PHOTOS (id, testArr) VALUES (2, "1,2,3")');
       //tx.executeSql('INSERT INTO fe_Activity (ActivityId_fake, Location) VALUES (23, ?)',[$scope.test_a]);
@@ -592,7 +581,7 @@
 
     // 保存数据
     
-    // dbFactory.dropTbl('fe_Activity');
+    dbFactory.dropTbl('fe_Activity');
     // upload消息数
     var badgeUpload = localStorageService.get('badgeUpload')|| 0;
     $scope.saveAct = function(){
@@ -600,7 +589,7 @@
       // 点击保存按钮后要间隔100ms,为了等一些耗时操作的完成，例如localStorage存数据
       $timeout(function() {
           var confirmBy = $scope.locationOn && $scope.categoryOn && ( $scope.attachImgs.length>0 || $scope.isMockInputVal)
-          /*console.log($scope.locationOn);
+         /* console.log($scope.locationOn);
           console.log($scope.categoryOn);
           console.log($scope.attachImgs.length>0 || $scope.isMockInputVal);
           console.log($scope.isMockInputVal);
@@ -612,39 +601,49 @@
             var time = showTime(),
                 review = $scope.reviewOn? $scope.review:"",
                 trade = $scope.tradeOn? $scope.trade:"",
-                subcontractor = $scope.subcontractorOn? $scope.subcontractor:"",
-                log = $scope.isMockInputVal? $scope.mockInputData:"";
-            
+                company = $scope.companyOn? $scope.company:"",
+                projectID = localStorageService.get('projectID'),
+                log = $scope.isMockInputVal? $scope.mockInputData:"",
+                idData;
+            var RequireReqview = false;
+            if($scope.reviewID){
+              RequireReqview = true;
+            }    
+            idData = {
+
+              "StaffID":1,
+              "ProjectID":projectID,
+              "LocationID":$scope.locationID,
+              "CategoryID": $scope.categoryID,
+              "RequireReqview":RequireReqview || false,
+              "NotityID": $scope.reviewID || "undefined",
+              "TradeID": $scope.tradeID || "undefined",
+              "CompanyID": $scope.companyID || "undefined",
+              "Importance":"undefined",
+              "Description":log,
+            };
+            console.log(idData);
             var ActivityId_fake = localStorageService.get('ActivityId_fake') || 0;
             var attPhotos = $scope.attachImgs;
             var photosArr = [];
             for(var m=0, phLen = attPhotos.length; m<phLen; m++ ){
                 photosArr.push(attPhotos[m].imgURI);
             }             
-            /*db.transaction(function(tx){
-              tx.executeSql('SELECT * FROM fe_Activity', [], function(tx, results){
-                console.log('results');
-                for(var i=0, rowLen = results.rows.length; i<rowLen; i++){
-                  console.log('Location:'+results.rows.item(i).Location);
-                  console.log('Category:'+results.rows.item(i).Category);
-                }
-                
-              });
-            })*/
-
+            
             var fieldArr = [];
             var actData = {
               ActivityId:ActivityId_fake,
-              projectId:123,
+              projectId:projectID,
               location: $scope.location,
               category: $scope.category,
               review: review,
               trade: trade,
-              subcontractor: subcontractor,
+              company: company,
               photos: photosArr.join(',') || "",
               photoLength:$scope.attachImgs.length,
               description: log,
               createdOn:time,
+              idData:JSON.stringify(idData),
             }
 
             for(var i_fld in actData){
@@ -664,7 +663,8 @@
               $rootScope.$broadcast('saveAct');
             }, 100);
             
-            doUpload();
+            //doUpload();
+            uploadFactory.coreUpload(false);
             clearNewAct();
           } else {
             //TODO
@@ -687,7 +687,7 @@
           //$scope.category = "選擇類別";
           $scope.review = "選擇用戶";
           $scope.trade = "選擇交易";
-          $scope.subcontractor = "選擇分判商";
+          $scope.company = "選擇分判商";
           //$scope.location = "選擇地址";
 
         } else {
@@ -697,7 +697,7 @@
           //$scope.category = "Select Category";
           $scope.review = "Select User";
           $scope.trade = "Select Trade";
-          $scope.subcontractor = "Select Subcontractor";
+          $scope.company = "Select Subcontractor";
           
           //$scope.location = "Select Location";
         }
@@ -705,7 +705,7 @@
         //$scope.isGray_category = true;
         $scope.isGray_review = true;
         $scope.isGray_trade = true;
-        $scope.isGray_subcontractor = true;
+        $scope.isGray_company = true;
         $scope.isGray_mockinput = true;
         $scope.attachImgs = [];
     }
