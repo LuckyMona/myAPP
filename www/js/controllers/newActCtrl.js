@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -19,11 +19,15 @@
     var getDownlist = function(){
       console.log('getDownlist');
       var token = localStorageService.get('token');
+      var username = localStorageService.get('username');
       var getDownlistReq = {
-        token:token
+        token:token,
+        username:username,
       }
+      console.log(getDownlistReq);
+      var getDownlistReqStr = '"'+JSON.stringify(getDownlistReq).replace(/\"/g,"\'")+'"';
 
-      newActFactory.getDownlist(getDownlistReq)
+      newActFactory.getDownlist(getDownlistReqStr)
         .then(function(result){
           //var jsonRes = JSON.parse(result.data);
           //console.log(jsonRes);
@@ -396,8 +400,67 @@
                 });
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength ++;
+
+
+
+                var win = function (r) {
+                    console.log("Code = " + r.responseCode);
+                    console.log("Response = " + r.response);
+                    console.log("Sent = " + r.bytesSent);
+                }
+
+                var fail = function (error) {
+                    alert("An error has occurred: Code = " + error.code);
+                    console.log("upload error source " + error.source);
+                    console.log("upload error target " + error.target);
+                }
+
+
+                //var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+                var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
+                var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
+                var options = new FileUploadOptions();
+                options.fileKey = "file";
+                options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
+                options.mimeType = "image/jpeg";
+                options.chunkedMode = false;
+                options.headers = {
+                   Connection: "close"
+                };
+
+                var params = {};
+                params.value1 = "{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
+                
+
+                options.params = params;
+
+                var ft = new FileTransfer();
+                ft.upload(imgURI, encodeURI(testUrl2), win, fail, options);
+
+
+                /*var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+                var uploadOptions = {
+                  mimeType:'image/jpeg',
+                  fileKey:"file",
+                  httpMethod : 'POST',
+                  fileName:'aaa',
+                  chunkedMode :false,
+                  params:"{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}"
+                };
+                
+
+                $cordovaFileTransfer.upload(encodeURI(url),imgURI, uploadOptions)
+                  .then(function(result){
+                    console.log('img upload success');
+                  }, function(err){
+                    console.log('img uplaod fail');
+                    console.log(err);
+                  });
+*/
+
+
               }, function(err) {
-                console.debug("Unable to obtain picture: " + error, "app");
+                console.debug("Unable to obtain picture: " + err, "app");
               });
 
               /*$cordovaCamera.cleanup().then(function(){
@@ -436,6 +499,7 @@
           //     options.targetWidth = 100;
           // }
 
+          var photoReq;
           document.addEventListener("deviceready", onDeviceReady, false);
           function onDeviceReady() {
               /*navigator.camera.getPicture(function cameraSuccess(imageUri) {
@@ -449,12 +513,42 @@
 
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
-                console.log(typeof imgURI);
+                
                 $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength++;
+
+                // 测试上传图片接口
+                console.log(typeof imgURI);
+
+                //var deferred = $q.defer();
+                var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+                var uploadOptions = {
+                  mimeType:'image/jpeg',
+                  fileKey:"file",
+                  httpMethod : 'POST',
+                  fileName:'aaa',
+                  chunkedMode :false,
+                  params:"{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}"
+                };
+
+                $cordovaFileTransfer.upload(encodeURI(url),imgURI, uploadOptions)
+                  .then(function(result){
+                    console.log('img upload success');
+                  }, function(err){
+                    console.log('img uplaod fail');
+                    console.log(err);
+                  });
+                /*$http.post(url, )
+                    .then(function(result){
+                        console.log('GetDataDict result:'+result);
+                        console.log(result);
+                        deferred.resolve(result);
+                    });*/
+
+                
               }, function(err) {
                 console.debug("Unable to obtain picture: " + err, "app");
               });
@@ -581,7 +675,7 @@
 
     // 保存数据
     
-    dbFactory.dropTbl('fe_Activity');
+    // dbFactory.dropTbl('fe_Activity');
     // upload消息数
     var badgeUpload = localStorageService.get('badgeUpload')|| 0;
     $scope.saveAct = function(){
@@ -663,8 +757,8 @@
               $rootScope.$broadcast('saveAct');
             }, 100);
             
-            //doUpload();
-            uploadFactory.coreUpload(false);
+            doUpload();
+            // uploadFactory.coreUpload(false);
             clearNewAct();
           } else {
             //TODO

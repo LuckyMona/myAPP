@@ -15,23 +15,25 @@
 
 	        var loginReq = {
 	          username:$scope.loginO.username,
-	          password:$scope.loginO.password
-	        }; 
+	          password:$scope.loginO.password,
+
+	        };
+	        var loginReqStr = "username="+$scope.loginO.username + "&password=" +$scope.loginO.password + "&grant_type=password&client_id=123";
 	        console.log(loginReq);
-	        userFactory.login(loginReq).then(
+	        userFactory.login(loginReqStr).then(
 	            function(result){
 	              console.log(result);
-	              if(result.success){
+	              if(result.statusText ==='OK'){
 	                // var href = $window.location.href;
 	                // var url = href.split('#')[0] + "#/tab/newAct";
 	                // $window.location.href = url;
-	                localStorageService.set('token',result.token);
-	                $localStorage.token = result.token;
+	                localStorageService.set('token',result.data);
+	                localStorageService.set('username',$scope.loginO.username);
+	                $localStorage.token = result.data;
 	                //$localStorage.token = result.token;
 	                $rootScope.$broadcast('loginSuccess');
 	                $state.go('tab.newAct');
 	              } else {
-
 	                console.log('登录名或密码不正确');
 	                $scope.showAlert();
 	              }
