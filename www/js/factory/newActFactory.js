@@ -17,24 +17,7 @@
                         console.log(result);
                         deferred.resolve(result);
                     });
-                /*var mockDownlistData = {
-                    success:true,
-                    data:{
-                        location:{
-                            'blockA':['floorA1','floorA2'],
-                            'blockB':['floorB1','floorB2','floorB3'],
-                        },
-                        category:['category1', 'category2', 'category3'],
-                        review:['reviewUser1', 'reviewUser2', 'reviewUser3'],
-                        trade:['trade1', 'trade2', 'trade3', 'trade4', 'trade5', 'trade6', 'trade7'],
-                        subcontractor:['subcontractor1','subcontractor2'],
-                        jobNumber:{
-                            'J1234':'Project AAA',
-                            'J2345':'Project BBB',
-                            'J3456':'Project CCC',
-                        },
-                    }
-                }*/
+                
                 /*var mockDownlistData = {data:{
     "success": "true", 
     "LU_Location": [

@@ -27,10 +27,11 @@
 	                // var href = $window.location.href;
 	                // var url = href.split('#')[0] + "#/tab/newAct";
 	                // $window.location.href = url;
+	                
 	                localStorageService.set('token',result.data);
 	                localStorageService.set('username',$scope.loginO.username);
-	                $localStorage.token = result.data;
-	                //$localStorage.token = result.token;
+	                //$localStorage.token = result.data;
+	                
 	                $rootScope.$broadcast('loginSuccess');
 	                $state.go('tab.newAct');
 	              } else {

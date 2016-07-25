@@ -36,6 +36,10 @@
             // console.log('downlistData:');
             console.log(result.data);
             localStorageService.set('downlistData', result.data);
+          }else{
+            localStorageService.clear('token');
+            $state.go('login.active');
+            $ionicViewSwitcher.nextDirection("back");
           }
         });
     }
@@ -210,19 +214,6 @@
     }
     
 
-    // 获取值为数组的下拉菜单
-    /*$scope.getArrayList = function(listName){
-      console.log('listName:'+listName);
-      var listItems = localStorageService.get('downlistData')[listName];
-           
-      localStorageService.set(listName+'Items', listItems);
-      $timeout(function() {
-          $state.go(listName);
-          $ionicViewSwitcher.nextDirection("forward");
-      }, 100);
-    }*/
-
-
     $scope.locationOn = false;    //是否选择
     $scope.categoryOn = false;    //是否选择
 
@@ -320,24 +311,6 @@
        $scope[clearName] = 'Select '+upperClearName;
     }
    
-    
-
-    //重构选择跳转
-    /*$scope.afterSelect = function(siteName){
-      
-      var url = "http://" + $window.location.host + "#/tab/newAct";
-     
-      $scope.$watch(siteName, function(newVal,oldVal){
-          console.log('newVal:'+newVal);
-          if(newVal==oldVal){
-            return;
-          }
-          $timeout(function() {
-              $window.location.href = url;
-          }, 500);
-      })
-    }
-    $scope.afterSelect(siteName);*/
 
     /*
      * 当切换语言时，改变各个输入框的默认提示内容
@@ -402,7 +375,8 @@
                 $scope.photoLength ++;
 
 
-
+                // 使用cordova file transfer插件上传图片
+                // 测试上传功能OK后，会把这部分摘出来做封装
                 var win = function (r) {
                     console.log("Code = " + r.responseCode);
                     console.log("Response = " + r.response);
@@ -416,7 +390,7 @@
                 }
 
 
-                //var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+                var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
                 var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
                 var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
                 var options = new FileUploadOptions();
@@ -435,7 +409,7 @@
                 options.params = params;
 
                 var ft = new FileTransfer();
-                ft.upload(imgURI, encodeURI(testUrl2), win, fail, options);
+                ft.upload(imgURI, encodeURI(url), win, fail, options);
 
 
                 /*var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
@@ -489,16 +463,7 @@
             saveToPhotoAlbum:true,
             correctOrientation: true  //Corrects Android orientation quirks
         }
-          //var func = createNewFileEntry;
-          /*options.targetHeight = 100;
-          options.targetWidth = 100;*/
-          // if (selection == "picker-thmb") {
-          //     // To downscale a selected image,
-          //     // Camera.EncodingType (e.g., JPEG) must match the selected image type.
-          //     options.targetHeight = 100;
-          //     options.targetWidth = 100;
-          // }
-
+          
           var photoReq;
           document.addEventListener("deviceready", onDeviceReady, false);
           function onDeviceReady() {
@@ -521,34 +486,39 @@
                 $scope.photoLength++;
 
                 // 测试上传图片接口
-                console.log(typeof imgURI);
+                // 使用cordova file transfer插件上传图片
+                // 测试上传功能OK后，会把这部分摘出来做封装
+                var win = function (r) {
+                    console.log("Code = " + r.responseCode);
+                    console.log("Response = " + r.response);
+                    console.log("Sent = " + r.bytesSent);
+                }
 
-                //var deferred = $q.defer();
+                var fail = function (error) {
+                    alert("An error has occurred: Code = " + error.code);
+                    console.log("upload error source " + error.source);
+                    console.log("upload error target " + error.target);
+                }
+
                 var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
-                var uploadOptions = {
-                  mimeType:'image/jpeg',
-                  fileKey:"file",
-                  httpMethod : 'POST',
-                  fileName:'aaa',
-                  chunkedMode :false,
-                  params:"{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}"
+                var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
+                var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
+                var options = new FileUploadOptions();
+                options.fileKey = "file";
+                options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
+                options.mimeType = "image/jpeg";
+                options.chunkedMode = false;
+                options.headers = {
+                   Connection: "close"
                 };
 
-                $cordovaFileTransfer.upload(encodeURI(url),imgURI, uploadOptions)
-                  .then(function(result){
-                    console.log('img upload success');
-                  }, function(err){
-                    console.log('img uplaod fail');
-                    console.log(err);
-                  });
-                /*$http.post(url, )
-                    .then(function(result){
-                        console.log('GetDataDict result:'+result);
-                        console.log(result);
-                        deferred.resolve(result);
-                    });*/
-
+                var params = {};
+                params.value1 = "{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
                 
+                options.params = params;
+
+                var ft = new FileTransfer();
+                ft.upload(imgURI, encodeURI(url), win, fail, options);
               }, function(err) {
                 console.debug("Unable to obtain picture: " + err, "app");
               });
