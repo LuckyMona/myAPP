@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout){
+        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory){
 
             function _coreUpload(isListenStop){
                 //onDeviceReady();
@@ -78,7 +78,19 @@
                   // console.log('n:'+n);
 
                   if(n<uploadActReqs.length){
-                    // may error done dealing
+                    // may error, dealing done 
+                    var token = localStorageService.get('token');
+                    chkTokenFactory.refreshToken(token)
+                      .then(function(result){
+                        if(result.statusText ==="OK"){
+                          token = result.data;
+                          localStorageService.set('token',result.data);
+                        }else if(result==='false'){
+                           return;
+                        }
+                      });
+                    uploadActReqs[n].uploadActReq.token = token;
+
                     newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
                       .then(function(result){
                         console.log(result);
@@ -149,8 +161,9 @@
                           // may error done dealing
                           
                           var updateActivityId = function(){
-                              dbFactory.update('fe_Activity',
-                                {ActivityId:result.ActivityID},
+
+                              dbFactory.update('fe_Activity', 
+                                { ActivityId:result.ActivityID},
                                 // {createdOn:uploadActReqs[n].uploadActReq.createdOn});
                                 {ActivityId:uploadActReqs[n].ActivityID},
                                 updateActivityIdSuccess,

@@ -11,14 +11,14 @@
                 
                 var deferred = $q.defer();
                 var url = PARAMS.BASE_URL + 'GetDataDict';
-                $http.post(url, getDownlistReq)
+               /* $http.post(url, getDownlistReq)
                     .then(function(result){
                         console.log('GetDataDict result:'+result);
                         console.log(result);
                         deferred.resolve(result);
                     });
-                
-                /*var mockDownlistData = {data:{
+                */
+                var mockDownlistData = {data:{
     "success": "true", 
     "LU_Location": [
         {
@@ -113,7 +113,7 @@
         }
     ]
 }};
-                deferred.resolve(mockDownlistData);*/
+                deferred.resolve(mockDownlistData);
                 return deferred.promise;
             }
 

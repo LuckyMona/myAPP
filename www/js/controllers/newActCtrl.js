@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory',
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -20,6 +20,20 @@
       console.log('getDownlist');
       var token = localStorageService.get('token');
       var username = localStorageService.get('username');
+      
+
+      chkTokenFactory.refreshToken(token)
+        .then(function(result){
+          if(result.statusText ==="OK"){
+            // Token expires and get refreshed token
+            token = result.data;
+            localStorageService.set('token',result.data);
+          }else if(result==='false'){
+            // Token not expire
+            return;
+          }
+        });
+
       var getDownlistReq = {
         token:token,
         username:username,
@@ -61,7 +75,7 @@
     
 
     // 引导用户先选jobNubmer
-    $scope.showAlert = function(){
+    var showAlert = function(){
       var myAlert = $ionicPopup.alert({
           title: '请先选择Job Number',
           template: '<a style="text-align:center;">点确定去选择Job Number</a>'
@@ -73,7 +87,7 @@
            $ionicViewSwitcher.nextDirection("forward");
       });
     }
-    $scope.showAlert();
+    showAlert();
 
     $scope.toggleTradeShow = function(){
       $scope.isTradeShow = !$scope.isTradeShow;
@@ -116,10 +130,19 @@
         })
     }
     getTasklist();   
-   
+
+    var initNewAct = function(){
+      getDownlist();
+      getJobList();
+      showAlert();
+      getTasklist();
+
+    }   
     $rootScope.$on('loginSuccess', function(){
       initNewAct();
+
     })
+
 
     // 获取地址下拉菜单,需要根据ProjectID筛选
     $scope.getLocationBlock = function(){
@@ -299,7 +322,7 @@
         });
     }
 
-    // saveAct
+    
     onSelect('review', true);
     onSelect('trade', true);
     onSelect('category', false);
@@ -505,6 +528,7 @@
                 var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
                 var options = new FileUploadOptions();
                 options.fileKey = "file";
+                options.httpMethod = 'POST';
                 options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
                 options.mimeType = "image/jpeg";
                 options.chunkedMode = false;
@@ -512,8 +536,7 @@
                    Connection: "close"
                 };
 
-                var params = {};
-                params.value1 = "{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
+                var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
                 
                 options.params = params;
 

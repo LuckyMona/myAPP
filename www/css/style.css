@@ -148,13 +148,21 @@
 .has-header49 { top: 49px; height: 100%; }
 
 .r-img { position: absolute; top: 16px; right: 16px; color:#8e8e8e; }
-.r-img > img { height: 40px; margin-right: 10px; }
+.r-img > img { max-height: 58px; margin-right: 10px; }
 
 .r-img h2 img { height:20px; }
 .r-img p { text-align: center; color:#8e8e8e; }
 .upload > h2 { color:#333333; }
-.upload > p { color:#8e8e8e; margin-bottom: -4px; }
-
+.upload > p { color:#8e8e8e; margin-bottom: -4px; min-height:40px; }
+.upload.item { padding-right:130px; }
+.upload_attach { 
+    transform: rotate(0deg); 
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);    
+    color: #8e8e8e;    
+    font-size: 24px; }
 
 .thinBar { background:#efeff4; height:10px; }
 .sign-btn { color:#ff3b30 !important; background: #fff !important; }
@@ -222,6 +230,11 @@
 .ellipsis { text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden; }
+.no_ellipsis {
+    text-overflow: initial;
+    overflow: auto;
+    white-space: normal;
+}
 .ion-android-arrow-back:before { font-size: 26px !important; }
 .radio-icon { color:#4CA2FF !important; }
 .item-radio input:checked + .radio-content .item-content {

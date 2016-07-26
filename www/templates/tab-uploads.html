@@ -5,11 +5,11 @@
 
         <a class="upload item item-button-right" href="" ng-repeat="upload in uploadItems">
           <h2>{{upload.createdOn}}</h2>
-          <p class="h20">{{upload.description}}</p>
+          <p class="h20 no_ellipsis">{{upload.description}}</p>
           <div class="r-img" ng-show="{{upload.photos.length}}">
              <img  ng-src="{{upload.photos[0]}}" class="fl">
             <div class="fl">
-              <h2><img ng-src="img/img.gif"></h2>
+              <h2><i class="upload_attach fr icon ion-android-attach"></i></h2>
               <p>{{upload.photoLength}}</p>
             </div>
           </div>  
