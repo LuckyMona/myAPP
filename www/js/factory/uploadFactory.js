@@ -51,7 +51,7 @@
                         }*/
                         var uploadActReq = results[i].idData;
                         //console.log(uploadActReq);
-                        uploadActReq = uploadActReq.replace(/\"/g,"\'");
+                        //uploadActReq = uploadActReq.replace(/\"/g,"\'");
                         //console.log(uploadActReq);
                         // 单条内容中的photos数组
                         
@@ -89,7 +89,13 @@
                            return;
                         }
                       });
-                    uploadActReqs[n].uploadActReq.token = token;
+                    
+                    var uploadActReqStr = uploadActReqs[n].uploadActReq;
+                    var uploadActReqObj = JSON.parse(uploadActReqStr);
+                    uploadActReqObj.token = token;
+                    uploadActReqs[n].uploadActReq = JSON.stringify(uploadActReqObj).replace(/\"/g, "\'");
+
+                    console.log(uploadActReqs[n].uploadActReq);
 
                     newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
                       .then(function(result){
@@ -115,9 +121,8 @@
                               var uploadPhotoRecur = function(k){
                                   if(k < uploadActPhotosReq.length){
 
-                                      // may error done dealing
-                                      uploadPhotoAct(uploadActPhotosReq[k]);
-                                      function uploadPhotoAct(uploadActPhotosReq){
+                                      
+                                      var uploadPhotoAct = function(uploadActPhotosReq){
                                           newActFactory.uploadPhotoAct(uploadActPhotosReq)
                                             .then(function(result){
                                                 if(result.success){
@@ -131,6 +136,8 @@
                                                 }
                                             });
                                       }
+                                      // may error done dealing
+                                      uploadPhotoAct(uploadActPhotosReq[k]);
                                   } else {
                                       // 这条数据全部上传完毕
                                       console.log('the NO.' +n +'data_s all photos upload!');
@@ -145,7 +152,7 @@
                                       if(badgeUpload === 0){
                                         return;
                                       }
-                                      badgeUpload --;
+                                      badgeUpload = badgeUpload-1;
                                       localStorageService.set('badgeUpload', badgeUpload);
                                       $rootScope.$broadcast('updateBadgeUpload',badgeUpload);
                                       // 隔3s上传下一条数据

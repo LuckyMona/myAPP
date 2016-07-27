@@ -41,6 +41,7 @@
       console.log(getDownlistReq);
       var getDownlistReqStr = '"'+JSON.stringify(getDownlistReq).replace(/\"/g,"\'")+'"';
 
+      // TODO loading弹窗
       newActFactory.getDownlist(getDownlistReqStr)
         .then(function(result){
           //var jsonRes = JSON.parse(result.data);
@@ -50,7 +51,10 @@
             // console.log('downlistData:');
             console.log(result.data);
             localStorageService.set('downlistData', result.data);
+            getJobList();
+            getTasklist();
           }else{
+            console.log('加载错误，请重试');
             localStorageService.clear('token');
             $state.go('login.active');
             $ionicViewSwitcher.nextDirection("back");
@@ -60,7 +64,7 @@
     getDownlist(); 
 
     // 获取jobList下拉菜单
-    var getJobList = function(){
+    function getJobList(){
       var jobLists = localStorageService.get('downlistData').LU_Project;
       console.log(jobLists);
       /*var jobItems = [],
@@ -75,7 +79,7 @@
     
 
     // 引导用户先选jobNubmer
-    var showAlert = function(){
+    function showAlert (){
       var myAlert = $ionicPopup.alert({
           title: '请先选择Job Number',
           template: '<a style="text-align:center;">点确定去选择Job Number</a>'
@@ -111,7 +115,7 @@
     chkAppVersion();*/
 
     // 获取Task List的数据
-    var getTasklist = function(){
+    function getTasklist (){
       console.log('getTasklist');
       var token = localStorageService.get('token');
       var getTasklistReq = {
@@ -133,9 +137,9 @@
 
     var initNewAct = function(){
       getDownlist();
-      getJobList();
-      showAlert();
-      getTasklist();
+      //getJobList();
+      //showAlert();
+      //getTasklist();
 
     }   
     $rootScope.$on('loginSuccess', function(){
@@ -526,6 +530,9 @@
                 var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
                 var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
                 var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
+                var access_token = localStorageService.get('token').access_token;
+                //var access_tokenStr = JSON.stringify(token).replace("\"","\'");
+
                 var options = new FileUploadOptions();
                 options.fileKey = "file";
                 options.httpMethod = 'POST';
@@ -536,7 +543,9 @@
                    Connection: "close"
                 };
 
-                var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
+                var params = {};
+                params.all = "{'token':'"+access_token+"','ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
+                //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
                 
                 options.params = params;
 
@@ -644,27 +653,6 @@
       console.log('date:'+ date);
       return date;
     }
-    //$scope.test_a = 'aa';
-  
-    //dbFactory.dropTbl('test');
-    // dbFactory.createTbl('test',['aa','bb']);
-    // dbFactory.save('test',{
-    //   aa:'123aaa'
-    // });
-   
-    /*db.transaction(function(tx){
-      tx.executeSql('DROP TABLE fe_Activity');
-      tx.executeSql('DROP TABLE fe_Activity2');
-      tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity'+
-        ' (ActivityId_fake unique, Project, Location, Category, Review, Trade, company, CreatedOn, Description)');
-      //tx.executeSql('CREATE TABLE IF NOT EXISTS fe_Activity4 (ActivityId_fake unique, Location, Category)');
-      // tx.executeSql('INSERT INTO PHOTOS (id, testArr) VALUES (2, "1,2,3")');
-      //tx.executeSql('INSERT INTO fe_Activity (ActivityId_fake, Location) VALUES (23, ?)',[$scope.test_a]);
-      //tx.executeSql('INSERT INTO fe_Activity4 (ActivityId_fake, Location) VALUES (23, ?)',[$scope.test_a]);
-    });*/
-
-    
-
 
     // 保存数据
     
@@ -676,12 +664,7 @@
       // 点击保存按钮后要间隔100ms,为了等一些耗时操作的完成，例如localStorage存数据
       $timeout(function() {
           var confirmBy = $scope.locationOn && $scope.categoryOn && ( $scope.attachImgs.length>0 || $scope.isMockInputVal)
-         /* console.log($scope.locationOn);
-          console.log($scope.categoryOn);
-          console.log($scope.attachImgs.length>0 || $scope.isMockInputVal);
-          console.log($scope.isMockInputVal);
-
-          console.log('confirmBy：'+ confirmBy);*/
+         
           if(confirmBy){
             console.log('saveAct confirmBy');
             
@@ -802,16 +785,25 @@
     
     function doUpload(){
 
-        // 在chrome上测试
+        
         // uploadFactory.coreUpload();
         document.addEventListener("deviceready",onDeviceReady, false);
         function onDeviceReady(){
-            //var type = $cordovaNetwork.getNetwork();
-            //console.log('getNetwork:'+ type);
-            console.log('getNetwork');
-            //var isOnline = $cordovaNetwork.isOnline();
-            //var isOffline = $cordovaNetwork.isOffline(); 
-            
+
+            var type = $cordovaNetwork.getNetwork();
+            var allow3G = localStorageService.get('allow3G') || false;
+            console.log('getNetwork:'+ type);
+            //console.log('getNetwork');
+            var isOnline = $cordovaNetwork.isOnline();
+            var isOffline = $cordovaNetwork.isOffline(); 
+            if(isOnline ===true){
+              if(type==="wifi"||type==='CELL_3G' && allow3G===true){
+                  console.log('online! start upload');
+                  uploadFactory.coreUpload(true);
+              }
+            }
+
+            // 监听allow3G的改变
             $rootScope.$on('allow3G_Change', function(d,data){
               if(data === true){
                 var type = $cordovaNetwork.getNetwork();

@@ -152,6 +152,11 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             jobName:jobList[i]
         });
     }*/
+    $scope.goBack = function(){
+      var fromState = $rootScope.jobList_fromState;
+      $state.go(fromState);
+      $ionicViewSwitcher.nextDirection("back");
+    }
     $scope.jobListArr = localStorageService.get('jobItems');
     //console.log(typeof $scope.jobListArr);
 

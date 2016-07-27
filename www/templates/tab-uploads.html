@@ -6,27 +6,14 @@
         <a class="upload item item-button-right" href="" ng-repeat="upload in uploadItems">
           <h2>{{upload.createdOn}}</h2>
           <p class="h20 no_ellipsis">{{upload.description}}</p>
-          <div class="r-img" ng-show="{{upload.photos.length}}">
+          <div class="r-img" ng-show="{{upload.photoLength}}">
              <img  ng-src="{{upload.photos[0]}}" class="fl">
             <div class="fl">
               <h2><i class="upload_attach fr icon ion-android-attach"></i></h2>
               <p>{{upload.photoLength}}</p>
             </div>
           </div>  
-        </a>
-        <!-- <a class="upload item item-button-right" href="">
-          <h2>2016/6/7 13:57</h2>
-          <p class="h20">落緊石屎</p>
-          <div class="r-img">
-            <img src="img/one.jpg" class="fl">
-            <div class="fl">
-              <h2><img src="img/img.gif"></h2>
-              <p>15</p>
-            </div>
-          </div>  
-        </a> -->
-        
-        
+        </a>   
 
         
     </div>
