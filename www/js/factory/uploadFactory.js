@@ -6,6 +6,49 @@
 
         function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory){
 
+            var _self = this;
+            // 使用cordova file transfer插件上传图片
+            function _uploadPhoto(imgURI){
+
+                var win = function (r) {
+                    console.log("Code = " + r.responseCode);
+                    console.log("Response = " + r.response);
+                    console.log("Sent = " + r.bytesSent);
+                }
+
+                var fail = function (error) {
+                    alert("An error has occurred: Code = " + error.code);
+                    console.log("upload error source " + error.source);
+                    console.log("upload error target " + error.target);
+                }
+
+                var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+                // var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
+                // var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
+                var access_token = localStorageService.get('token').access_token;
+                //var access_tokenStr = JSON.stringify(token).replace("\"","\'");
+
+                var options = new FileUploadOptions();
+                options.fileKey = "file";
+                options.httpMethod = 'POST';
+                options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
+                options.mimeType = "image/jpeg";
+                options.chunkedMode = false;
+                options.headers = {
+                   Connection: "close"
+                };
+
+                var params = {};
+                params.all = "{'token':'"+access_token+"','ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
+                //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
+                
+                options.params = params;
+
+                var ft = new FileTransfer();
+                ft.upload(imgURI, encodeURI(url), win, fail, options);
+
+            }
+
             function _coreUpload(isListenStop){
                 //onDeviceReady();
                 document.addEventListener("deviceready",onDeviceReady, false);
@@ -37,26 +80,15 @@
                     console.log('results.length>0');
                     for(var i=0; i<len; i++ )
                     {   
-                        // 单条内容中不包括photo的部分
-                        /*var uploadActReq = {
-                              ActivityId: results[i].ActivityId, // activityId怎么获取的？
-                              projectId: results[i].projectId,
-                              location: results[i].location,
-                              category: results[i].category,
-                              review: results[i].review,
-                              trade: results[i].trade,
-                              subcontractor: results[i].subcontractor,
-                              description: results[i].description,
-                              createdOn: results[i].createdOn,
-                        }*/
                         var uploadActReq = results[i].idData;
-                        //console.log(uploadActReq);
-                        //uploadActReq = uploadActReq.replace(/\"/g,"\'");
-                        //console.log(uploadActReq);
+                        
                         // 单条内容中的photos数组
                         
                         // 单条内容由数据和photos组成
                         uploadActReqs.push({
+                            //ProjectID:results[i].projectId,
+                            //StaffID:results[i].StaffID,
+                            //DateCreated:results[i].DateCreated,
                             uploadActReq: uploadActReq,
                             actPhotos: results[i].photos.split(','),
                             ActivityID:results[i].ActivityId,
@@ -105,7 +137,7 @@
                           //console.log('ActivityId:'+ result.ActivityId);
 
                           // 把ActivityId存入本地数据库，调用在定义后面
-                          var updateActivityIdSuccess = function(){
+                            var updateActivityIdSuccess = function(){
                               var lenPhoto = uploadActReqs[n].actPhotos.length;
                               var uploadActPhotosReq = [];
                               if(lenPhoto>0){
@@ -120,10 +152,9 @@
                               // 上传每一条数据中的照片部分，递归
                               var uploadPhotoRecur = function(k){
                                   if(k < uploadActPhotosReq.length){
-
-                                      
+                                      console.log(uploadActPhotosReq[k]);
                                       var uploadPhotoAct = function(uploadActPhotosReq){
-                                          newActFactory.uploadPhotoAct(uploadActPhotosReq)
+                                            _self.uploadPhoto(uploadActPhotosReq[k])
                                             .then(function(result){
                                                 if(result.success){
                                                   console.log('th NO. '+k+' photo upload success!');
@@ -193,6 +224,7 @@
 
             return {
                 coreUpload:_coreUpload,
+                uploadPhoto:_uploadPhoto,
             }
         }
 })();

@@ -401,65 +401,6 @@
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength ++;
 
-
-                // 使用cordova file transfer插件上传图片
-                // 测试上传功能OK后，会把这部分摘出来做封装
-                var win = function (r) {
-                    console.log("Code = " + r.responseCode);
-                    console.log("Response = " + r.response);
-                    console.log("Sent = " + r.bytesSent);
-                }
-
-                var fail = function (error) {
-                    alert("An error has occurred: Code = " + error.code);
-                    console.log("upload error source " + error.source);
-                    console.log("upload error target " + error.target);
-                }
-
-
-                var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
-                var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
-                var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
-                options.mimeType = "image/jpeg";
-                options.chunkedMode = false;
-                options.headers = {
-                   Connection: "close"
-                };
-
-                var params = {};
-                params.value1 = "{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
-                
-
-                options.params = params;
-
-                var ft = new FileTransfer();
-                ft.upload(imgURI, encodeURI(url), win, fail, options);
-
-
-                /*var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
-                var uploadOptions = {
-                  mimeType:'image/jpeg',
-                  fileKey:"file",
-                  httpMethod : 'POST',
-                  fileName:'aaa',
-                  chunkedMode :false,
-                  params:"{'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}"
-                };
-                
-
-                $cordovaFileTransfer.upload(encodeURI(url),imgURI, uploadOptions)
-                  .then(function(result){
-                    console.log('img upload success');
-                  }, function(err){
-                    console.log('img uplaod fail');
-                    console.log(err);
-                  });
-*/
-
-
               }, function(err) {
                 console.debug("Unable to obtain picture: " + err, "app");
               });
@@ -494,14 +435,7 @@
           var photoReq;
           document.addEventListener("deviceready", onDeviceReady, false);
           function onDeviceReady() {
-              /*navigator.camera.getPicture(function cameraSuccess(imageUri) {
-
-                  $scope.imgUri = imageUri;
-
-              }, function cameraError(error) {
-                  console.debug("Unable to obtain picture: " + error, "app");
-
-              }, options);*/
+              
 
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
@@ -511,55 +445,10 @@
                 });
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength++;
-
-                // 测试上传图片接口
-                // 使用cordova file transfer插件上传图片
-                // 测试上传功能OK后，会把这部分摘出来做封装
-                var win = function (r) {
-                    console.log("Code = " + r.responseCode);
-                    console.log("Response = " + r.response);
-                    console.log("Sent = " + r.bytesSent);
-                }
-
-                var fail = function (error) {
-                    alert("An error has occurred: Code = " + error.code);
-                    console.log("upload error source " + error.source);
-                    console.log("upload error target " + error.target);
-                }
-
-                var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
-                var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
-                var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
-                var access_token = localStorageService.get('token').access_token;
-                //var access_tokenStr = JSON.stringify(token).replace("\"","\'");
-
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.httpMethod = 'POST';
-                options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
-                options.mimeType = "image/jpeg";
-                options.chunkedMode = false;
-                options.headers = {
-                   Connection: "close"
-                };
-
-                var params = {};
-                params.all = "{'token':'"+access_token+"','ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
-                //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
                 
-                options.params = params;
-
-                var ft = new FileTransfer();
-                ft.upload(imgURI, encodeURI(url), win, fail, options);
               }, function(err) {
                 console.debug("Unable to obtain picture: " + err, "app");
               });
-
-              /*$cordovaCamera.cleanup().then(function(){
-                console.log('cleanup success');
-              },function(){
-                console.log('cleanup err');
-              });*/
           }
     }
     
@@ -825,11 +714,14 @@
               if(networkState === "wifi"){
                 uploadFactory.coreUpload(true);
                 // TODO 开定时器，检测什么时候变到了3G
+                
               } else if(networkState === "CELL_3G" && allow3G === true){
                 uploadFactory.coreUpload(true);
                 // TODO 开定时器，检测什么时候从3G变到了非wifi，就关掉上传
+                
               } else if(networkState === "CELL_3G" && allow3G === false){
                 // 当用户点击start upload的时候再上传
+                
                 localStorageService.set('isStartUpload', true);
               }
 
