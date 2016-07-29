@@ -18,8 +18,9 @@
 	          password:$scope.loginO.password,
 
 	        };
-	        var loginReqStr = "username="+$scope.loginO.username + "&password=" +$scope.loginO.password + "&grant_type=password&client_id=123";
-	        console.log(loginReq);
+	        // var loginReqStr = "username="+$scope.loginO.username + "&password=" +$scope.loginO.password + "&grant_type=password&client_id=123";
+	        var loginReqStr = "username=training44&grant_type=password&client_id=27e0501f-5dad-4b7e-b6c7-bd66a20ec626&device_id=123456&device_name=PcClient&password=wrGam13546";
+	        //console.log(loginReq);
 	        userFactory.login(loginReqStr).then(
 	            function(result){
 	              console.log(result);
@@ -29,6 +30,9 @@
 	                // $window.location.href = url;
 	                
 	                localStorageService.set('token',result.data);
+	                localStorageService.set('staffID', '123');
+	                localStorageService.set('UID', 'This_is_UID');
+	                localStorageService.set('Name', 'Name');
 	                localStorageService.set('username',$scope.loginO.username);
 	                //$localStorage.token = result.data;
 	                

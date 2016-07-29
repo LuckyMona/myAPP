@@ -64,7 +64,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
 .controller('SystemCtrl', function($rootScope, $scope, $window,$timeout,localStorageService, $state, $ionicViewSwitcher, $translate) {
   
-   
+    $scope.UID = localStorageService.get('UID');
+    $scope.Name = localStorageService.get('Name');
     $scope.allow3G = false;
     // $scope.isGray_language = false;
     // $scope.isGray_jobNumber = false;
@@ -169,6 +170,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         }
         $rootScope.$broadcast('jobNumberSelect', newVal);
         localStorageService.set('projectID',newVal);
+        localStorageService.set('staffID','234');
         var back = $ionicHistory.backView().stateName;
         console.log(back);
         $state.go(back);

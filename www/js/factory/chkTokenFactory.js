@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('chkTokenFactory', chkTokenFactoryFunc);
 
-        function chkTokenFactoryFunc($q, $http){
+        function chkTokenFactoryFunc(PARAMS, $q, $http){
 
             var _refreshToken = function(token){
                 // check if token expires
@@ -15,8 +15,8 @@
                 // if token expires
                 if(isExpire){
                     
-                    var url = 'https://gcl-oauth-test.azurewebsites.net/token',
-                        reFreshTokenReqStr = 'refresh_token=' + token.refresh_token +'&grant_type=refresh_token&client_id=123';
+                    var url = PARAMS.AUTH_SERVER,
+                        reFreshTokenReqStr = 'refresh_token=' + token.refresh_token +'&grant_type=refresh_token&client_id=27e0501f-5dad-4b7e-b6c7-bd66a20ec626';
                     $http({
                         method:'POST',
                         headers:{

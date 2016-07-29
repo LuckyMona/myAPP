@@ -546,9 +546,10 @@
     // 保存数据
     
     // dbFactory.dropTbl('fe_Activity');
-    // upload消息数
-    var badgeUpload = localStorageService.get('badgeUpload')|| 0;
+    
     $scope.saveAct = function(){
+      // upload消息数
+      var badgeUpload = localStorageService.get('badgeUpload')|| 0;
       console.log('start saveAct');
       // 点击保存按钮后要间隔100ms,为了等一些耗时操作的完成，例如localStorage存数据
       $timeout(function() {
@@ -561,6 +562,7 @@
                 review = $scope.reviewOn? $scope.review:"",
                 trade = $scope.tradeOn? $scope.trade:"",
                 company = $scope.companyOn? $scope.company:"",
+                staffID = localStorageService.get('staffID'),
                 projectID = localStorageService.get('projectID'),
                 log = $scope.isMockInputVal? $scope.mockInputData:"",
                 idData;
@@ -570,7 +572,7 @@
             }    
             idData = {
 
-              "StaffID":1,
+              "StaffID":staffID,
               "ProjectID":projectID,
               "LocationID":$scope.locationID,
               "CategoryID": $scope.categoryID,

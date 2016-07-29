@@ -11,13 +11,13 @@
 				console.log(loginReq);
 
 				var defer = $q.defer();
-				var url = 'https://gcl-oauth-test.azurewebsites.net/token';
+				var token_url = PARAMS.AUTH_SERVER;
 				$http({
 					method:'POST',
 					headers:{
 						'Content-Type':'application/x-www-form-urlencoded'
 					},
-					url:'https://gcl-oauth-test.azurewebsites.net/token',
+					url:token_url,
 					data:loginReq})
 					.then(function(result){
 						console.log(result);

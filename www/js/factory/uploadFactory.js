@@ -4,13 +4,13 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc($rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory){
+        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory){
 
             var _self = this;
             // 使用cordova file transfer插件上传图片
-            function _uploadPhoto(imgURI){
+            function _uploadPhoto(reqObj, win, fail){
 
-                var win = function (r) {
+                /*var win = function (r) {
                     console.log("Code = " + r.responseCode);
                     console.log("Response = " + r.response);
                     console.log("Sent = " + r.bytesSent);
@@ -21,8 +21,9 @@
                     console.log("upload error source " + error.source);
                     console.log("upload error target " + error.target);
                 }
-
+*/
                 var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+
                 // var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
                 // var testUrl2 = 'http://192.168.12.200:8733/Test/rest/SaveImage';
                 var access_token = localStorageService.get('token').access_token;
@@ -31,21 +32,24 @@
                 var options = new FileUploadOptions();
                 options.fileKey = "file";
                 options.httpMethod = 'POST';
-                options.fileName = imgURI.substr(imgURI.lastIndexOf('/') + 1);
+                options.fileName = reqObj.photo.substr(reqObj.photo.lastIndexOf('/') + 1);
                 options.mimeType = "image/jpeg";
                 options.chunkedMode = false;
                 options.headers = {
                    Connection: "close"
                 };
 
+                var projectID = localStorageService.get('projectID');
+                var staffID = localStorageService.get('staffID');
+
                 var params = {};
-                params.all = "{'token':'"+access_token+"','ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'}";
+                params.all = "{'token':'"+access_token+"','ProjectID':'"+projectID+"','StaffID':'"+staffID+"','DateCreated':'2016-01-01 00:00:00'}";
                 //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
                 
                 options.params = params;
 
                 var ft = new FileTransfer();
-                ft.upload(imgURI, encodeURI(url), win, fail, options);
+                ft.upload(reqObj.photo, encodeURI(url), win, fail, options);
 
             }
 
@@ -90,7 +94,7 @@
                             //StaffID:results[i].StaffID,
                             //DateCreated:results[i].DateCreated,
                             uploadActReq: uploadActReq,
-                            actPhotos: results[i].photos.split(','),
+                            actPhotos: results[i].photos.length>0?results[i].photos.split(','):[],
                             ActivityID:results[i].ActivityId,
                         });
                     }                
@@ -127,7 +131,7 @@
                     uploadActReqObj.token = token;
                     uploadActReqs[n].uploadActReq = JSON.stringify(uploadActReqObj).replace(/\"/g, "\'");
 
-                    console.log(uploadActReqs[n].uploadActReq);
+                    //console.log(uploadActReqs[n].uploadActReq);
 
                     newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
                       .then(function(result){
@@ -138,7 +142,11 @@
 
                           // 把ActivityId存入本地数据库，调用在定义后面
                             var updateActivityIdSuccess = function(){
+                              if(uploadActReqs[n].actPhotos===[""]){
+                                uploadActReqs[n].actPhotos = [];
+                              }
                               var lenPhoto = uploadActReqs[n].actPhotos.length;
+
                               var uploadActPhotosReq = [];
                               if(lenPhoto>0){
                                   for(var j = 0; j<lenPhoto; j++ ){
@@ -151,24 +159,32 @@
 
                               // 上传每一条数据中的照片部分，递归
                               var uploadPhotoRecur = function(k){
-                                  if(k < uploadActPhotosReq.length){
+                                  if( k < uploadActPhotosReq.length){
                                       console.log(uploadActPhotosReq[k]);
                                       var uploadPhotoAct = function(uploadActPhotosReq){
-                                            _self.uploadPhoto(uploadActPhotosReq[k])
-                                            .then(function(result){
-                                                if(result.success){
-                                                  console.log('th NO. '+k+' photo upload success!');
-                                                  //从本地删除已经上传的photo，防止如果没有完成整条数据上传，下次重试的时候，重复上传
-                                                  //dbFactory.update('fe_Activity',{ActivityId:uploadActReqs[n].ActivityID}, k);
-                                                  uploadPhotoRecur(k+1);
-                                                } else {
-                                                  console.log('th NO. '+k+' photo upload fail, retry!');
-                                                  uploadPhotoAct(uploadActPhotosReq);
-                                                }
+                                            _uploadPhoto(uploadActPhotosReq,function(r){
+                                              console.log('win');
+                                              console.log(r);
+                                              console.log('th NO. '+k+' photo upload success!');
+                                              //从本地删除已经上传的photo，防止如果没有完成整条数据上传，下次重试的时候，重复上传
+                                              //dbFactory.update('fe_Activity',{ActivityId:uploadActReqs[n].ActivityID}, k);
+                                              uploadPhotoRecur(k+1);
+
+                                            }, function(err){
+                                              
+                                              console.log(err);
+                                              console.log('th NO. '+k+' photo upload fail, retry!');
+                                              $timeout(function(){
+                                                uploadPhotoAct(uploadActPhotosReq)
+                                              },3000);
                                             });
+                                              
                                       }
                                       // may error done dealing
-                                      uploadPhotoAct(uploadActPhotosReq[k]);
+                                      //uploadPhotoAct(uploadActPhotosReq[k]);
+                                      if(uploadActPhotosReq[k].photo){
+                                         uploadPhotoAct(uploadActPhotosReq[k]);         
+                                      }
                                   } else {
                                       // 这条数据全部上传完毕
                                       console.log('the NO.' +n +'data_s all photos upload!');

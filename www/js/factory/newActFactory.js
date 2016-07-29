@@ -7,11 +7,11 @@
         function newActFactoryFunc($q, $http, PARAMS){
 
             var _getDownlist = function(getDownlistReq){
-                console.log(getDownlistReq);
+                //console.log(getDownlistReq);
                 
                 var deferred = $q.defer();
                 var url = PARAMS.BASE_URL + 'GetDataDict';
-               $http.post(url, getDownlistReq)
+                $http.post(url, getDownlistReq)
                     .then(function(result){
                         console.log('GetDataDict result:'+result);
                         console.log(result);
@@ -145,11 +145,11 @@
             }
 
             var _uploadAct = function(uploadActReq){
-                console.log(uploadActReq);
+                // console.log(uploadActReq);
                 var url = PARAMS.BASE_URL + 'UploadActivity';
                 var deferred = $q.defer();
                 var quoteReq = "\""+uploadActReq+"\"";
-                console.log(quoteReq);
+                // console.log(quoteReq);
                 $http.post(url, quoteReq)
                     .then(function(result){
                         console.log(result);
