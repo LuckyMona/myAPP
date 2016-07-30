@@ -6,7 +6,7 @@
 
         function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory){
 
-            var _self = this;
+           
             // 使用cordova file transfer插件上传图片
             function _uploadPhoto(reqObj, win, fail){
 
@@ -62,7 +62,7 @@
                   if(isListenStop){
                     $rootScope.$on('allow3G_Change', function(d, data){
                         var type = $cordovaNetwork.getNetwork();
-                        if(data === false && type==="CELL_3G"){
+                        if(data === false && (type===Connection.CELL_3G || type===Connection.CELL_4G)){
                             stopUpload();
                         }
                     });
@@ -101,11 +101,6 @@
                 };
 
                 console.log('uploadActReqs:'+ uploadActReqs);
-                    
-                //  if(type === 'wifi')
-                //  if(true)
-                //  {
-                //  console.log('wifi');
 
                 // 上传每一条数据，递归
                 var n = 0;

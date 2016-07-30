@@ -13,8 +13,6 @@
                 var url = PARAMS.BASE_URL + 'GetDataDict';
                 $http.post(url, getDownlistReq)
                     .then(function(result){
-                        console.log('GetDataDict result:'+result);
-                        console.log(result);
                         deferred.resolve(result);
                     });
                 
@@ -118,8 +116,7 @@
             }
 
             var _getTasklist = function(getTasklistReq){
-                console.log('getTasklistReq:');
-                console.log(getTasklistReq);
+               
                 var deferred = $q.defer();
                 /*$http.post(url, req)
                     .then(function(result){

@@ -22,14 +22,14 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     // var href =  $window.location.href.split('#')[0] + "#/tab/taskList";
     var getTasklist = function(){
        $scope.tasklists = localStorageService.get('tasklistData');
-       console.log($scope.tasklists);
+       
     }
     getTasklist();
 
 
 })
 .controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory) {
-   console.log('UploadsCtrl');
+   
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
         //console.log();
@@ -44,7 +44,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
             uploadFactory.coreUpload(false);
             return;
         }
-        console.log('not allowed manual upload');
+        alert('not allowed manual upload');
    }
    $rootScope.$on('saveAct', function(){
         //$scope.uploadItems = localStorageService.get('actDatas');
@@ -100,7 +100,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 .controller('LangCtrl',function($rootScope, $scope, $state, $ionicViewSwitcher){
     // language.html页面单选后跳回来
     $scope.$watch("lan", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
+        
         if(newVal==oldVal){
           return;
         }
@@ -115,6 +115,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 .controller('TabCtrl', function($rootScope, $scope, localStorageService){
   
     $scope.badgeUpload = localStorageService.get('badgeUpload') || 0;
+    $scope.uploadNum = localStorageService.get('badgeUpload') || 0;
     $rootScope.$on('updateBadgeUpload', function(d, data){
         $scope.badgeUpload = data;
     });
@@ -128,18 +129,65 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         $scope.jobNumber = data;
     })
 })
-.controller('PhotoCtrl', function($scope,localStorageService){
+.controller('PhotoCtrl', function($scope,localStorageService, $state, $ionicViewSwitcher, $rootScope){
   $scope.photoList = localStorageService.get('photoList');
+  // 选择几张
+  $scope.selectNum = 0;
+  // 是否长按呼出选择icon
+  $scope.isCallSelect = false;
   // 点击图片放大
   $scope.bigImage = false;
   $scope.showBigImg = function(imgUri){
-    console.log(imgUri);
-    $scope.bigImgUrl = imgUri;
-    $scope.bigImage = true;
+    if($scope.isCallSelect === false){
+      console.log(imgUri);
+      $scope.bigImgUrl = imgUri;
+      $scope.bigImage = true;
+    }
+    return;
   }
   $scope.hideBigImg = function(){
-    console.log('hideBigImg');
+    
     $scope.bigImage = false;
+  }
+
+  //$scope.isShowSelectIcon = false;
+
+  // handler of on-hold event
+  $scope.callSelect = function(photoItem){
+
+    console.log('callSelect');
+    $scope.photoList.forEach(function(item, index, arr){
+      item.isShowSelectIcon = true;
+      item.isSelected = false;
+    });
+    $scope.selectNum = 1;
+    photoItem.isSelected = true;
+    $scope.isCallSelect = true;
+  }
+
+  $scope.doSelect = function(photoItem){
+      console.log('doSelect');
+      if($scope.isCallSelect === true){
+          if(photoItem.isSelected === true){
+            photoItem.isSelected = false;
+          }else{
+            photoItem.isSelected = true;
+            $scope.selectNum ++;
+          }
+      }
+      return;
+  }
+
+  $scope.deletePhoto = function(){
+    $scope.photoList.forEach(function(item, index, arr){
+        if(item.isSelected ===true){
+          arr.splice(index,1);
+        }
+    });
+    $scope.isCallSelect = false;
+    $rootScope.$broadcast('deletePhotoDone', $scope.photoList);
+    $state.go('tab.newAct');
+    $ionicViewSwitcher.nextDirection("back");
   }
 
 })
@@ -164,15 +212,22 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     // jobList.html页面单选后跳回来
     $scope.jobList = 'J1';
     $scope.$watch("jobList", function(newVal,oldVal){
-        console.log('jobList newVal:'+newVal);
+        
         if(newVal==oldVal){
           return;
         }
         $rootScope.$broadcast('jobNumberSelect', newVal);
         localStorageService.set('projectID',newVal);
-        localStorageService.set('staffID','234');
+        var StaffID = "";
+        $scope.jobListArr.forEach(function(item, index, arr){
+            if(item.ProjectID === newVal){
+              StaffID = item.StaffID;
+            }
+        });
+
+        localStorageService.set('staffID',StaffID);
         var back = $ionicHistory.backView().stateName;
-        console.log(back);
+        
         $state.go(back);
         $ionicViewSwitcher.nextDirection("back");
     });
@@ -189,7 +244,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     $scope.floorItems = floorNameArr;
     
     $scope.$watch('floorModel', function(newVal,oldVal){
-        console.log('floorNewVal:'+ newVal);
+        
         if(newVal === oldVal){
           return;
         }
@@ -197,7 +252,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
           return (item.AreaName ===newVal)
         });
 
-        console.log(floorItems);
+        
         // localStorageService.set('floorSelected', newVal);
         $rootScope.$broadcast('floorChange', floorItems);
         // console.log('$state');
@@ -235,7 +290,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
                 //localStorageService.set('floorItems', locations[i]);
             }
         }
-        console.log(areaArr);
+        
         localStorageService.set('floorItems',areaArr);
         /*localStorageService.set('blockSelected',{
           selectBlock:block,
@@ -253,7 +308,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     $scope.category = "";
     $scope.categoryItems = localStorageService.get('categoryItems');
     $scope.$watch('category', function(newVal, oldVal){
-    console.log('newVal:'+newVal);
+    
     // console.log('oldVal:'+oldVal);
     if(newVal==oldVal){
       return;
@@ -285,7 +340,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 .controller('ReviewCtrl', function($rootScope,$scope, localStorageService, $state, $ionicViewSwitcher){
 
     var reviewItems = localStorageService.get('reviewItems');
-    console.log('reviewItems'+reviewItems);
+    
 
     for(var i=0, len=reviewItems.length; i<len; i++){
         reviewItems[i].checked = false;
@@ -304,8 +359,8 @@ angular.module('starter.controllers', ['LocalStorageModule'])
           reviewID.push(arr[i].StaffID);
         } else continue;
       }
-      console.log('reviewData:'+reviewData.join(','));
-      console.log('reviewID:'+reviewID.join(','));
+      //console.log('reviewData:'+reviewData.join(','));
+      //console.log('reviewID:'+reviewID.join(','));
       
       if(reviewData.length >0 ){
         $rootScope.$broadcast('reviewDone',{
@@ -325,7 +380,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
 
   var tradeItems = localStorageService.get('tradeItems');
   for(var i=0, len = tradeItems.length; i<len; i++){
-    console.log(tradeItems[i]);
+    
     tradeItems[i].checked = false;
   }
   $scope.tradeList = tradeItems;
@@ -378,7 +433,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
           companyID.push(arr[i].CompanyID);
         } else continue;
       }
-      console.log(companyData);
+      
 
       $rootScope.$broadcast('companyDone',{
         companyData:companyData.join(','),

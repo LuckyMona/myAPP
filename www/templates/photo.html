@@ -4,24 +4,26 @@
 	  	<i class="icon ion-android-arrow-back" style="color:#BFC1C3;" ></i>
 	  </a>
 	</div>
-	<h1 class="title"><i>3</i> {{ 'SELECTED' | translate }}</h1>
+	<h1 class="title" style="left:0 !important; right:0 !important;"><i>{{selectNum}}</i> {{ 'SELECTED' | translate }}</h1>
 	<div class="buttons">
-	  <button class="button button-clear button-positive">Delete</button>
+	  <button ng-click="deletePhoto()" class="button button-clear button-positive">{{ 'DELETE' | translate }}</button>
 	</div>
 </ion-header-bar> 
 <ion-view>
-	<ion-content class="bg-grey has-header44">
+	<ion-content class="bg-grey has-header44" ng-controller="PhotoCtrl">
 	  	<div class="photoWall">
 		  	<div class="eachPhoto" ng-repeat="photo in photoList" ng-click="showBigImg(photo.imgURI)">
-				<img ng-src="{{photo.imgURI}}">
-				<a href="" class="selectedPic"></a>
+				<img on-hold="callSelect(photo)" ng-click="doSelect(photo)"ng-src="{{photo.imgURI}}">
+				<a ng-show="photo.isShowSelectIcon" ng-class="{true:'selectedPic', false:'selectingPic'}[photo.isSelected]"></a>
+				
 			</div>
 			
 			<!-- <div class="eachPhoto">
 				<img src="img/one.jpg">
-				<a href="" class="selectedPic"></a>
-			</div>
-			<div class="eachPhoto">
+				<a ng-show="isSelectedIconShow" class="selectedPic"></a>
+				<a ng-show="isSelectingIconShow" class="selectingPic"></a>
+			</div> -->
+			<!-- <div class="eachPhoto">
 				<img src="img/one.jpg">
 				<a href="" class="selectedPic"></a>
 			</div>

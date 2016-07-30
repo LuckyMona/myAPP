@@ -17,7 +17,7 @@
 
     // 获取下拉菜单的数据
     var getDownlist = function(){
-      console.log('getDownlist');
+      
       var token = localStorageService.get('token');
       var username = localStorageService.get('username');
       
@@ -30,6 +30,7 @@
             localStorageService.set('token',result.data);
           }else if(result==='false'){
             // Token not expire
+          
             return;
           }
         });
@@ -38,7 +39,7 @@
         token:token,
         username:username,
       }
-      console.log(getDownlistReq);
+      
       var getDownlistReqStr = '"'+JSON.stringify(getDownlistReq).replace(/\"/g,"\'")+'"';
 
       // TODO loading弹窗
@@ -46,7 +47,7 @@
         .then(function(result){
           //var jsonRes = JSON.parse(result.data);
           //console.log(jsonRes);
-          console.log(result);
+          
           if(result.data.success==="true"){
             // console.log('downlistData:');
             console.log(result.data);
@@ -55,7 +56,7 @@
             getTasklist();
           }else{
             console.log('加载错误，请重试');
-            localStorageService.clear('token');
+            localStorageService.remove('token');
             $state.go('login.active');
             $ionicViewSwitcher.nextDirection("back");
           }
@@ -65,16 +66,30 @@
 
     // 获取jobList下拉菜单
     function getJobList(){
-      var jobLists = localStorageService.get('downlistData').LU_Project;
-      console.log(jobLists);
-      /*var jobItems = [],
-          i,
-          len = jobLists.length;
-      for(i=0; i<len; i++){
-        jobItems.push(jobLists[i].ProjectName);
-      }
-      console.log(jobItems);*/
-      localStorageService.set('jobItems',jobLists);
+      var staffProjectArr = localStorageService.get('Project#Staff');
+      var LU_Project = localStorageService.get('downlistData').LU_Project;
+
+      var LU_ProjectFilter = [];
+      /* LU_ProjectFilter 格式：
+      [{
+          ProjectID:"1",
+          ProjectNO:"1",
+          ProjectName:"ProjectName1",
+          StaffID:"111",
+      }] */
+      // 筛选LU_Project，条件是ProjectID等于Project#Staff中的Project
+      staffProjectArr.forEach(function(item, index, arr){
+        
+          LU_Project.forEach(function(itemPro, index, arr){
+              if(itemPro.ProjectID === item.split("#")[0]){
+                  itemPro.StaffID = item.split("#")[1];
+                  LU_ProjectFilter.push(itemPro);
+              }
+          });
+
+      });
+      console.log(LU_ProjectFilter);
+      localStorageService.set('jobItems',LU_ProjectFilter);
     }
     
 
@@ -85,7 +100,7 @@
           template: '<a style="text-align:center;">点确定去选择Job Number</a>'
           });
           myAlert.then(function(res) {
-           console.log('ok');
+           
            getJobList();
            $state.go('jobList');
            $ionicViewSwitcher.nextDirection("forward");
@@ -116,7 +131,7 @@
 
     // 获取Task List的数据
     function getTasklist (){
-      console.log('getTasklist');
+      
       var token = localStorageService.get('token');
       var getTasklistReq = {
         token:token
@@ -125,8 +140,7 @@
       newActFactory.getTasklist(getTasklistReq)
         .then(function(result){
             if(result.success){
-              console.log('tasklistData:');
-              console.log(result.data);
+              
               localStorageService.set('tasklistData', result.data);
               localStorageService.set('badgeTask',result.data.length);
               $rootScope.$broadcast('updateBadgeTask',result.data.length);
@@ -145,8 +159,7 @@
     $rootScope.$on('loginSuccess', function(){
       initNewAct();
 
-    })
-
+    });
 
     // 获取地址下拉菜单,需要根据ProjectID筛选
     $scope.getLocationBlock = function(){
@@ -162,7 +175,7 @@
           blockItems.push(locations[i]);
         }
       }
-      console.log('blockItems:' + blockItems);
+      
       localStorageService.set('blockItems', blockItems);
       $timeout(function(){
         $state.go('block');  
@@ -205,12 +218,12 @@
 
       // 第一个字母大写
       var upperSelectName = selectName.substr(0,1).toUpperCase() + selectName.substr(1,selectName.length-1);
-      console.log(upperSelectName);
+      
       var itemList = localStorageService.get('downlistData')['LU_'+upperSelectName];
       if(selectName === 'review'){
         itemList = localStorageService.get('downlistData').tbl_UserProfile;
       }
-      console.log(itemList);
+      
 
       //是否按ProjectID分组
       if(isFilterByProject && isFilterByProject===true){
@@ -221,7 +234,7 @@
           //是否分中英文
           if(isUseLang && isUseLang === true){
             var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-            console.log(langKey);
+            
             itemList.forEach(function(item, index, arr){
               if(langKey === 'us_en'){
                 item.langName = item[upperSelectName+'Name'];
@@ -234,7 +247,7 @@
           
       }
       
-      console.log(itemList);
+      
       localStorageService.set(selectName+'Items', itemList);
       $state.go(selectName);  
       $ionicViewSwitcher.nextDirection("forward");  
@@ -305,7 +318,7 @@
         
         if(isMulti){
             $rootScope.$on(selectName + 'Done', function(d, data){
-                console.log(data);
+                
                 $scope['is'+selectName+'Show'] = true;
                 $scope['isGray_'+ selectName] = false;
                 $scope[selectName] = data[selectName+'Data'];
@@ -318,7 +331,7 @@
             $scope['isGray_'+ selectName] = false;
             $scope[selectName] = data[selectName+'Data'];
             $scope[selectName + 'ID'] = data[selectName+'ID'];
-            console.log(data);
+            //console.log(data);
             if(selectName === 'category'){
               localStorageService.set('category', data.categoryData);
             }
@@ -347,7 +360,7 @@
     $scope.mockInputData = "Input Diary Entry Here…";
 
     $rootScope.$on('changeLanguage', function(e, lang){
-      //console.log('changeLanguage');  
+      
       if(lang === "zh_hk"){
         $scope.mockInputData = "請輸入項目日誌…";
         $scope.review = "選擇用戶";
@@ -374,11 +387,11 @@
         var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
-            destinationType: Camera.DestinationType.FILE_URI,
+            destinationType: navigator.camera.DestinationType.FILE_URI,
             // In this app, dynamically set the picture source, Camera or photo gallery
             sourceType: srcType,
-            encodingType: Camera.EncodingType.JPEG,
-            mediaType: Camera.MediaType.PICTURE,
+            encodingType: navigator.camera.EncodingType.JPEG,
+            mediaType: navigator.camera.MediaType.PICTURE,
             allowEdit: false,
             saveToPhotoAlbum:true,
             correctOrientation: true  //Corrects Android orientation quirks
@@ -389,14 +402,15 @@
     $scope.photoLength = 0;
     //拍照
     $scope.takePhoto = function(){
-      var options = _setOptions(Camera.PictureSourceType.CAMERA);
+      var options = _setOptions(navigator.camera.PictureSourceType.CAMERA);
         document.addEventListener("deviceready", onDeviceReady, false);
         function onDeviceReady() {
              
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
                 $scope.attachImgs.unshift({
-                  'imgURI':imgURI
+                    'imgURI':imgURI,
+                    isShowSelectIcon:false,
                 });
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength ++;
@@ -416,17 +430,17 @@
     //新增图片
     $scope.getPhoto = function(){
 
-          //var srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
-          //var options = _setOptions(Camera.PictureSourceType.SAVEDPHOTOALBUM);
+          //var srcType = navigator.camera.PictureSourceType.SAVEDPHOTOALBUM;
+          //var options = _setOptions(navigator.camera.PictureSourceType.SAVEDPHOTOALBUM);
           // 注意：这个options必须写在这里，不能使用上面定义的_setOptions函数，否则在手机上测试会有bug
            var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
-            destinationType: Camera.DestinationType.FILE_URI,
+            destinationType: navigator.camera.DestinationType.FILE_URI,
             // In this app, dynamically set the picture source, Camera or photo gallery
-            sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
-            encodingType: Camera.EncodingType.JPEG,
-            mediaType: Camera.MediaType.PICTURE,
+            sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM,
+            encodingType: navigator.camera.EncodingType.JPEG,
+            mediaType: navigator.camera.MediaType.PICTURE,
             allowEdit: false,
             saveToPhotoAlbum:true,
             correctOrientation: true  //Corrects Android orientation quirks
@@ -460,15 +474,15 @@
       $scope.bigImage = true;
     }
     $scope.hideBigImg = function(){
-      console.log('hideBigImg');
+      
       $scope.bigImage = false;
     }
 
     // 点击红叉删除图片
     $scope.delPhoto = function(imgUri){
-      console.log('del');
+      
       var i, len =  $scope.attachImgs.length;
-      console.log(len);
+      
       for(i=0; i<len; i++){
         if($scope.attachImgs[i].imgURI === imgUri){
           $scope.attachImgs.splice(i,1);
@@ -476,8 +490,13 @@
         }
       }
       $scope.photoLength--;
-      console.log(len);
+      
     }
+    //删除图片后，刷新newAct页面的photoList
+    $rootScope.$on('deletePhotoDone', function(d, data){
+        $scope.attachImgs = data;
+        $scope.photoLength = data.length;
+    });
 
     // log input clear content when focus
     $scope.isMockInputVal = false; // 是否填写
@@ -539,7 +558,7 @@
            (d.getHours()) + ":" + 
            (d.getMinutes());
 
-      console.log('date:'+ date);
+      
       return date;
     }
 
@@ -550,7 +569,7 @@
     $scope.saveAct = function(){
       // upload消息数
       var badgeUpload = localStorageService.get('badgeUpload')|| 0;
-      console.log('start saveAct');
+      
       // 点击保存按钮后要间隔100ms,为了等一些耗时操作的完成，例如localStorage存数据
       $timeout(function() {
           var confirmBy = $scope.locationOn && $scope.categoryOn && ( $scope.attachImgs.length>0 || $scope.isMockInputVal)
@@ -583,7 +602,7 @@
               "Importance":"undefined",
               "Description":log,
             };
-            console.log(idData);
+            
             var ActivityId_fake = localStorageService.get('ActivityId_fake') || 0;
             var attPhotos = $scope.attachImgs;
             var photosArr = [];
@@ -640,7 +659,7 @@
     var clearNewAct = function(){
         console.log('clearNewAct');
         var keyLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-        console.log('keyLang:'+keyLang);
+        
         $scope.photoLength = 0;
         if(keyLang === "zh_hk"){
           //console.log('zh_hk');
@@ -688,7 +707,7 @@
             var isOnline = $cordovaNetwork.isOnline();
             var isOffline = $cordovaNetwork.isOffline(); 
             if(isOnline ===true){
-              if(type==="wifi"||type==='CELL_3G' && allow3G===true){
+              if((type===Connection.WIFI||type===Connection.CELL_3G||type===Connection.CELL_4G) && allow3G===true){
                   console.log('online! start upload');
                   uploadFactory.coreUpload(true);
               }
@@ -698,7 +717,7 @@
             $rootScope.$on('allow3G_Change', function(d,data){
               if(data === true){
                 var type = $cordovaNetwork.getNetwork();
-                if(type==="CELL_3G"){
+                if(type===Connection.CELL_3G || type===Connection.CELL_4G){
                   uploadFactory.coreUpload(true);
                 }
               }
@@ -713,15 +732,15 @@
 
               //尚未考虑从wifi转变成3G时的处理
 
-              if(networkState === "wifi"){
+              if(networkState === Connection.WIFI){
                 uploadFactory.coreUpload(true);
                 // TODO 开定时器，检测什么时候变到了3G
                 
-              } else if(networkState === "CELL_3G" && allow3G === true){
+              } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === true){
                 uploadFactory.coreUpload(true);
                 // TODO 开定时器，检测什么时候从3G变到了非wifi，就关掉上传
                 
-              } else if(networkState === "CELL_3G" && allow3G === false){
+              } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === false){
                 // 当用户点击start upload的时候再上传
                 
                 localStorageService.set('isStartUpload', true);

@@ -290,12 +290,15 @@
 }
 .photoWall .eachPhoto img { width:100%; height:auto; }
 .photoWall .eachPhoto a { position:absolute; z-index:99; right:0; top:0; display: block;
-    background: url(../img/selected.png) no-repeat;
+    background-repeat: no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;
     border-radius: 4px; 
 }
+
+.photoWall .eachPhoto .selectingPic { background-image: url(../img/selecting.png); }
+.photoWall .eachPhoto .selectedPic { background-image: url(../img/selected.png); }
 .startUpload { 
     width: 70px;
     height: 70px;

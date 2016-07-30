@@ -45,6 +45,7 @@
 			'SELECT_SUBCONTRACTOR':'Select Subcontractor',
 			'PHOTO':'Photo',
 			//'mockInputData':'Input Diary entry here…',
+			'DELETE':'Delete',
 
 			/*system*/
 			'CURRENT_USER':'Current User',
@@ -127,6 +128,7 @@
 			'SELECT_SUBCONTRACTOR':'選擇外判商',
 			'PHOTO':'照片',
 			//'mockInputData':'请输入项目日志…',
+			'DELETE':'删除',
 
 			/*system*/
 			'CURRENT_USER':'當前用戶',
