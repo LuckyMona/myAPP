@@ -4,16 +4,16 @@
 	  	<i class="icon ion-android-arrow-back" style="color:#BFC1C3;" ></i>
 	  </a>
 	</div>
-	<h1 class="title" style="left:0 !important; right:0 !important;"><i>{{selectNum}}</i> {{ 'SELECTED' | translate }}</h1>
+	<h1 class="title"><i>{{selectNum}}</i> {{ 'SELECTED' | translate }}</h1>
 	<div class="buttons">
 	  <button ng-click="deletePhoto()" class="button button-clear button-positive">{{ 'DELETE' | translate }}</button>
 	</div>
 </ion-header-bar> 
 <ion-view>
-	<ion-content class="bg-grey has-header44" ng-controller="PhotoCtrl">
+	<ion-content class="bg-grey has-header44">
 	  	<div class="photoWall">
-		  	<div class="eachPhoto" ng-repeat="photo in photoList" ng-click="showBigImg(photo.imgURI)">
-				<img on-hold="callSelect(photo)" ng-click="doSelect(photo)"ng-src="{{photo.imgURI}}">
+		  	<div class="eachPhoto" ng-repeat="photo in parent.photoList" ng-click="showBigImg(photo.imgURI);doSelect(photo);">
+				<img on-hold="callSelect(photo)" ng-src="{{photo.imgURI}}">
 				<a ng-show="photo.isShowSelectIcon" ng-class="{true:'selectedPic', false:'selectingPic'}[photo.isSelected]"></a>
 				
 			</div>

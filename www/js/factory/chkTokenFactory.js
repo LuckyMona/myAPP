@@ -6,13 +6,14 @@
     angular.module('starter')
         .factory('chkTokenFactory', chkTokenFactoryFunc);
 
-        function chkTokenFactoryFunc(PARAMS, $q, $http, $timeout){
+        function chkTokenFactoryFunc(PARAMS, $q, $http, $timeout, localStorageService){
 
             var _refreshToken = function(token){
                 // check if token expires
-                var expireNum = parseFloat(token.expires_in),
+                var tokenExp = isNaN(localStorageService.get('access#exp')) ? 0 : parseFloat(localStorageService.get('access#exp'));
+                var expireNum = tokenExp,
                     nowTime = new Date().getTime(),
-                    isExpire = expireNum-nowTime>0 ? false : true,
+                    isExpire = expireNum-nowTime/1000 > 0 ? false : true,      // tokenExp的单位是秒？而不是毫秒
                     df =  $q.defer(),
                     device_id = '123456'; // TODO hard code
 

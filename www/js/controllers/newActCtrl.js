@@ -1,8 +1,8 @@
 'use strict';
 (function () {
-	angular.module('NewActCtrl', ['LocalStorageModule'])
+	angular.module('NewActCtrl', ['LocalStorageModule', 'ngStorage'])
 		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory){
+							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -14,6 +14,25 @@
     $scope.isGray_company = true;
     $scope.isGray_mockinput = true;
 
+
+    // 获取APP Version
+    /*var chkAppVersion = function(){
+      var version = "";
+      document.addEventListener("deviceready", onDeviceReady, false);
+      function onDeviceReady() {
+        if (window.cordova){
+            cordova.getAppVersion.getVersionNumber().then(function (version) {
+               version = version;
+            });
+        }
+      }
+      var chkAppVersionReq = {
+        version:version
+      }
+    };
+    chkAppVersion();
+    // TODO: 判断App是否需要强制升级？如果需要强制升级，就推出App
+    */
 
     // 获取下拉菜单的数据
     var getDownlist = function(){
@@ -54,6 +73,7 @@
             localStorageService.set('downlistData', result.data);
             getJobList();
             getTasklist();
+            selectProject();
           }else{
             console.log('加载错误，请重试');
             localStorageService.remove('token');
@@ -62,7 +82,6 @@
           }
         });
     }
-    getDownlist(); 
 
     // 获取jobList下拉菜单
     function getJobList(){
@@ -91,43 +110,6 @@
       console.log(LU_ProjectFilter);
       localStorageService.set('jobItems',LU_ProjectFilter);
     }
-    
-
-    // 引导用户先选jobNubmer
-    function showAlert (){
-      var myAlert = $ionicPopup.alert({
-          title: '请先选择Job Number',
-          template: '<a style="text-align:center;">点确定去选择Job Number</a>'
-          });
-          myAlert.then(function(res) {
-           
-           getJobList();
-           $state.go('jobList');
-           $ionicViewSwitcher.nextDirection("forward");
-      });
-    }
-    showAlert();
-
-    $scope.toggleTradeShow = function(){
-      $scope.isTradeShow = !$scope.isTradeShow;
-    }
-
-    // 获取APP Version
-    /*var chkAppVersion = function(){
-      var version = "";
-      document.addEventListener("deviceready", onDeviceReady, false);
-      function onDeviceReady() {
-        if (window.cordova){
-            cordova.getAppVersion.getVersionNumber().then(function (version) {
-               version = version;
-            });
-        }
-      }
-      var chkAppVersionReq = {
-        version:version
-      }
-    };
-    chkAppVersion();*/
 
     // 获取Task List的数据
     function getTasklist (){
@@ -146,20 +128,36 @@
               $rootScope.$broadcast('updateBadgeTask',result.data.length);
             }
         })
-    }
-    getTasklist();   
+    } 
 
-    var initNewAct = function(){
-      getDownlist();
-      //getJobList();
-      //showAlert();
-      //getTasklist();
-
-    }   
+    // 监听登录成功的事件
     $rootScope.$on('loginSuccess', function(){
-      initNewAct();
-
+      getDownlist();
     });
+
+    // 或者，之前已经登录过，重新打开App，但Token还有效时，尝试更新数据
+    function refreshData(){
+      if (isNeedToRefreshData === 'Y') {   // TODO: 还需要判断是否网络
+        getDownlist();
+
+        isNeedToRefreshData === 'N';
+      }
+    }
+    refreshData();
+
+
+    // 如果没有选择Project引导用户先选Project
+    function selectProject(){
+      var projectID = localStorageService.get('projectID');
+      if (projectID === null) {
+           $state.go('jobList');
+           $ionicViewSwitcher.nextDirection("forward");
+      }
+    }
+
+    $scope.toggleTradeShow = function(){
+      $scope.isTradeShow = !$scope.isTradeShow;
+    }
 
     // 获取地址下拉菜单,需要根据ProjectID筛选
     $scope.getLocationBlock = function(){
@@ -194,7 +192,7 @@
           len = categoryItems.length;
       for(i; i<len; i++){
           //categoryItems[i].name = "";
-          if(lang = "us_en"){
+          if(lang === "us_en"){
             categoryItems[i].name = categoryItems[i].CategoryName;
           } else {
             categoryItems[i].name = categoryItems[i].CategoryChineseName;
@@ -296,6 +294,8 @@
     $scope.reviewOn = false;
     $scope.tradeOn = false;
     $scope.companyOn = false;
+    $scope.tradeNum = 0;
+    $scope.companyNum =0;
     var onSelect = function(selectName, isMulti){
         $scope[selectName] = 'Select ' + selectName.substring(0,1).toUpperCase()+selectName.substring(1);
         if(selectName === 'review')
@@ -318,7 +318,16 @@
         
         if(isMulti){
             $rootScope.$on(selectName + 'Done', function(d, data){
-                
+              if(d.name==="tradeDone")
+              {
+                var tradeNum = data.tradeID.split(',').length;
+                $scope.tradeNum = tradeNum;
+              }
+              else if(d.name==="companyDone"){
+                var companyNum = data.companyID.split(',').length;
+                $scope.companyNum = companyNum;
+              }
+
                 $scope['is'+selectName+'Show'] = true;
                 $scope['isGray_'+ selectName] = false;
                 $scope[selectName] = data[selectName+'Data'];
@@ -349,6 +358,12 @@
        $scope['isGray_'+clearName] = true;
        var upperClearName = clearName.charAt(0).toUpperCase() + clearName.slice(1);
        $scope[clearName] = 'Select '+upperClearName;
+       if(clearName==="trade"){
+        $scope.tradeNum = 0;
+       }
+       else if(clearName==="company"){
+        $scope.companyNum = 0;
+       }
     }
    
 
@@ -502,7 +517,12 @@
     $scope.isMockInputVal = false; // 是否填写
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
-      $scope.mockInputData = "";
+      
+      if ($scope.isMockInputVal === false) {
+          $scope.mockInputData = "";
+          document.getElementById("mockinput").innerHTML = "";
+      }
+
       $scope.isGray_mockinput = false;
       // $event.target.focus();
       /*$event.target.click();*/
@@ -518,7 +538,7 @@
      // console.log($event);
     }
     $scope.mockInputBlur = function(){
-      var mockInputCont = document.getElementById("mockinput").innerHTML;
+      var mockInputCont = document.getElementById("mockinput").innerHTML.replace("<div>","").replace("</div>","");
 
       if(mockInputCont){
           $scope.isMockInputVal = true;
@@ -663,7 +683,9 @@
         $scope.photoLength = 0;
         if(keyLang === "zh_hk"){
           //console.log('zh_hk');
+          $scope.isMockInputVal = false;
           $scope.mockInputData = "請輸入項目日誌…";
+          document.getElementById("mockinput").innerHTML = "請輸入項目日誌…";
           //$scope.category = "選擇類別";
           $scope.review = "選擇用戶";
           $scope.trade = "選擇交易";
@@ -672,7 +694,9 @@
 
         } else {
           //console.log('us_en');
+          $scope.isMockInputVal = false;
           $scope.mockInputData = "Input Diary Entry Here…";
+          document.getElementById("mockinput").innerHTML = "Input Diary Entry Here…";
           console.log($scope.mockInputData);
           //$scope.category = "Select Category";
           $scope.review = "Select User";
@@ -690,70 +714,183 @@
         $scope.attachImgs = [];
     }
 
+    // 开一个永远不关的定时器，后期优化再做按需开关定时器
+    var timer = null;
+    chkNetChange();
     // 根据网络情况调用上传
     doUpload();
-    
-    function doUpload(){
 
-        
-        // uploadFactory.coreUpload();
+    
+    // 开定时器,每隔1s检测网络变化，只检测WIFI与3G/4G的转变            
+    function chkNetChange(){
+        document.addEventListener("deviceready",onDeviceReady, false);
+        function onDeviceReady(){
+            var type = $cordovaNetwork.getNetwork();
+            var memType = type;
+            coreChkNetChange();
+            function coreChkNetChange(){
+              
+              timer = $timeout(function(){
+                    console.log('Timer once');
+                    var oldType = memType;
+                    var newType = $cordovaNetwork.getNetwork();
+                    memType = newType;
+                    
+                    if(newType!==oldType){
+                      $rootScope.$broadcast('netChange', { "newType":newType, "oldType":oldType });
+                    }
+
+                    // 把isStopChkNetChange设定为true就可以关闭这个定时器
+                    // if(isStopChkNetChange===true){
+                    //   return;
+                    // };
+                    coreChkNetChange();
+              },1000);
+
+              timer.then(function(){
+                console.log( "Timer resolved!");
+              },function(){
+                console.log( "Timer rejected!");
+              });
+            }
+          
+        }
+    }
+
+    function doUpload(){
+/*
+测试用例：
+1、WIFI
+2、4G, not allow
+3、4G, Allow
+
+ */  // uploadFactory.coreUpload();
         document.addEventListener("deviceready",onDeviceReady, false);
         function onDeviceReady(){
 
             var type = $cordovaNetwork.getNetwork();
+            var memType = type;
+            
+
             var allow3G = localStorageService.get('allow3G') || false;
             console.log('getNetwork:'+ type);
             //console.log('getNetwork');
             var isOnline = $cordovaNetwork.isOnline();
-            var isOffline = $cordovaNetwork.isOffline(); 
+            var isOffline = $cordovaNetwork.isOffline();
+
+            
             if(isOnline ===true){
-              if((type===Connection.WIFI||type===Connection.CELL_3G||type===Connection.CELL_4G) && allow3G===true){
-                  console.log('online! start upload');
-                  uploadFactory.coreUpload(true);
-              }
+                //只要联网，就要开定时器检测网络变化
+                //$timeout.cancel(timer);
+                //chkNetChange();
+                if(type===Connection.WIFI||(type===Connection.CELL_3G||type===Connection.CELL_4G) && allow3G===true){
+                    console.log('online! start upload');
+                    uploadFactory.coreUpload(true);
+                    localStorageService.set('isStartUpload', "");
+                }
+                else if((type===Connection.CELL_3G||type===Connection.CELL_4G) && allow3G===false){
+                  // 只有当allow3G=false并且手机连的是3G网才可以手动上传
+                  // 当用户点击start upload的时候再上传
+                  localStorageService.set('isStartUpload', "true");
+                }
+              
+                onNetChange();
+                
             }
 
-            // 监听allow3G的改变
+            // 监听allow3G的改变，此时只需检测3G/4G
             $rootScope.$on('allow3G_Change', function(d,data){
-              if(data === true){
+              localStorageService.set('allow3G',data);
+              if(data === true){ 
+                // Allow 3G，并且处于3G或4G的环境，就自动上传，并且不允许手动上传
                 var type = $cordovaNetwork.getNetwork();
                 if(type===Connection.CELL_3G || type===Connection.CELL_4G){
                   uploadFactory.coreUpload(true);
+                  localStorageService.set('isStartUpload', "");
+                }
+                
+              }else if(data === false){
+                // not Allow 3G, 如果手机连接3G或4G，就要停止上传，并允许手动点击start upload上传
+                if(type===Connection.CELL_3G || type===Connection.CELL_4G){
+                  $rootScope.$broadcast('stopUpload');
+                  localStorageService.set('isStartUpload', "true");
                 }
               }
+
             });
 
             //设备联网事件
             //一连上网络，就检查是否满足自动上传的条件
             $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
               
-              console.log('device is online');
-              var allow3G = localStorageService.get('allow3G') || false;
+                //只要联网，就要开定时器检测网络变化
+                //$timeout.cancel(timer);
+                //chkNetChange();
 
-              //尚未考虑从wifi转变成3G时的处理
+                console.log('device is online');
+                var allow3G = localStorageService.get('allow3G') || false;
 
-              if(networkState === Connection.WIFI){
-                uploadFactory.coreUpload(true);
-                // TODO 开定时器，检测什么时候变到了3G
+                if(networkState === Connection.WIFI){
+                  uploadFactory.coreUpload(true);
+                  localStorageService.set('isStartUpload', "");
                 
-              } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === true){
-                uploadFactory.coreUpload(true);
-                // TODO 开定时器，检测什么时候从3G变到了非wifi，就关掉上传
-                
-              } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === false){
-                // 当用户点击start upload的时候再上传
-                
-                localStorageService.set('isStartUpload', true);
-              }
+                } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === true){
+                  uploadFactory.coreUpload(true);
+                  localStorageService.set('isStartUpload', "");
+                  
+                } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === false){
+                  // 当用户点击start upload的时候再上传
+                  
+                  localStorageService.set('isStartUpload', "true");
+                }
+                onNetChange();
 
             });
-              
-            
+
+            $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+              //关定时器，关闭上传，不允许点击start upload
+              //$timeout.cancel(timer);
+              $rootScope.$broadcast('stopUpload');
+              localStorageService.set('isStartUpload', "");
+            });
+
+            //监听到连线网络类型发生变化时，进行相应判断和处理
+            function onNetChange(){
+                $rootScope.$on('netChange', function(d, data){
+                    
+                      if((data.oldType===Connection.CELL_3G ||  data.oldType===Connection.CELL_4G) && allow3G===false && data.newType===Connection.WIFI){
+                        // 如果从3G/4G且not Allow3G，变成wifi，就开始上传，并禁止手动点击startUpload, 
+                        localStorageService.set('isStartUpload', "");
+                        uploadFactory.coreUpload(true);
+                        
+                      } else if(data.oldType===Connection.WIFI && (data.newType===Connection.CELL_3G || data.newType===Connection.CELL_4G) && allow3G===false){
+                        // 如果从wifi变成，3G/4G且not allow3G，就要停止上传，并且可以手动点击startUpload 
+                        $rootScope.$broadcast('stopUpload');
+                        localStorageService.set('isStartUpload', "true");
+                      }
+                  });
+            }
         }
     }
 
     
-		}]);
+		}])
+    .filter('zoneUnique', function() {                  // ng-repeat 过滤重复
+       return function(collection, keyname) {
+          var output = [], 
+              keys = [];
+
+          angular.forEach(collection, function(item) {
+              var key = item[keyname];
+              if(keys.indexOf(key) === -1) {
+                  keys.push(key);
+                  output.push(item);
+              }
+          });
+
+          return output;
+       };
+    });
 
 })();
 

@@ -66,6 +66,9 @@
                             stopUpload();
                         }
                     });
+                    $rootScope.$on('stopUpload', function(){
+                      stopUpload();
+                    });
                   }
                 }
                 
@@ -171,7 +174,7 @@
                                               console.log('th NO. '+k+' photo upload fail, retry!');
                                               $timeout(function(){
                                                 uploadPhotoAct(uploadActPhotosReq)
-                                              },3000);
+                                              },30000);
                                             });
                                               
                                       }
@@ -218,13 +221,19 @@
                                 updateActivityIdSuccess,
                                 function(){
                                   console.log('updateActivityId fail, do retry');
-                                  //updateActivityId();
+                                  $timeout(function(){
+                                    updateActivityId();
+                                  },5000);
+                                  
                                 });
                           }
                           updateActivityId();
                         } else {
                           console.log('the NO.' +n +'data_s upload fail, retry!');
-                          // uploadActRecur(n);
+                          uploadActRecur(n);
+                          $timeout(function(){
+                            uploadActRecur(n);
+                          },5000);
                         }
                       })
                    } else return;

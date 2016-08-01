@@ -70,6 +70,7 @@
 	              if(result.statusText ==='OK'){
 	                
 	                localStorageService.set('token',result.data);
+	                $localStorage.token = result.data;
 
 	                var accTokenStr = decodeToken(result.data);	                
 	                var accToken_Json = JSON.parse(accTokenStr);
@@ -92,10 +93,11 @@
 	                localStorageService.set('Project#Staff', accToken_Json.staffid);
 	                localStorageService.set('UID', accToken_Json.uid);
 	                localStorageService.set('Name', accToken_Json.fn);
+	                localStorageService.set('access#exp',accToken_Json.exp);
 	                localStorageService.set('username',$scope.loginO.username);
 	                //$localStorage.token = result.data;
 	                
-	                $rootScope.$broadcast('loginSuccess');
+	                $rootScope.$broadcast('loginSuccess');  // 通知去服务器下载更新的数据，如DropDownList，JobList
 	                $state.go('tab.newAct');
 	              } else if(result.status < 0) {
 	                console.log('网络连接错误');

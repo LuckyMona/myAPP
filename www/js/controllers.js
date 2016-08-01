@@ -1,5 +1,5 @@
 
-angular.module('starter.controllers', ['LocalStorageModule'])
+angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
 
 // .controller('DashCtrl', function($scope) {})
@@ -62,7 +62,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
    });
 })
 
-.controller('SystemCtrl', function($rootScope, $scope, $window,$timeout,localStorageService, $state, $ionicViewSwitcher, $translate) {
+.controller('SystemCtrl', function($rootScope, $scope, $window,$timeout,localStorageService, $state, $ionicViewSwitcher, $translate, $localStorage) {
   
     $scope.UID = localStorageService.get('UID');
     $scope.Name = localStorageService.get('Name');
@@ -74,6 +74,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         // 删除字段：token / tasklistData
         // localStorageService.clearAll();
         localStorageService.remove('token','tasklistData','badgeTask');
+        delete $localStorage.token;
         $state.go('login.active');
     }
 
@@ -95,6 +96,14 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         getLang(data);
         $translate.use(data);
         
+    });
+
+    //当切换Allow 3G时触发
+    $scope.$watch('allow3G', function(newVal, oldVal){
+      console.log('change allow3G');
+      console.log(newVal);
+      $rootScope.$broadcast('allow3G_Change', newVal);
+     
     });
 })
 .controller('LangCtrl',function($rootScope, $scope, $state, $ionicViewSwitcher){
@@ -125,12 +134,16 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         $scope.badgeTask = data;
     });
 
+    $scope.jobNumber = localStorageService.get('projectID');
     $rootScope.$on('jobNumberSelect', function(d, data){
         $scope.jobNumber = data;
     })
 })
 .controller('PhotoCtrl', function($scope,localStorageService, $state, $ionicViewSwitcher, $rootScope){
-  $scope.photoList = localStorageService.get('photoList');
+  
+  $scope.parent = {
+    photoList:localStorageService.get('photoList'),
+  }
   // 选择几张
   $scope.selectNum = 0;
   // 是否长按呼出选择icon
@@ -156,7 +169,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   $scope.callSelect = function(photoItem){
 
     console.log('callSelect');
-    $scope.photoList.forEach(function(item, index, arr){
+    $scope.parent.photoList.forEach(function(item, index, arr){
       item.isShowSelectIcon = true;
       item.isSelected = false;
     });
@@ -170,6 +183,7 @@ angular.module('starter.controllers', ['LocalStorageModule'])
       if($scope.isCallSelect === true){
           if(photoItem.isSelected === true){
             photoItem.isSelected = false;
+             $scope.selectNum --;
           }else{
             photoItem.isSelected = true;
             $scope.selectNum ++;
@@ -179,13 +193,25 @@ angular.module('starter.controllers', ['LocalStorageModule'])
   }
 
   $scope.deletePhoto = function(){
-    $scope.photoList.forEach(function(item, index, arr){
+    var photoListArr = $scope.parent.photoList;
+  /*  photoListArr.forEach(function(item, index, arr){
         if(item.isSelected ===true){
           arr.splice(index,1);
         }
-    });
+    });*/
+
+    var i=0, len = photoListArr.length;
+    for(i; i<len; ){
+      if(photoListArr[i].isSelected===true){
+        photoListArr.splice(i,1);
+        len = len-1;
+      }
+    }
+
+    $scope.parent.photoList = photoListArr;
     $scope.isCallSelect = false;
-    $rootScope.$broadcast('deletePhotoDone', $scope.photoList);
+    localStorageService.set('photoList',photoListArr);
+    $rootScope.$broadcast('deletePhotoDone', $scope.parent.photoList);
     $state.go('tab.newAct');
     $ionicViewSwitcher.nextDirection("back");
   }
@@ -233,8 +259,15 @@ angular.module('starter.controllers', ['LocalStorageModule'])
     });
 })
 .controller('FloorCtrl', function($rootScope, $scope, localStorageService, $state, $ionicViewSwitcher){
-    
-    //$scope.a = {"floorModel":""};
+
+    $rootScope.$on('blockSelected',function(d,data){
+      var floorNameArr = [];
+      data.forEach(function(item, index, arr){
+        floorNameArr.push(item.AreaName);
+      });
+      $scope.floorItems = floorNameArr;
+    });
+
     $scope.floorModel = ''; 
     var floorItems = localStorageService.get('floorItems');
     var floorNameArr = [];
@@ -248,37 +281,26 @@ angular.module('starter.controllers', ['LocalStorageModule'])
         if(newVal === oldVal){
           return;
         }
-        floorItems.some(function(item, index, arr){
+        
+        floorItems = localStorageService.get('floorItems');
+        var selItems = floorItems.filter(function(item, index, arr){
           return (item.AreaName ===newVal)
         });
 
-        
-        // localStorageService.set('floorSelected', newVal);
-        $rootScope.$broadcast('floorChange', floorItems);
-        // console.log('$state');
+        $rootScope.$broadcast('floorChange', selItems);
         $state.go('tab.newAct');
         $ionicViewSwitcher.nextDirection("back");
 
     });
-
-    /*$scope.radioChange = function(){
-        console.log('radioChange');
-    }*/
-    // $scope.$watch('test', function(){
-    //     console.log('radioChange');
-    // });
-
 })
-.controller('BlockCtrl', function($scope,localStorageService,$state, $ionicViewSwitcher){
+.controller('BlockCtrl', function($rootScope,$scope,localStorageService,$state, $ionicViewSwitcher){
     $scope.blockItems = localStorageService.get('blockItems');
 
     $scope.getFloor = function(block){
-        // console.log('getFloor:'+block);
         var locations = $scope.blockItems,
             i,
             len = locations.length,
             areaArr = [];
-        //var selectedBlockID ='';
         
         for(i=0; i<len; i++){
             if(locations[i].ZoneName === block){
@@ -286,17 +308,12 @@ angular.module('starter.controllers', ['LocalStorageModule'])
                   AreaName:locations[i].AreaName,
                   locationID:locations[i].LocationID
                 });
-                //selectedBlockID = locations[i].LocationID;
-                //localStorageService.set('floorItems', locations[i]);
             }
         }
         
         localStorageService.set('floorItems',areaArr);
-        /*localStorageService.set('blockSelected',{
-          selectBlock:block,
-          selectedBlockID:selectedBlockID
-        });*/
         localStorageService.set('blockSelected',block);
+        $rootScope.$broadcast('blockSelected',areaArr);
         $state.go('floor');
         $ionicViewSwitcher.nextDirection("forward");
     }
