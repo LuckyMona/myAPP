@@ -33,6 +33,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
         //console.log();
+        results.forEach(function(item, index, arr){
+          item.photos = item.photos.split(',');
+        });
         $scope.uploadItems = results;
    });
    $scope.startUpload = function(){
@@ -127,6 +130,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $scope.uploadNum = localStorageService.get('badgeUpload') || 0;
     $rootScope.$on('updateBadgeUpload', function(d, data){
         $scope.badgeUpload = data;
+        $scope.uploadNum = data;
     });
 
     $scope.badgeTask = localStorageService.get('badgeTask') || 0;

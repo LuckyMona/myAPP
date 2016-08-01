@@ -128,7 +128,7 @@
 .mt24 { margin:0; margin-top:10px !important; }
 .mt49 { margin-top:49px; }
 .mb24 { margin-bottom:24px !important; }
-.mb100 { margin-bottom:100px; }
+.mb100 { margin-bottom:100px !important; }
 .t-r { text-align:right; }
 .no-decor { text-decoration: none; }
 
@@ -148,13 +148,13 @@
 .has-header49 { top: 49px; height: 100%; }
 
 .r-img { position: absolute; top: 16px; right: 16px; color:#8e8e8e; }
-.r-img > img { max-height: 58px; margin-right: 10px; }
+.r-img > img { max-height: 58px; margin-right: 10px; max-width: 58px;}
 
 .r-img h2 img { height:20px; }
 .r-img p { text-align: center; color:#8e8e8e; }
 .upload > h2 { color:#333333; }
 .upload > p { color:#8e8e8e; margin-bottom: -4px; min-height:40px; }
-.upload.item { padding-right:130px; }
+.upload.item { padding-right:100px !important; }
 .upload_attach { 
     transform: rotate(0deg); 
     -ms-transform: rotate(0deg);
@@ -231,9 +231,9 @@
     white-space: nowrap;
     overflow: hidden; }
 .no_ellipsis {
-    text-overflow: initial;
-    overflow: auto;
-    white-space: normal;
+    text-overflow: initial !important;
+    overflow: auto !important;
+    white-space: normal !important;
 }
 .ion-android-arrow-back:before { font-size: 26px !important; }
 .radio-icon { color:#4CA2FF !important; }

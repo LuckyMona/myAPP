@@ -731,7 +731,7 @@
             function coreChkNetChange(){
               
               timer = $timeout(function(){
-                    console.log('Timer once');
+                    
                     var oldType = memType;
                     var newType = $cordovaNetwork.getNetwork();
                     memType = newType;
