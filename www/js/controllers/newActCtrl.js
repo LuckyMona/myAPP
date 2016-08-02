@@ -517,7 +517,7 @@
     $scope.isMockInputVal = false; // 是否填写
     $scope.mockInputFocus = function($event){
       console.log('onFocus');
-      
+        
       if ($scope.isMockInputVal === false) {
           $scope.mockInputData = "";
           document.getElementById("mockinput").innerHTML = "";
@@ -569,6 +569,12 @@
        console.log(h2);
      }
     */
+
+    /*$scope.$watch(function(){
+      return $scope.mockInputData;
+    }, function(newVal, oldVal){
+      console.log(newVal);
+    });*/
 
     var showTime = function(){
       var d = new Date();
