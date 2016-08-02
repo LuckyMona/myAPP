@@ -11,7 +11,7 @@
                     var memHeight = ele[0].offsetHeight;
 
                     ele.on('focus', function(){
-                        $ionicScrollDelegate.scrollTo(300);
+                        $ionicScrollDelegate.scrollTo(0, 300, true);
                         console.log('focus');
                         $interval.cancel(timer);
                         console.log(timer);
