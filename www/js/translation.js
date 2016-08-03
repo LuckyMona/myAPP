@@ -68,7 +68,9 @@
 			'SELECTED':'Selected',
 			/*job list*/
 			'JOB_LIST':'Job List',
-
+            'UPLOADING':'uploading...',
+            'STOP_UPLOAD1':'Stop',
+            'STOP_UPLOAD2':'Uploading',
             /*'TRANSLATE': 'EN',
             'LOADING': 'Loading...',
             
@@ -150,7 +152,9 @@
 			'SELECTED':'項被選中',
 			/*job list*/
 			'JOB_LIST':'工作號碼列表',
-
+            'UPLOADING':'正在上傳...',
+            'STOP_UPLOAD1':'停止',
+            'STOP_UPLOAD2':'上傳',
             /*'TRANSLATE': '中',
             'LOADING': '載入中...',
             

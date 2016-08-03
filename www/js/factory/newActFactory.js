@@ -4,16 +4,23 @@
     angular.module('starter')
         .factory('newActFactory', newActFactoryFunc);
 
-        function newActFactoryFunc($q, $http, PARAMS){
+        function newActFactoryFunc($q, $http, PARAMS,$ionicLoading){
 
             var _getDownlist = function(getDownlistReq){
                 //console.log(getDownlistReq);
-                
+                $ionicLoading.show({
+                    template: 'Loading...'
+                });
                 var deferred = $q.defer();
                 var url = PARAMS.BASE_URL + 'GetDataDict';
                 $http.post(url, getDownlistReq)
-                    .then(function(result){
+                    .then(function successCb(result){
+                        $ionicLoading.hide();
                         deferred.resolve(result);
+                    },function errorCb(result){
+                        $ionicLoading.hide();
+                        deferred.resolve(result);
+                        
                     });
                 
                /* var mockDownlistData = {data:{

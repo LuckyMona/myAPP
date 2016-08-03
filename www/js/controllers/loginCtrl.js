@@ -7,14 +7,7 @@
     String.prototype.decodeBase64 = function(){
         return decodeURIComponent(escape(window.atob(this)));
     };
-    /*var str = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiJnYW1za2FcXFRyYWluaW5nNDQiLCJmbiI6IlRyYWluaW5nNDQiLCJtYWlsIjoidHJhaW5pbmc0NEBnYW1tb25jb25zdHJ1Y3Rpb24uY29tIiwiZWlkIjoiZ2Ftc2thXFxUcmFpbmluZzQ0Iiwib2J1IjoiIiwiaGJ1IjoiIiwicGljIjoiaHR0cDovL3RlbXBhZGRyZXNzLmdhbW1vb25jb25zdHJ1Y3Rpb24uY29tL2JsYWgvLmpwZyIsInN0YWZmaWQiOlsiMzU0IzEyMyIsIjM3MyMxNTUiXSwicm9sZSI6WyIzNTQjU0RfQSIsIjM3MyNTRF9SIl0sImlzcyI6Imh0dHA6Ly9pZGVudGl0eS5nYW1tb25jb25zdHJ1Y3Rpb24uY29tIiwiYXVkIjoiaHR0cDovL3NpdGVkaWFyeS5nYW1tb25jb25zdHJ1Y3Rpb24uY29tIiwiZXhwIjoxNDY5ODM1OTgzLCJuYmYiOjE0Njk3OTI3ODN9.udNLRfXtT_9D5KT7BxkGXoj1XQw41jlJG4EZzXBQN6A';
-    console.log(str);
-    var dotPlace = str.lastIndexOf('.');
-    var newStr = str.substr(0,dotPlace);*/
-    //var jsonStr = newStr.decodeBase64();
-    //console.log(jsonStr);
-    //str.replace('/\./');
-    //console.log(newStr.decodeBase64());
+    
     /*
     sample:
     var str = 'sdfasdasdfa';
@@ -27,7 +20,7 @@
 (function () {
 
 	angular.module('LoginCtrl', ['ionic','ngStorage'])
-		.controller('LoginCtrl', function(PARAMS, $rootScope, $scope, $translate, userFactory, $window, $ionicPopup, $timeout,localStorageService,$state,$localStorage){
+		.controller('LoginCtrl', function(PARAMS, $rootScope, $scope, $translate, userFactory, $window, $ionicPopup, $timeout,localStorageService,$state,$localStorage,helpToolsFactory){
       
 	      $scope.isShowWarning = false;
 	      var loginO = {
@@ -97,19 +90,24 @@
 	                localStorageService.set('username',$scope.loginO.username);
 	                //$localStorage.token = result.data;
 	                
-	                $rootScope.$broadcast('loginSuccess');  // 通知去服务器下载更新的数据，如DropDownList，JobList
+	                // 预留时间，等代码执行到newActCtrl.js的$on处，否则$on接收不到信息
+	                $timeout(function(){
+	                	console.log('loginSuccess');
+	                	$rootScope.$broadcast('loginSuccess');  // 通知去服务器下载更新的数据，如DropDownList，JobList
+	                },2000);
+	                
 	                $state.go('tab.newAct');
 	              } else if(result.status < 0) {
 	                console.log('网络连接错误');
-	                $scope.showAlert('网络连接错误');
+	               	helpToolsFactory.showAlert('网络连接错误');
 	              } else {
 	                console.log('账号或密码不正确！');
-	                $scope.showAlert('账号或密码不正确！');
+	                helpToolsFactory.showAlert('账号或密码不正确！');
 	              }
 	            }
 	          )
 	      }
-	      $scope.showAlert = function(msg){
+	      /*$scope.showAlert = function(msg){
 	      	var myAlert = $ionicPopup.alert({
 	      		title: '提示',
      			template: '<p style="text-align:center;">' + msg + '</p>'
@@ -120,7 +118,7 @@
 			$timeout(function() {
 				myAlert.close();
 			}, 2000);
-	      }
+	      }*/
 
 	       $scope.activeClear = function(){
 	      	$scope.loginO.username = "";

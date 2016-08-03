@@ -53,7 +53,7 @@
 
             }
 
-            function _coreUpload(isListenStop){
+            function _coreUpload(isListenStop, successCb){
                 //onDeviceReady();
                 document.addEventListener("deviceready",onDeviceReady, false);
                 function onDeviceReady(){
@@ -236,7 +236,12 @@
                           },5000);
                         }
                       })
-                   } else return;
+                  } else {
+                    if(successCb){
+                      successCb();
+                    }
+                    return;
+                  } ;
                 }
                 });
 

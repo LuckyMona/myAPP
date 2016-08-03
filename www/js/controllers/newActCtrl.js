@@ -1,8 +1,8 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule', 'ngStorage'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory',
-							function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory','$localStorage','helpToolsFactory',
+							         function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage,helpToolsFactory){
 	
 	  $scope.isTradeShow = false;
     $scope.isReviewShow = false;
@@ -35,12 +35,11 @@
     */
 
     // 获取下拉菜单的数据
-    var getDownlist = function(){
+    function getDownlist (){
       
       var token = localStorageService.get('token');
       var username = localStorageService.get('username');
       
-
       chkTokenFactory.refreshToken(token)
         .then(function(result){
           if(result.statusText ==="OK"){
@@ -149,6 +148,7 @@
     // 如果没有选择Project引导用户先选Project
     function selectProject(){
       var projectID = localStorageService.get('projectID');
+
       if (projectID === null) {
            $state.go('jobList');
            $ionicViewSwitcher.nextDirection("forward");
@@ -668,7 +668,7 @@
             $timeout(function() {
               $rootScope.$broadcast('saveAct');
             }, 100);
-            
+            helpToolsFactory.showMsg('Save To Pending List Success!');
             doUpload();
             // uploadFactory.coreUpload(false);
             clearNewAct();

@@ -13,13 +13,16 @@
               <p>{{upload.photoLength}}</p>
             </div>
           </div>  
-        </a>   
-
+        </a>  
         
     </div>
-
+    
   </ion-content>
-  <div class="startUpload" ng-click="startUpload()">
+  <div class="uploadMaskWrap" ng-show="isUploadMaskShow">
+      <div class="uploadMask"></div>
+      <div class="uploadContent">{{'UPLOADING' | translate}}</div>
+  </div>
+  <div class="startUpload" id="startUpload" ng-click="startUpload()">
       <p>{{'START_UPLOAD1' | translate }}</p>
       <p class="no-mg">{{'START_UPLOAD2' | translate }}</p>
     </div>
