@@ -28,7 +28,7 @@
 
                 $timeout(function() {
                     $ionicLoading.hide();
-                }, 1000);
+                }, 2000);
             }
 
             return {

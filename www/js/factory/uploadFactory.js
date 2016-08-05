@@ -134,7 +134,7 @@
                     newActFactory.uploadAct(uploadActReqs[n].uploadActReq)
                       .then(function(result){
                         console.log(result);
-                        if(result.success){
+                        if(result.success && result.success ==="true"){
                           console.log('the  NO. '+n+' uploadAct success!');
                           //console.log('ActivityId:'+ result.ActivityId);
 
@@ -173,7 +173,7 @@
                                               console.log(err);
                                               console.log('th NO. '+k+' photo upload fail, retry!');
                                               $timeout(function(){
-                                                uploadPhotoAct(uploadActPhotosReq)
+                                                uploadPhotoAct(uploadActPhotosReq);
                                               },30000);
                                             });
                                               
@@ -189,21 +189,24 @@
                                       
                                       // 更新Task List，从本地列表中减去这条数据
                                       // may error
-                                      dbFactory.delete('fe_Activity',{ActivityId:result.ActivityID});
-                                      $timeout(function(){
-                                        $rootScope.$broadcast('saveAct');
-                                      },100);
-                                      var badgeUpload = localStorageService.get('badgeUpload');
-                                      if(badgeUpload === 0){
-                                        return;
-                                      }
-                                      badgeUpload = badgeUpload-1;
-                                      localStorageService.set('badgeUpload', badgeUpload);
-                                      $rootScope.$broadcast('updateBadgeUpload',badgeUpload);
-                                      // 隔3s上传下一条数据
-                                      $timeout(function() {
-                                        uploadActRecur(n+1);
-                                      }, 3000);
+                                      dbFactory.delete('fe_Activity',{ActivityId:result.ActivityID},function(){
+                                          $timeout(function(){
+                                            $rootScope.$broadcast('saveAct');
+                                          },100);
+                                          var badgeUpload = localStorageService.get('badgeUpload');
+                                          if(badgeUpload === 0){
+                                            return;
+                                          }
+                                          badgeUpload = badgeUpload-1;
+                                          localStorageService.set('badgeUpload', badgeUpload);
+                                          $rootScope.$broadcast('updateBadgeUpload',badgeUpload);
+                                          // 隔3s上传下一条数据
+                                          $timeout(function() {
+                                            uploadActRecur(n+1);
+                                          }, 3000);
+                                      });
+                                      
+                                      
                                   }
                               }
                               var k = 0;
@@ -230,7 +233,7 @@
                           updateActivityId();
                         } else {
                           console.log('the NO.' +n +'data_s upload fail, retry!');
-                          uploadActRecur(n);
+                          //uploadActRecur(n);
                           $timeout(function(){
                             uploadActRecur(n);
                           },5000);

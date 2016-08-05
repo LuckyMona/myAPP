@@ -1,6 +1,6 @@
 <ion-header-bar align-title="center" class="bg-img-cuz bar bar-header bar-stable bdr-color-cuz">
 	<div class="buttons">
-	  <a class="button button-clear" ng-click="goBack()">
+	  <a class="button button-clear" ng-click="jobListGoBack()">
 	  	<i class="icon ion-android-arrow-back" style="color:#BFC1C3;" ></i>
 	  </a>
 	</div>
@@ -15,7 +15,7 @@
 	  	<div class="list mt24 blockFix prevBlock jobList">
 		  	<ion-list>
 			  	<ion-radio ng-model="$parent.jobList" ng-repeat="jobItem in jobListArr" nav-direction="back" ng-value="jobItem.ProjectID">
-			  		<h2>{{jobItem.ProjectNO}}</h2>
+			  		<h2>{{jobItem.ProjectNo}}</h2>
 			  		<p>{{jobItem.ProjectName}}</p>
 			  	</ion-radio>
 			  	<!-- <ion-radio ng-model="$parent.jobList" nav-direction="back"  ng-value="'J2'">

@@ -14,7 +14,6 @@
     $scope.isGray_company = true;
     $scope.isGray_mockinput = true;
 
-
     // 获取APP Version
     /*var chkAppVersion = function(){
       var version = "";
@@ -60,7 +59,7 @@
       
       var getDownlistReqStr = '"'+JSON.stringify(getDownlistReq).replace(/\"/g,"\'")+'"';
 
-      // TODO loading弹窗
+      // loading弹窗 
       newActFactory.getDownlist(getDownlistReqStr)
         .then(function(result){
           //var jsonRes = JSON.parse(result.data);
@@ -69,7 +68,25 @@
           if(result.data.success==="true"){
             // console.log('downlistData:');
             console.log(result.data);
-            localStorageService.set('downlistData', result.data);
+            //console.log(result.data.LU_Company[0].CompanyID);
+            var resObj = result.data;
+
+            //拿到的json，值为数值的话转成字符串
+            for(var i in resObj){
+              if(Array.isArray(resObj[i])===true){
+                resObj[i].forEach(function(item, index, arr){
+                  for(var j in item){
+                    if(typeof item[j] === "number"){
+                      item[j] = item[j]+"";
+                    }
+                  }
+                });
+              }
+              
+            }
+            console.log(typeof 123);
+            console.log(resObj);
+            localStorageService.set('downlistData', resObj);
             getJobList();
             getTasklist();
             selectProject();
@@ -393,31 +410,32 @@
         $scope.location = localStorageService.get('location') || "Select Location";
       }
     });
+    
 
     /*
      * 从图库选添加照片&&拍照
      * @author Mary
      */
     function _setOptions(srcType) {
+        
+
+    $scope.photoLength = 0;
+    //拍照
+    $scope.takePhoto = function(){
+      //var options = _setOptions(navigator.camera.PictureSourceType.CAMERA);
+      // 注意：这个options必须写在这里，不能为了避免与$scope.getPhoto中的options重复代码，定义setOptions函数返回options，在这里调用，否则在手机上测试会有bug
         var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
             destinationType: navigator.camera.DestinationType.FILE_URI,
             // In this app, dynamically set the picture source, Camera or photo gallery
-            sourceType: srcType,
+            sourceType: navigator.camera.PictureSourceType.CAMERA,
             encodingType: navigator.camera.EncodingType.JPEG,
             mediaType: navigator.camera.MediaType.PICTURE,
             allowEdit: false,
             saveToPhotoAlbum:true,
             correctOrientation: true  //Corrects Android orientation quirks
         }
-        return options;
-    }
-
-    $scope.photoLength = 0;
-    //拍照
-    $scope.takePhoto = function(){
-      var options = _setOptions(navigator.camera.PictureSourceType.CAMERA);
         document.addEventListener("deviceready", onDeviceReady, false);
         function onDeviceReady() {
              
@@ -548,34 +566,7 @@
       }
     }
 
-
-    //监控log input高度变化
-    /*$scope.$watch("$scope.style.height", function(newVal,oldVal){
-        console.log('newVal:'+newVal);
-        if(newVal==oldVal){
-          return;
-        }
-    });*/
-
-   /* var ele = document.getElementById("mockinput");
-     //var h = ele.offsetHeight;
-     $scope.$watch('ele.offsetHeight', function(newVal, oldVal){
-       console.log('newVal:'+newVal);
-       console.log('oldVal:'+oldVal);
-     });
-     if(ele.offsetHeight>36){
-       console.log(ele.offsetHeight);
-       var h2 = ele.getBoundingClientRect().height;
-       console.log(h2);
-     }
-    */
-
-    /*$scope.$watch(function(){
-      return $scope.mockInputData;
-    }, function(newVal, oldVal){
-      console.log(newVal);
-    });*/
-
+    
     var showTime = function(){
       var d = new Date();
       var date = (d.getFullYear()) + "/" + 
@@ -588,6 +579,46 @@
       return date;
     }
 
+    /**
+     * 监听editItem
+     */
+    $rootScope.$on('editItem', function(d, data){
+      
+      //更新视图数据
+      $scope.location = data.location;
+      $scope.locationOn = true;
+      $scope.category = data.category;
+      $scope.categoryOn = true;
+      $scope.review = data.review ||"";
+      $scope.trade = data.trade || "";
+      $scope.company = data.company || "";
+      document.getElementById('mockinput').innerHTML = data.description;
+      $scope.mockInputData = data.description||"";
+      $scope.isMockInputVal = data.description===""?false:true;
+      //$scope.attachImgs = data.photos[0]===""?[]:data.photos;
+      if(data.photos[0]===""){
+        $scope.attachImgs = [];
+      }else{
+        data.photos.forEach(function(item, index, arr){
+          $scope.attachImgs.push({
+            'imgURI':item
+          });
+        });
+      }
+
+      $scope.ActivityId = data.ActivityId;
+      
+      var edit_idData = JSON.parse(data.idData);
+      console.log(edit_idData);
+      localStorageService.set('staffID', edit_idData.StaffID);
+      localStorageService.set('projectID', edit_idData.ProjectID);
+      $scope.locationID = edit_idData.LocationID;
+      $scope.CategoryID = edit_idData.CategoryID;
+      $scope.reviewID = edit_idData.NotityID;
+      $scope.TradeID = edit_idData.TradeID;
+      $scope.CompanyID = edit_idData.CompanyID;
+
+    });
     // 保存数据
     
     // dbFactory.dropTbl('fe_Activity');
@@ -611,9 +642,9 @@
                 projectID = localStorageService.get('projectID'),
                 log = $scope.isMockInputVal? $scope.mockInputData:"",
                 idData;
-            var RequireReqview = false;
+            var RequireReview = false;
             if($scope.reviewID){
-              RequireReqview = true;
+              RequireReview = true;
             }    
             idData = {
 
@@ -621,14 +652,14 @@
               "ProjectID":projectID,
               "LocationID":$scope.locationID,
               "CategoryID": $scope.categoryID,
-              "RequireReqview":RequireReqview || false,
+              "RequireReview":RequireReview || false,
               "NotityID": $scope.reviewID || "undefined",
               "TradeID": $scope.tradeID || "undefined",
               "CompanyID": $scope.companyID || "undefined",
               "Importance":"undefined",
               "Description":log,
             };
-            
+
             var ActivityId_fake = localStorageService.get('ActivityId_fake') || 0;
             var attPhotos = $scope.attachImgs;
             var photosArr = [];
@@ -650,6 +681,27 @@
               description: log,
               createdOn:time,
               idData:JSON.stringify(idData),
+            }
+            if(typeof $scope.ActivityId === 'number'){
+              actData.ActivityId = $scope.ActivityId;
+              //actData.idData = actData.idData.replace(/\"/g,"");
+              dbFactory.update('fe_Activity',
+                                actData,
+                                {ActivityId:$scope.ActivityId},
+                                function succeCb(){
+                                  console.log('update success');
+                                  clearNewAct();
+                                  $timeout(function() {
+                                    $rootScope.$broadcast('saveAct');
+                                  }, 100);
+                                  $scope.ActivityId = "";
+                                  helpToolsFactory.showMsg('Save To Pending List Success!');
+                                  return;
+                                },
+                                function errorCb(){
+                                  console.log('update error');
+                                });
+              return;
             }
 
             for(var i_fld in actData){

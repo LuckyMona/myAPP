@@ -6,7 +6,7 @@
     angular.module('starter')
         .factory('chkTokenFactory', chkTokenFactoryFunc);
 
-        function chkTokenFactoryFunc(PARAMS, $q, $http, $timeout, localStorageService){
+        function chkTokenFactoryFunc(PARAMS, $q, $http, $timeout, localStorageService,$ionicLoading){
 
             var _refreshToken = function(token){
                 // check if token expires
@@ -29,6 +29,9 @@
                                                 + '&device_id='
                                                 + device_id;
 
+                        $ionicLoading.show({
+                            template: 'Loading...'
+                        });
                         $http({
                             method:'POST',
                             headers:{
@@ -38,6 +41,10 @@
                             data:reFreshTokenReqStr
                         }).then(function(result){
                             console.log(result);
+                            $ionicLoading.hide();
+                            df.resolve(result);
+                        },function(result){
+                            $ionicLoading.hide();
                             df.resolve(result);
                         });
                     },1000);

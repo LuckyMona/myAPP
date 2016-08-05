@@ -28,7 +28,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
 
 })
-.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory,$translateLocalStorage) {
+.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory,$translateLocalStorage,$state, $ionicViewSwitcher) {
    
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
@@ -40,50 +40,68 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    });
    $scope.isUploadMaskShow = false;
 
-   //isStopUpload用来区分是start还是stop
+    $scope.editItem = function(item){
+      console.log(item);
+      $rootScope.$broadcast('editItem', item);
+      $state.go('tab.newAct');
+      $ionicViewSwitcher.nextDirection("forward");
+    }
+
+   function toggleLang(isStopUpload){
+      var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+      var oStartUpload = document.getElementById('startUpload');
+      if(isStopUpload==="true"){
+        if(langKey === "us_en"){
+          oStartUpload.innerHTML = "<p>Stop</p><p class='no-mg'>Upload</p>";
+        }else if(langKey === "zh_hk"){
+            oStartUpload.innerHTML = "<p>停止</p><p class='no-mg'>上傳</p>";
+        }
+      }else if(isStopUpload===""){
+        if(langKey === "us_en"){
+          oStartUpload.innerHTML = "<p>Start</p><p class='no-mg'>Upload</p>";
+        }else if(langKey === "zh_hk"){
+            oStartUpload.innerHTML = "<p>开始</p><p class='no-mg'>上傳</p>";
+        }
+      }
+   }
    
+   $rootScope.$on('changeLanguage',function(){
+    toggleLang(localStorageService.get('isStopUpload'));
+   });
    $scope.startUpload = function(){
         console.log('startUpload clicked!');
 
         // isStartUpload 只有当allow3G=false并且手机连的是3G网才可以手动上传
         var isStartUpload = localStorageService.get('isStartUpload');
-        var oStartUpload = document.getElementById('startUpload');
-        if(isStartUpload ==="true"){
-        //if(true){
-            //isStopUpload = !isStopUpload;
-            //localStorageService.set('isStartUpload',isStartUpload);
-            $scope.isUploadMaskShow = true;
-            var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-            if(langKey === "us_en"){
-                oStartUpload.innerHTML = "<p>Stop</p><p class='no-mg'>Upload</p>";
-            }else if(langKey === "zh_hk"){
-                oStartUpload.innerHTML = "<p>停止</p><p class='no-mg'>上傳</p>";
-            }
+        if(isStartUpload == null){ isStartUpload = "true"; } 
+        //isStopUpload用来区分是start还是stop
+        var isStopUpload = localStorageService.get('isStopUpload') || "";
 
-            //点过start upload就把isStartUpload设为"",这样再点的时候就进不来这个if分支
-            localStorageService.set('isStartUpload',"");
+        if(isStartUpload ==="true" && isStopUpload === "" && $scope.uploadItems.length>0){
+        
+            $scope.isUploadMaskShow = true;
+            
+            localStorageService.set('isStopUpload',"true")
+            toggleLang("true");
             uploadFactory.coreUpload(false, function(){
                 //全部上传完成后
                 $scope.isUploadMaskShow = false;
-                var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-                if(langKey === "us_en"){
-                    oStartUpload.innerHTML = "<p>Start</p><p class='no-mg'>Upload</p>";
-                }else if(langKey === "zh_hk"){
-                    oStartUpload.innerHTML = "<p>开始</p><p class='no-mg'>上傳</p>";
-                }
+                localStorageService.set('isStopUpload',"");
+                toggleLang("");                
             });
-            return;
-        }else if(isStartUpload ===""){
-          $scope.isUploadMaskShow = false;
-          var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-          if(langKey === "us_en"){
-              oStartUpload.innerHTML = "<p>Start</p><p class='no-mg'>Upload</p>";
-          }else if(langKey === "zh_hk"){
-              oStartUpload.innerHTML = "<p>开始</p><p class='no-mg'>上傳</p>";
-          }
+            //点过start upload就把isStartUpload设为"",这样再点的时候就进不来这个if分支
+            //localStorageService.set('isStartUpload',"");
+            //return;
+        }else if(isStartUpload ==="" || isStopUpload ==="true"){
+          //已经弹出蒙版的情况，或者不允许点击StartUpload的情况，就要隐藏蒙版，按钮变为"Start"
+          $scope.isUploadMaskShow = false;    //隐藏蒙版
+          toggleLang("");                     //按钮变为"Start"
+          localStorageService.set('isStopUpload',"");
           $rootScope.$broadcast('stopUpload');
           console.log('not allowed manual upload');
         }
+
+
         //alert('not allowed manual upload');
    }
    $rootScope.$on('saveAct', function(){
@@ -110,9 +128,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     // $scope.isGray_language = false;
     // $scope.isGray_jobNumber = false;
     $scope.signOut = function(){
-        // TODO 不应该clearAll，保留字段：ActivityId_fake / badgeUpload
-        // 删除字段：token / tasklistData
-        // localStorageService.clearAll();
+        
+        // 删除字段：token / tasklistData / badgeTask
         localStorageService.remove('token','tasklistData','badgeTask');
         delete $localStorage.token;
         $state.go('login.active');
@@ -146,13 +163,14 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
      
     });
 })
-.controller('LangCtrl',function($rootScope, $scope, $state, $ionicViewSwitcher){
+.controller('LangCtrl',function($rootScope, $scope, $state, $ionicViewSwitcher,$translateLocalStorage){
     // language.html页面单选后跳回来
     $scope.$watch("lan", function(newVal,oldVal){
         
         if(newVal==oldVal){
           return;
         }
+        $translateLocalStorage.set('NG_TRANSLATE_LANG_KEY',newVal);
         
         $rootScope.$broadcast('changeLanguage', newVal);
         /*console.log('sm_url:'+ $scope.m_url);*/
@@ -175,7 +193,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         $scope.badgeTask = data;
     });
 
-    $scope.jobNumber = localStorageService.get('projectID');
+    $scope.jobNumber = localStorageService.get('projectNo');
     $rootScope.$on('jobNumberSelect', function(d, data){
         $scope.jobNumber = data;
     })
@@ -241,12 +259,11 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         }
     });*/
 
-    var i=0, len = photoListArr.length;
-    for(i; i<len; ){
+    var i=0;
+    for(i; i<photoListArr.length; ){
       if(photoListArr[i].isSelected===true){
         photoListArr.splice(i,1);
-        len = len-1;
-      }
+      }else {i++;}
     }
 
     $scope.parent.photoList = photoListArr;
@@ -268,19 +285,19 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
             jobName:jobList[i]
         });
     }*/
-    $scope.goBack = function(){
+    $scope.jobListGoBack = function(){
       
-      $scope.jobList = localStorageService.get('jobList')||undefined;
-      console.log($scope.jobList);
+      //$scope.jobList = localStorageService.get('jobList')||undefined;
+      //console.log($scope.jobList);
 
-      if($scope.jobList === undefined){
-        helpToolsFactory.showAlert('Please select ProjectNO!');
+      if((localStorageService.get('jobList')||undefined) === undefined){
+        helpToolsFactory.showAlert('Please select your job!');
         return;
       }
       var from = $rootScope.jobList_fromState;
       
       $state.go(from);
-      //$ionicViewSwitcher.nextDirection("back");
+      $ionicViewSwitcher.nextDirection("back");
     }
     $scope.jobListArr = localStorageService.get('jobItems');
 
@@ -299,8 +316,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         var selectProject =  $scope.jobListArr.filter(function(item, index, arr){
           return(item.ProjectID === newVal);
         });
-        $rootScope.$broadcast('jobNumberSelect',selectProject[0].ProjectNO);
+        $rootScope.$broadcast('jobNumberSelect',selectProject[0].ProjectNo);
         localStorageService.set('projectID',newVal);
+        localStorageService.set('projectNo',selectProject[0].ProjectNo);
         var StaffID = "";
         $scope.jobListArr.forEach(function(item, index, arr){
             if(item.ProjectID === newVal){

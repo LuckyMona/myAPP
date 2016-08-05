@@ -68,7 +68,7 @@
 			'SELECTED':'Selected',
 			/*job list*/
 			'JOB_LIST':'Job List',
-            'UPLOADING':'uploading...',
+            'UPLOADING':'Uploading...',
             'STOP_UPLOAD1':'Stop',
             'STOP_UPLOAD2':'Uploading',
             /*'TRANSLATE': 'EN',

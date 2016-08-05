@@ -68,15 +68,29 @@
                 var setStr = "",
                     condiStr = "";
                 for(var iSet in setObj){
-                    setStr += (iSet + " = "+ setObj[iSet] +",");
+                    if(typeof setObj[iSet] ==="number" ){
+                        setStr +=  (iSet + " = "+ setObj[iSet] +",");
+                    }else{
+                        setStr += (iSet + " = "+"\'"+ setObj[iSet] +"\'"+",");
+                    }
+                    
                 }
                 setStr = setStr.substring(0, setStr.length-1);
                 for(var iCondi in condiObj){
                     condiStr += (iCondi +" = "+condiObj[iCondi]);
                 }
                 
-                var updateStr = 'UPDATE '+tblName+' SET '+setStr+' WHERE '+ condiStr;
+                var updateStr = "UPDATE "+tblName+" SET "+setStr+" WHERE "+ condiStr;
+                console.log(updateStr);
                 // console.log('updateStr:'+updateStr);
+                //var testStr = 'UPDATE fe_Activity SET projectId = 354, description = "dsasdafda" WHERE ActivityId = 0';
+                /*db.transaction(function(tx){
+                    tx.executeSql(testStr, [], function(){
+                        console.log('db update success');
+                    },function(){
+                        console.log('db update fail');
+                    })
+                });*/
                 db.transaction(function(tx){
                     tx.executeSql(updateStr, [], function(){
                     // tx.executeSql('UPDATE fe_Activity SET ActivityId = 123 WHERE ActivityId = 2', [], function(){
@@ -93,7 +107,7 @@
                 });
             }
 
-            var _delete = function(tblName, condiObj){
+            var _delete = function(tblName, condiObj, successCb){
                 var condiStr = "";
                 for(var iCondi in condiObj){
                     condiStr += (iCondi +" = "+condiObj[iCondi]);
@@ -102,6 +116,9 @@
                     //tx.executeSql('DELETE FROM fe_Activity WHERE ActivityId = 123',[],function(){
                     tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr,[],function(){
                         console.log('delete success');
+                        if(successCb){
+                            successCb();
+                        }
                     },function(){
                         console.log('delete fail');
                     })
