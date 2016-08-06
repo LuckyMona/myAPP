@@ -40,12 +40,12 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    });
    $scope.isUploadMaskShow = false;
 
-    $scope.editItem = function(item){
+    /*$scope.editItem = function(item){
       console.log(item);
       $rootScope.$broadcast('editItem', item);
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("forward");
-    }
+    }*/
 
    function toggleLang(isStopUpload){
       var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');

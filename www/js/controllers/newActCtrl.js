@@ -416,7 +416,7 @@
      * 从图库选添加照片&&拍照
      * @author Mary
      */
-    function _setOptions(srcType) {
+    
         
 
     $scope.photoLength = 0;
@@ -582,7 +582,7 @@
     /**
      * 监听editItem
      */
-    $rootScope.$on('editItem', function(d, data){
+    /*$rootScope.$on('editItem', function(d, data){
       
       //更新视图数据
       $scope.location = data.location;
@@ -618,7 +618,7 @@
       $scope.TradeID = edit_idData.TradeID;
       $scope.CompanyID = edit_idData.CompanyID;
 
-    });
+    });*/
     // 保存数据
     
     // dbFactory.dropTbl('fe_Activity');
@@ -642,9 +642,9 @@
                 projectID = localStorageService.get('projectID'),
                 log = $scope.isMockInputVal? $scope.mockInputData:"",
                 idData;
-            var RequireReview = false;
+            var RequireReqview = false;
             if($scope.reviewID){
-              RequireReview = true;
+              RequireReqview = true;
             }    
             idData = {
 
@@ -652,7 +652,7 @@
               "ProjectID":projectID,
               "LocationID":$scope.locationID,
               "CategoryID": $scope.categoryID,
-              "RequireReview":RequireReview || false,
+              "RequireReqview":RequireReqview || false,
               "NotityID": $scope.reviewID || "undefined",
               "TradeID": $scope.tradeID || "undefined",
               "CompanyID": $scope.companyID || "undefined",
@@ -682,7 +682,7 @@
               createdOn:time,
               idData:JSON.stringify(idData),
             }
-            if(typeof $scope.ActivityId === 'number'){
+            /*if(typeof $scope.ActivityId === 'number'){
               actData.ActivityId = $scope.ActivityId;
               //actData.idData = actData.idData.replace(/\"/g,"");
               dbFactory.update('fe_Activity',
@@ -702,7 +702,7 @@
                                   console.log('update error');
                                 });
               return;
-            }
+            }*/
 
             for(var i_fld in actData){
               fieldArr.push(i_fld);
@@ -770,6 +770,7 @@
         $scope.isGray_company = true;
         $scope.isGray_mockinput = true;
         $scope.attachImgs = [];
+        localStorageService.set('photoList',$scope.attachImgs);
     }
 
     // 开一个永远不关的定时器，后期优化再做按需开关定时器

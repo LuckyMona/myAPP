@@ -41,9 +41,10 @@
 
                 var projectID = localStorageService.get('projectID');
                 var staffID = localStorageService.get('staffID');
+                var ActivityID = reqObj.ActivityId;
 
                 var params = {};
-                params.all = "{'token':'"+access_token+"','ProjectID':'"+projectID+"','StaffID':'"+staffID+"','DateCreated':'2016-01-01 00:00:00'}";
+                params.all = "{'token':'"+access_token+"','ProjectID':'"+projectID+"','ActivityID':'"+ActivityID+"','StaffID':'"+staffID+"','DateCreated':'2016-01-01 00:00:00'}";
                 //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
                 
                 options.params = params;
@@ -149,7 +150,7 @@
                               if(lenPhoto>0){
                                   for(var j = 0; j<lenPhoto; j++ ){
                                   uploadActPhotosReq.push({
-                                    ActivityId:uploadActReqs[n].ActivityID,
+                                    ActivityId:result.ActivityID,
                                     photo:uploadActReqs[n].actPhotos[j],
                                   });
                                 }

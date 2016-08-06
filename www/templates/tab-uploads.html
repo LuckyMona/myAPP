@@ -3,7 +3,7 @@
     <div class="greyBar mt49">{{uploadNum}} {{'UPLOAD_TITLE' | translate }}</div>
     <div class="list prevBlock mb100">
 
-        <a class="upload item item-button-right" ng-repeat="upload in uploadItems" ng-click="editItem(upload)">
+        <a class="upload item item-button-right" ng-repeat="upload in uploadItems" ><!--ng-click="editItem(upload)"> -->
           <h2>{{upload.createdOn}}</h2>
           <p class="h20 no_ellipsis">{{upload.description}}</p>
           <div class="r-img" ng-show="{{upload.photoLength}}">
