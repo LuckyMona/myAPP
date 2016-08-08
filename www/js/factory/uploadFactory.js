@@ -20,8 +20,8 @@
                     alert("An error has occurred: Code = " + error.code);
                     console.log("upload error source " + error.source);
                     console.log("upload error target " + error.target);
-                }
-*/
+                }*/
+
                 var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
 
                 // var testUrl = 'http://192.168.12.200:8733/WcfServiceLibrary1/Test/rest/GetData';
@@ -164,11 +164,20 @@
                                             _uploadPhoto(uploadActPhotosReq,function(r){
                                               console.log('win');
                                               console.log(r);
-                                              console.log('th NO. '+k+' photo upload success!');
-                                              //从本地删除已经上传的photo，防止如果没有完成整条数据上传，下次重试的时候，重复上传
-                                              //dbFactory.update('fe_Activity',{ActivityId:uploadActReqs[n].ActivityID}, k);
-                                              uploadPhotoRecur(k+1);
-
+                                              console.log(r.response.replace(/(^\"*)|(\"*$)/g,''));
+                                              var resObj = JSON.parse(r.response.replace(/(^\"*)|(\"*$)/g,''));
+                                              console.log(resObj);
+                                              if(resObj.success === "true"){
+                                                  console.log('th NO. '+k+' photo upload success!');
+                                                  //从本地删除已经上传的photo，防止如果没有完成整条数据上传，下次重试的时候，重复上传
+                                                  //dbFactory.update('fe_Activity',{ActivityId:uploadActReqs[n].ActivityID}, k);
+                                                  uploadPhotoRecur(k+1);
+                                              }else if(resObj.success === "false"){
+                                                  console.log('th NO. '+k+' photo upload fail, retry!');
+                                                  $timeout(function(){
+                                                    uploadPhotoAct(uploadActPhotosReq);
+                                                  },30000);
+                                              }
                                             }, function(err){
                                               
                                               console.log(err);

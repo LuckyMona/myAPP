@@ -423,7 +423,8 @@
     //拍照
     $scope.takePhoto = function(){
       //var options = _setOptions(navigator.camera.PictureSourceType.CAMERA);
-      // 注意：这个options必须写在这里，不能为了避免与$scope.getPhoto中的options重复代码，定义setOptions函数返回options，在这里调用，否则在手机上测试会有bug
+      // 注意：这个options必须写在这里，不能为了避免与$scope.getPhoto中的options重复代码，
+      // 定义setOptions函数返回options，在这里调用，否则在手机上测试会有bug
         var options = {
             // Some common settings are 20, 50, and 100
             quality: 50,
@@ -556,7 +557,7 @@
      // console.log($event);
     }
     $scope.mockInputBlur = function(){
-      var mockInputCont = document.getElementById("mockinput").innerHTML.replace("<div>","").replace("</div>","");
+      var mockInputCont = document.getElementById("mockinput").innerHTML.replace(/(<[\/]?div>)|(<br>)/g,"");
 
       if(mockInputCont){
           $scope.isMockInputVal = true;
