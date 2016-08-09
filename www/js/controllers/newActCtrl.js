@@ -557,7 +557,7 @@
      // console.log($event);
     }
     $scope.mockInputBlur = function(){
-      var mockInputCont = document.getElementById("mockinput").innerHTML.replace(/(<[\/]?div>)|(<br>)/g,"");
+      var mockInputCont = document.getElementById("mockinput").innerHTML.replace(/(<[\/]?div>)|(<br>)|(&nbsp;)/g,"");
 
       if(mockInputCont){
           $scope.isMockInputVal = true;

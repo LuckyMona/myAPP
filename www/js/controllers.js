@@ -318,6 +318,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         });
         $rootScope.$broadcast('jobNumberSelect',selectProject[0].ProjectNo);
         localStorageService.set('projectID',newVal);
+        $rootScope.$broadcast('projectid_changed', selectProject[0].ProjectID);
         localStorageService.set('projectNo',selectProject[0].ProjectNo);
         var StaffID = "";
         $scope.jobListArr.forEach(function(item, index, arr){
@@ -369,6 +370,24 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     });
 })
 .controller('BlockCtrl', function($rootScope,$scope,localStorageService,$state, $ionicViewSwitcher){
+    $rootScope.$on('projectid_changed', function(event, data)
+    {
+        var newBlockSelection = [];
+        var newProjectID = data;
+        var locationList = localStorageService.get('downlistData')["LU_Location"];
+        if (locationList != null)
+        {
+          for(var counter = 0; counter < locationList.length ; counter++)
+          {
+              if (locationList[counter].ProjectID == newProjectID)
+              {
+                  newBlockSelection.push(locationList[counter]);
+              }
+          }
+        }
+        $scope.blockItems = newBlockSelection;
+    });
+
     $scope.blockItems = localStorageService.get('blockItems');
 
     $scope.getFloor = function(block){

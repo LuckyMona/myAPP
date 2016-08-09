@@ -90,10 +90,15 @@
       /* Uncomment for 3D effect */
       /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
     }
-.bar.bar-positive { background: #3E50B5; }
+.bar.bar-positive { background: #F1AF00; }
 .bar-cus { height: 56px; }
 .bar .title-cus { height: 56px; line-height: 56px; color: rgba(255,255,255,0.87) !important; font-size: 20px;}
 .bar-positive .buttons:first-child .button { opacity: 0; }
+
+.app_icon { height: 56px; padding: 10px 2px; background: #DC0019;}
+.app_icon img { padding: 0px; margin: 5px 2px;}
+.button-gammon { background: #555555; color: rgb(255,255,255)}
+
 .has-tabs, .bar-footer.has-tabs {  } 
 .has-header {
     top: 56px;
