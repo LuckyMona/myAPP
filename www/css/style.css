@@ -90,7 +90,7 @@
       /* Uncomment for 3D effect */
       /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
     }
-.bar.bar-positive { background: #F1AF00; }
+.bar.bar-positive { background: #F1AF00; padding:0px; }
 .bar-cus { height: 56px; }
 .bar .title-cus { height: 56px; line-height: 56px; color: rgba(255,255,255,0.87) !important; font-size: 20px;}
 .bar-positive .buttons:first-child .button { opacity: 0; }

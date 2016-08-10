@@ -62,6 +62,12 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         }else if(langKey === "zh_hk"){
             oStartUpload.innerHTML = "<p>开始</p><p class='no-mg'>上傳</p>";
         }
+      }else if(isStopUpload==="stopping"){
+        if(langKey === "us_en"){
+          oStartUpload.innerHTML = "<p>Doing</p><p class='no-mg'>Stopping</p>";
+        }else if(langKey === "zh_hk"){
+            oStartUpload.innerHTML = "<p>正在</p><p class='no-mg'>停止</p>";
+        }
       }
    }
    
@@ -78,27 +84,56 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         var isStopUpload = localStorageService.get('isStopUpload') || "";
 
         if(isStartUpload ==="true" && isStopUpload === "" && $scope.uploadItems.length>0){
-        
+        // 点击"开始上传"的情况
             $scope.isUploadMaskShow = true;
-            
+            $scope.isStoppingShow = false; //隐藏stopping，显示uploading
             localStorageService.set('isStopUpload',"true")
             toggleLang("true");
-            uploadFactory.coreUpload(false, function(){
-                //全部上传完成后
-                $scope.isUploadMaskShow = false;
-                localStorageService.set('isStopUpload',"");
-                toggleLang("");                
-            });
+            //if($rootScope.isUploading === false || $rootScope.isUploading === undefined){
+              // 没在上传的时候，才打开上传              
+                uploadFactory.coreUpload(true, function(){
+                  //全部上传完成后
+                  $scope.isUploadMaskShow = false;
+                  localStorageService.set('isStopUpload',"");
+                  toggleLang("");                
+                });
+            //}
+
+            // 设定了Stopping状态之后，就不可能还在上传了
+            /*else if($rootScope.isUploading === true){
+              // 已经正在上传了，就等上传停止再启动coreUpload
+              $rootScope.$on('coreUpload_done', function(){
+                uploadFactory.coreUpload(true, function(){
+                  //全部上传完成后
+                  $scope.isUploadMaskShow = false;
+                  localStorageService.set('isStopUpload',"");
+                  toggleLang("");                
+                });
+              });
+            }*/
             //点过start upload就把isStartUpload设为"",这样再点的时候就进不来这个if分支
             //localStorageService.set('isStartUpload',"");
             //return;
-        }else if(isStartUpload ==="" || isStopUpload ==="true"){
-          //已经弹出蒙版的情况，或者不允许点击StartUpload的情况，就要隐藏蒙版，按钮变为"Start"
-          $scope.isUploadMaskShow = false;    //隐藏蒙版
-          toggleLang("");                     //按钮变为"Start"
+        }else if(isStopUpload ==="true"){
+        // 已经弹出蒙版时，点击停止上传的情况
+        // 在真正停下上传之前，蒙版显示stopping
+          $scope.isStoppingShow = true;
+          toggleLang("stopping"); 
+
+          // 真正停止上传了，就要隐藏蒙版，按钮变为"Start"
+          $rootScope.$on('stop_coreUpload_done',function(){
+            toggleLang(""); //按钮变为"Start"
+            $scope.isUploadMaskShow = true;    //隐藏蒙版
+          });
+                 
           localStorageService.set('isStopUpload',"");
           $rootScope.$broadcast('stopUpload');
+          
+        }else if(isStartUpload ===""){
+          //不允许点击StartUpload的情况
           console.log('not allowed manual upload');
+          // toggleLang(""); //按钮变为"Start"
+          // $scope.isUploadMaskShow = true;    //隐藏蒙版
         }
 
 
@@ -408,8 +443,15 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         localStorageService.set('floorItems',areaArr);
         localStorageService.set('blockSelected',block);
         $rootScope.$broadcast('blockSelected',areaArr);
-        $state.go('floor');
-        $ionicViewSwitcher.nextDirection("forward");
+
+        if (areaArr.length = 1 && areaArr[0].AreaName === null) {  // Zone 没有 Area
+          $rootScope.$broadcast('floorChange', areaArr);
+          $state.go('tab.newAct');
+          $ionicViewSwitcher.nextDirection("back");
+        } else {
+          $state.go('floor');
+          $ionicViewSwitcher.nextDirection("forward");
+        }
     }
     
 })
@@ -454,7 +496,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     
 
     for(var i=0, len=reviewItems.length; i<len; i++){
-        reviewItems[i].checked = false;
+        reviewItems[i].checked = "";
     }
      $scope.reviewList = reviewItems;
     // [{text:'Alan', checked:false}]
@@ -477,6 +519,11 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         $rootScope.$broadcast('reviewDone',{
           "reviewData":reviewData.join(','),
           "reviewID":reviewID.join(','),
+        });
+      }else{
+        $rootScope.$broadcast('reviewDone',{
+          "reviewData":"",
+          "reviewID":"",
         });
       }
       $state.go('tab.newAct');

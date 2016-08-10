@@ -277,6 +277,7 @@
     
     if(localStorageService.get('location') ){
       $scope.location =  localStorageService.get('location');
+      $scope.locationID =  localStorageService.get('locationID');
       $scope.locationOn = true;
     } else {
       var localLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
@@ -290,12 +291,13 @@
     
     $rootScope.$on('floorChange', function(d, data){
       var block = localStorageService.get('blockSelected');
-      var locationStr = block + " / " + data[0].AreaName;
+      var locationStr = block + (data[0].AreaName === null ? "" : (" / " + data[0].AreaName));
       $scope.isGray_location = false;
       $scope.location = locationStr;
       $scope.locationID = data[0].locationID;
       $scope.locationOn = true;
       localStorageService.set('location', locationStr);
+      localStorageService.set('locationID', $scope.locationID);
 
     });
 
@@ -322,6 +324,7 @@
         if(selectName ==="category"){
           if(localStorageService.get('category')){
             $scope.category =  localStorageService.get('category');
+            $scope.categoryID =  localStorageService.get('categoryID');
             $scope.categoryOn = true;
           } else {
             var localLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
@@ -360,6 +363,7 @@
             //console.log(data);
             if(selectName === 'category'){
               localStorageService.set('category', data.categoryData);
+              localStorageService.set('categoryID', data.categoryID);
             }
             $scope[selectName + 'On'] = true;  //是否选择
         });

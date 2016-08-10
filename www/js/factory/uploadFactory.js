@@ -51,12 +51,13 @@
 
                 var ft = new FileTransfer();
                 ft.upload(reqObj.photo, encodeURI(url), win, fail, options);
-
             }
 
             function _coreUpload(isListenStop, successCb){
+
+                $rootScope.isUploading = true;
                 //onDeviceReady();
-                document.addEventListener("deviceready",onDeviceReady, false);
+                /*document.addEventListener("deviceready",onDeviceReady, false);
                 function onDeviceReady(){
 
                   //监听allow3G的改变,如果 not allow3G且手机连接的为3G网，就停止上传
@@ -75,7 +76,7 @@
                 
                 function stopUpload(){
                     return;
-                }
+                }*/
                 // N条内容数组
                 var uploadActReqs = [];
 
@@ -111,7 +112,24 @@
                 uploadActRecur(n);
                 function uploadActRecur(n){
                   // console.log('n:'+n);
-
+                  document.addEventListener("deviceready",onDeviceReady, false);
+                  function onDeviceReady(){
+                    if(isListenStop){
+                      $rootScope.$on('allow3G_Change', function(d, data){
+                          var type = $cordovaNetwork.getNetwork();
+                          if(data === false && (type===Connection.CELL_3G || type===Connection.CELL_4G)){
+                              n = uploadActReqs.length;
+                              //是否将要把$rootScope.isUploading设为false
+                              $rootScope._isSetingUploadingFalse = true;
+                          }
+                      });
+                      $rootScope.$on('stopUpload', function(){
+                        n = uploadActReqs.length;
+                        $rootScope._isSetingUploadingFalse = true;
+                      });
+                    }
+                  }
+                
                   if(n<uploadActReqs.length){
                     // may error, dealing done 
                     var token = localStorageService.get('token');
@@ -196,7 +214,7 @@
                                   } else {
                                       // 这条数据全部上传完毕
                                       console.log('the NO.' +n +'data_s all photos upload!');
-                                      
+
                                       // 更新Task List，从本地列表中减去这条数据
                                       // may error
                                       dbFactory.delete('fe_Activity',{ActivityId:result.ActivityID},function(){
@@ -214,8 +232,19 @@
                                           $timeout(function() {
                                             uploadActRecur(n+1);
                                           }, 3000);
+
+                                          //停止上传
+                                          if($rootScope._isSetingUploadingFalse === true ){
+                                            //如果用户之前点了stop upload
+                                            $rootScope.$broadcast('stop_coreUpload_done');
+                                            $rootScope.isUploading === false;
+                                            $rootScope._isSetingUploadingFalse = false;
+                                          }else if($rootScope._isSetingUploadingFalse === false || $rootScope._isSetingUploadingFalse === undefined){
+                                            //如果用户没点过stop upload，即将上传下一条数据，所以仍处于上传中
+                                            $rootScope.isUploading === true;
+                                          }
                                       });
-                                      
+
                                       
                                   }
                               }
@@ -253,6 +282,8 @@
                     if(successCb){
                       successCb();
                     }
+                    $rootScope._isSetingUploadingFalse = false;
+                    $rootScope.isUploading = false;
                     return;
                   } ;
                 }

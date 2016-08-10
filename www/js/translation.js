@@ -71,6 +71,7 @@
             'UPLOADING':'Uploading...',
             'STOP_UPLOAD1':'Stop',
             'STOP_UPLOAD2':'Uploading',
+            'STOPPING':'Stopping...',
             /*'TRANSLATE': 'EN',
             'LOADING': 'Loading...',
             
@@ -155,6 +156,7 @@
             'UPLOADING':'正在上傳...',
             'STOP_UPLOAD1':'停止',
             'STOP_UPLOAD2':'上傳',
+            'STOPPING':'正在停止...',
             /*'TRANSLATE': '中',
             'LOADING': '載入中...',
             
