@@ -44,7 +44,7 @@
 			'SUBCONTRACTOR':'Subcontractor',
 			'SELECT_SUBCONTRACTOR':'Select Subcontractor',
 			'PHOTO':'Photo',
-			//'mockInputData':'Input Diary entry here…',
+			'INPUT_LOG_HERE':'Input Diary entry here…',
 			'DELETE':'Delete',
 
 			/*system*/
@@ -69,34 +69,27 @@
 			/*job list*/
 			'JOB_LIST':'Job List',
             'UPLOADING':'Uploading...',
+            'STOPPING':'Stopping...',
             'STOP_UPLOAD1':'Stop',
             'STOP_UPLOAD2':'Uploading',
-            'STOPPING':'Stopping...',
-            /*'TRANSLATE': 'EN',
-            'LOADING': 'Loading...',
-            
-            
-            'INVALID_LOGIN': 'Incorrect Username or Password',
-            'INVALID_EMP_ID': 'Incorrect Employee Details',
-            'OTP': 'One-Time-Password',
-            'OTP_MESSAGE': 'System has sent you a One-Time-Password using SMS at [time].',
-            'REQUEST_OTP': 'Request OTP',
-            'PASSCODE': 'Passcode',
-            'PASSCODE_SETUP': 'Setup Your Passcode',
-            'PASSCODE_ENTER': 'Enter Your Passcode',
-            'PASSCODE_CONFIRM': 'Re-Enter Passcode to Confirm',
-            'PASSCODE_INCORRECT': 'Passcode is incorrect, please try again.',
-            'PASSCODE_MISMATCH': 'Passcode does not match, please try again.',
-            'OK': 'OK',
-            
-            'COMMUNICATIONS': 'News',
-            'PEOPLE': 'People',
-            'ELEAVE': 'eLeave',
-            'MORE': 'More',
-            'LATEST': 'Latest',
-            'CEOBLOG': 'CEO Blog',
-            'VERSION': 'Version'*/
+            'STOPPING1':'Doing',
+            'STOPPING2':'Stopping',
 
+			/* 弹出框 */
+			'OK': 'OK',
+			'CANCEL': 'Cancel',
+			'EXIT': 'Exit',
+			'TIPS': "Tips",
+			'EXIT_MSG': 'Do you want to exit the App?',
+			'LOADING': 'Loading...',
+
+			/* 错误提示 */
+			'INVALID_LOGIN': 'Incorrect Username or Password!',
+			'INVALID_EMP_ID': 'Incorrect Employee Details!',
+			'NET_WORK_ERROR': 'Network Error!',
+			'PLEASE_SELECT_JOB': 'Please select your job!',
+			'SAVE_TO_PENDING_SUCCESS': 'Save to pending list success!',
+			'MANDATORY_NOT_FILL': 'Please select location and category, fill in log or attach images!',
 		});
 		$translateProvider.translations('zh_hk', {
 			/*login*/
@@ -130,7 +123,7 @@
 			'SUBCONTRACTOR':'外判商',
 			'SELECT_SUBCONTRACTOR':'選擇外判商',
 			'PHOTO':'照片',
-			//'mockInputData':'请输入项目日志…',
+			'INPUT_LOG_HERE':'请输入项目日志…',
 			'DELETE':'删除',
 
 			/*system*/
@@ -154,33 +147,27 @@
 			/*job list*/
 			'JOB_LIST':'工作號碼列表',
             'UPLOADING':'正在上傳...',
+            'STOPPING':'正在停止...',
             'STOP_UPLOAD1':'停止',
             'STOP_UPLOAD2':'上傳',
-            'STOPPING':'正在停止...',
-            /*'TRANSLATE': '中',
-            'LOADING': '載入中...',
-            
-            
-            'INVALID_LOGIN': '不正確的用戶名稱或密碼',
-            'INVALID_EMP_ID': '不正確的顧員資料',
-            'OTP': '單次使用驗證碼',
-            'OTP_MESSAGE': '系統於 [time] 向你的登記手提電話號碼發出了單次使用驗證碼。',
-            'REQUEST_OTP': 'Request OTP',
-            'PASSCODE': '簡易登入編碼',
-            'PASSCODE_SETUP': '設定簡易登入編碼',
-            'PASSCODE_ENTER': '輸入簡易登入編碼',
-            'PASSCODE_CONFIRM': '再次輸入簡易登入編碼',
-            'PASSCODE_INCORRECT': '簡易登入編碼不正確，請再次輸入。',
-            'PASSCODE_MISMATCH': '簡易登入編碼不匹配，請再次輸入。',
-            'OK': '確定',
-            
-            'COMMUNICATIONS': '通訊',
-            'PEOPLE': '人員',
-            'ELEAVE': '假期',
-            'MORE': '更多',
-            'LATEST': '近況',
-            'CEOBLOG': '總裁博客',
-            'VERSION': '版本編號'*/
+            'STOPPING1':'正在',
+            'STOPPING2':'停止',
+
+            /* 弹出框 */
+		    'OK': '確定',
+		    'CANCEL': '取消',
+		    'EXIT': '退出',
+		    'TIPS': "提示",
+		    'EXIT_MSG': '你确定要退出应用吗?',
+		    'LOADING': '載入中...',
+
+            /* 错误提示 */
+		    'INVALID_LOGIN': '不正確的用戶名稱或密碼!',
+		    'INVALID_EMP_ID': '不正確的顧員資料!',
+			'NET_WORK_ERROR': '网络连接错误!',
+			'PLEASE_SELECT_JOB': '请选择你的工作项目!',
+			'SAVE_TO_PENDING_SUCCESS': '保存到待上传列表成功!',
+			'MANDATORY_NOT_FILL': '请选择地址和类别, 输入项目日志或者拍照!',
         });
 
 	}

@@ -28,7 +28,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
 
 })
-.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory,$translateLocalStorage,$state, $ionicViewSwitcher) {
+.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory,$translateLocalStorage,$state, $ionicViewSwitcher, helpToolsFactory) {
    
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
@@ -51,23 +51,11 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
       var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
       var oStartUpload = document.getElementById('startUpload');
       if(isStopUpload==="true"){
-        if(langKey === "us_en"){
-          oStartUpload.innerHTML = "<p>Stop</p><p class='no-mg'>Upload</p>";
-        }else if(langKey === "zh_hk"){
-            oStartUpload.innerHTML = "<p>停止</p><p class='no-mg'>上傳</p>";
-        }
+        oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('STOP_UPLOAD1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('STOP_UPLOAD2') + "</p>";
       }else if(isStopUpload===""){
-        if(langKey === "us_en"){
-          oStartUpload.innerHTML = "<p>Start</p><p class='no-mg'>Upload</p>";
-        }else if(langKey === "zh_hk"){
-            oStartUpload.innerHTML = "<p>开始</p><p class='no-mg'>上傳</p>";
-        }
+        oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('START_UPLOAD1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('START_UPLOAD2') + "</p>";
       }else if(isStopUpload==="stopping"){
-        if(langKey === "us_en"){
-          oStartUpload.innerHTML = "<p>Doing</p><p class='no-mg'>Stopping</p>";
-        }else if(langKey === "zh_hk"){
-            oStartUpload.innerHTML = "<p>正在</p><p class='no-mg'>停止</p>";
-        }
+        oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('STOPPING1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('STOPPING2') + "</p>";
       }
    }
    
@@ -326,7 +314,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
       //console.log($scope.jobList);
 
       if((localStorageService.get('jobList')||undefined) === undefined){
-        helpToolsFactory.showAlert('Please select your job!');
+        helpToolsFactory.showAlert(helpToolsFactory.i18nT('PLEASE_SELECT_JOB'));
         return;
       }
       var from = $rootScope.jobList_fromState;
@@ -336,15 +324,26 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     }
     $scope.jobListArr = localStorageService.get('jobItems');
 
-    //console.log(typeof $scope.jobListArr);
-
-    // jobList.html页面单选后跳回来
-    //$scope.jobList = 'J1';
+   
+    // TODO 弹窗多语言
+    $scope.showConfirm = function(event){
+      helpToolsFactory.showConfirm( 'Confirm Toggle Project',
+                                      'Are you sure to toggle project? It will clear what you fill in new Acticity',
+                                      sureCb,
+                                      cancelCb);
+        function cancelCb(){
+            event.preventDefault();
+        }
+        function sureCb(){
+          return;
+        }
+    }
     $scope.$watch("jobList", function(newVal,oldVal){
         
         if(newVal==oldVal){
           return;
         }
+
         $scope.jobList = newVal;
         localStorageService.set('jobList', newVal);
 
@@ -364,9 +363,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
         localStorageService.set('staffID',StaffID);
         var back = $ionicHistory.backView().stateName;
-        
         $state.go(back);
-        $ionicViewSwitcher.nextDirection("back");
+        $ionicViewSwitcher.nextDirection("back"); 
     });
 })
 .controller('FloorCtrl', function($rootScope, $scope, localStorageService, $state, $ionicViewSwitcher){
@@ -495,12 +493,18 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     var reviewItems = localStorageService.get('reviewItems');
     
 
-    for(var i=0, len=reviewItems.length; i<len; i++){
+    /*for(var i=0, len=reviewItems.length; i<len; i++){
+        if(reviewItems[i].checked){
+          return;
+        }
         reviewItems[i].checked = "";
-    }
+    }*/
      $scope.reviewList = reviewItems;
     // [{text:'Alan', checked:false}]
-  
+    
+    $scope.backFromReview = function(){
+      $scope.reviewList = localStorageService.get('reviewItems');
+    }
     $scope.reviewDone = function(){
       
       var reviewData = [],
@@ -514,7 +518,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
       }
       //console.log('reviewData:'+reviewData.join(','));
       //console.log('reviewID:'+reviewID.join(','));
-      
+      localStorageService.set('reviewItems', $scope.reviewList);
       if(reviewData.length >0 ){
         $rootScope.$broadcast('reviewDone',{
           "reviewData":reviewData.join(','),
@@ -537,11 +541,12 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
   //$scope.tradeList = [];
 
   var tradeItems = localStorageService.get('tradeItems');
-  for(var i=0, len = tradeItems.length; i<len; i++){
-    
-    tradeItems[i].checked = false;
-  }
+  
   $scope.tradeList = tradeItems;
+
+  $scope.backFromTrade = function(){
+     $scope.tradeList = localStorageService.get('tradeItems');
+  }
   $scope.tradeDone = function(){
       
       var tradeData = [];
@@ -553,11 +558,16 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
           tradeID.push(arr[i].TradeID);
         } else continue;
       }
-    
+      localStorageService.set('tradeItems', $scope.tradeList);
       if ( tradeData.length>0){
         $rootScope.$broadcast('tradeDone',{
           "tradeData":tradeData.join(','),
           "tradeID":tradeID.join(','),
+        });
+      }else{
+        $rootScope.$broadcast('tradeDone',{
+          "tradeData":"",
+          "tradeID":"",
         });
       }
       $state.go('tab.newAct');
@@ -571,15 +581,18 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
   // $scope.category = 'Category A';
   $scope.company = "Select Subcontractor";
   var companyItems = localStorageService.get('companyItems');
-  for(var i=0, len=companyItems.length; i<len; i++ ){
+  /*for(var i=0, len=companyItems.length; i<len; i++ ){
     companyItems[i].checked =false;
-  }
+  }*/
   $scope.companyList = companyItems;
   /*var mock = [
     {text:'trade1', checked:false},
     {text:'trade2', checked:false},
     {text:'trade3', checked:false}
   ];*/
+  $scope.backFromCompany = function(){
+      $scope.companyList = localStorageService.get('companyItems');
+  }
   $scope.companyDone = function(){
       
       var companyData = [];
@@ -591,21 +604,23 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
           companyID.push(arr[i].CompanyID);
         } else continue;
       }
+      localStorageService.set('companyItems',$scope.companyList);
+      if(companyData.length>0){
+        $rootScope.$broadcast('companyDone',{
+          companyData:companyData.join(','),
+          companyID:companyID.join(','),
+        });
+      }else{
+        $rootScope.$broadcast('companyDone',{
+          "companyData":"",
+          "companyID":"",
+        });
+      }
       
-
-      $rootScope.$broadcast('companyDone',{
-        companyData:companyData.join(','),
-        companyID:companyID.join(','),
-      });
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("back");
 
 
   }
 });
-/*.controller('TabCtrl', function($scope,$window, $timeout,localStorageService){
-    var href =  $window.location.href.split('#')[0] + "#/tab/taskList";
-    $scope.tabGetTasklist = function(){
-        var taskListData = localStorageService.get('tasklistData');
-    }
-})*/
+

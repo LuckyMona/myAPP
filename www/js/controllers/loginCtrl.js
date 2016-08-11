@@ -57,7 +57,7 @@
 	                        + "&password=" + $scope.loginO.password;
 
 	        //console.log(loginReq);
-	        userFactory.login(loginReqStr).then(
+	        userFactory.login(loginReqStr, 0).then(
 	            function(result){
 	              console.log(result);
 	              if(result.statusText ==='OK'){
@@ -98,29 +98,17 @@
 	                
 	                $state.go('tab.newAct');
 	              } else if(result.status < 0) {
-	                console.log('网络连接错误');
-	               	helpToolsFactory.showAlert('网络连接错误');
+	                console.log(helpToolsFactory.i18nT('NET_WORK_ERROR'));
+	               	helpToolsFactory.showAlert(helpToolsFactory.i18nT('NET_WORK_ERROR'));
 	              } else {
-	                console.log('账号或密码不正确！');
-	                helpToolsFactory.showAlert('账号或密码不正确！');
+	                console.log(helpToolsFactory.i18nT('INVALID_LOGIN'));
+	                helpToolsFactory.showAlert(helpToolsFactory.i18nT('INVALID_LOGIN'));
 	              }
 	            }
 	          )
 	      }
-	      /*$scope.showAlert = function(msg){
-	      	var myAlert = $ionicPopup.alert({
-	      		title: '提示',
-     			template: '<p style="text-align:center;">' + msg + '</p>'
-	      	});
-	      	myAlert.then(function(res) {
-			     console.log('ok');
-			});
-			$timeout(function() {
-				myAlert.close();
-			}, 2000);
-	      }*/
 
-	       $scope.activeClear = function(){
+	      $scope.activeClear = function(){
 	      	$scope.loginO.username = "";
 	      	$scope.loginO.password = "";
 	      }

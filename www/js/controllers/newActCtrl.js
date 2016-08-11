@@ -233,41 +233,70 @@
 
       // 第一个字母大写
       var upperSelectName = selectName.substr(0,1).toUpperCase() + selectName.substr(1,selectName.length-1);
-      
-      var itemList = localStorageService.get('downlistData')['LU_'+upperSelectName];
-      if(selectName === 'review'){
-        itemList = localStorageService.get('downlistData').tbl_UserProfile;
-      }
-      
+      var itemList = null;
+      // var isProjectIdChanged;
 
-      //是否按ProjectID分组
-      if(isFilterByProject && isFilterByProject===true){
-          itemList = itemList.filter(function(item, index, arr){
-            return (item.ProjectID === localStorageService.get('projectID') );
-          });
-
-          //是否分中英文
-          if(isUseLang && isUseLang === true){
-            var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-            
-            itemList.forEach(function(item, index, arr){
-              if(langKey === 'us_en'){
-                item.langName = item[upperSelectName+'Name'];
-              } else if(langKey === "zh_hk"){
-                item.langName = item[upperSelectName+'ChineseName'];
-              }
-              
+      //var oldProjectID = localStorageService.get('oldProjectID');
+      //var newProjectID = localStorageService.get('projectID');
+      //localStorageService.set('oldProjectID',newProjectID);
+      
+      /*if(oldProjectID === null || oldProjectID === newProjectID){
+        isProjectIdChanged===false;
+      }else if(oldProjectID !== newProjectID){
+        isProjectIdChanged = true;
+      }*/
+      
+      //if(isProjectIdChanged===true){
+      //projectID已经改变
+      //     itemList = localStorageService.get(selectName+'Items');
+      //     if(selectName === 'review'){
+      //         itemList = localStorageService.get('downlistData').tbl_UserProfile;
+      //     }
+      //     filterByProjectID();
+      // }else{
+      //projectID没有改变
+          if(localStorageService.get(selectName+'Items')){
+              itemList = localStorageService.get(selectName+'Items');
+          }else if(localStorageService.get(selectName+'Items') === null){
+            itemList = localStorageService.get('downlistData')['LU_'+upperSelectName];
+            if(selectName === 'review'){
+                itemList = localStorageService.get('downlistData').tbl_UserProfile;
+            }
+            filterByProjectID();
+          }          
+      //}
+      
+      
+      function filterByProjectID(){
+        //是否按ProjectID分组
+        if(isFilterByProject && isFilterByProject===true){
+            itemList = itemList.filter(function(item, index, arr){
+              return (item.ProjectID === localStorageService.get('projectID') );
             });
-          }
-          
+
+            //是否分中英文
+            if(isUseLang && isUseLang === true){
+              var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+              
+              itemList.forEach(function(item, index, arr){
+                if(langKey === 'us_en'){
+                  item.langName = item[upperSelectName+'Name'];
+                } else if(langKey === "zh_hk"){
+                  item.langName = item[upperSelectName+'ChineseName'];
+                }
+                
+              });
+            }
+            
+        }
       }
-      
       
       localStorageService.set(selectName+'Items', itemList);
       $state.go(selectName);  
       $ionicViewSwitcher.nextDirection("forward");  
     }
     
+
 
     $scope.locationOn = false;    //是否选择
     $scope.categoryOn = false;    //是否选择
@@ -280,13 +309,7 @@
       $scope.locationID =  localStorageService.get('locationID');
       $scope.locationOn = true;
     } else {
-      var localLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-      //if(localStorageService.get('NG_TRANSLATE_LANG_KEY'))
-      if(localLang == 'zh_hk'){
-        $scope.location = '選擇地址';
-      } else {
-        $scope.location = 'Select Location';
-      }
+      $scope.location = helpToolsFactory.i18nT('SELECT_LOCATION');
     }
     
     $rootScope.$on('floorChange', function(d, data){
@@ -301,8 +324,10 @@
 
     });
 
- 
-   
+    // 切換了projectID就要清空页面 
+    $rootScope.$on('jobNumberSelect', function(){
+      clearNewAct();
+    });
     /*
      * [onSelect 监听选项改变]
      * @param  {string}  selectName [选项名]
@@ -327,12 +352,7 @@
             $scope.categoryID =  localStorageService.get('categoryID');
             $scope.categoryOn = true;
           } else {
-            var localLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
-            if(localLang ==="zh_hk"){
-              $scope.category = '選擇類別';
-            } else {
-              $scope.category = 'Select Category';
-            }
+            $scope.category = helpToolsFactory.i18nT('SELECT_CATEGORY');
           }
         }
         
@@ -393,25 +413,17 @@
      * @author Mary
      */
     
-    $scope.mockInputData = "Input Diary Entry Here…";
+    $scope.mockInputData = helpToolsFactory.i18nT('INPUT_LOG_HERE');
 
     $rootScope.$on('changeLanguage', function(e, lang){
-      
-      if(lang === "zh_hk"){
-        $scope.mockInputData = "請輸入項目日誌…";
-        $scope.review = "選擇用戶";
-        if(!localStorageService.get('location')){
-          $scope.location = "選擇地址";
-        }
+      $scope.mockInputData = helpToolsFactory.i18nT('INPUT_LOG_HERE');
+      $scope.review = helpToolsFactory.i18nT('SELECT_USER');
+      if(!localStorageService.get('location')){
+        $scope.location = helpToolsFactory.i18nT('SELECT_LOCATION');
+      }
 
-        if(!localStorageService.get('category')){
-          $scope.category = "選擇類別";
-        }
-      } else {
-        $scope.mockInputData = "Input Diary Entry Here…";
-        $scope.category = localStorageService.get('category') || "Select Category";
-        $scope.review = "Select User";
-        $scope.location = localStorageService.get('location') || "Select Location";
+      if(!localStorageService.get('category')){
+        $scope.category = helpToolsFactory.i18nT('SELECT_CATEGORY');
       }
     });
     
@@ -431,7 +443,7 @@
       // 定义setOptions函数返回options，在这里调用，否则在手机上测试会有bug
         var options = {
             // Some common settings are 20, 50, and 100
-            quality: 50,
+            quality: 100,
             destinationType: navigator.camera.DestinationType.FILE_URI,
             // In this app, dynamically set the picture source, Camera or photo gallery
             sourceType: navigator.camera.PictureSourceType.CAMERA,
@@ -473,7 +485,7 @@
           // 注意：这个options必须写在这里，不能使用上面定义的_setOptions函数，否则在手机上测试会有bug
            var options = {
             // Some common settings are 20, 50, and 100
-            quality: 50,
+            quality: 100,
             destinationType: navigator.camera.DestinationType.FILE_URI,
             // In this app, dynamically set the picture source, Camera or photo gallery
             sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM,
@@ -725,13 +737,12 @@
             $timeout(function() {
               $rootScope.$broadcast('saveAct');
             }, 100);
-            helpToolsFactory.showMsg('Save To Pending List Success!');
+            helpToolsFactory.showMsg(helpToolsFactory.i18nT('SAVE_TO_PENDING_SUCCESS'));
             doUpload();
             // uploadFactory.coreUpload(false);
             clearNewAct();
           } else {
-            //TODO
-            alert('Please select location and category, fill in log or attach images');
+            helpToolsFactory.showAlert(helpToolsFactory.i18nT('MANDATORY_NOT_FILL'));
           }
       }, 100);     
       
@@ -741,35 +752,16 @@
     // newAct页面清空
     var clearNewAct = function(){
         console.log('clearNewAct');
-        var keyLang = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
         
         $scope.photoLength = 0;
-        if(keyLang === "zh_hk"){
-          //console.log('zh_hk');
-          $scope.isMockInputVal = false;
-          $scope.mockInputData = "請輸入項目日誌…";
-          document.getElementById("mockinput").innerHTML = "請輸入項目日誌…";
-          //$scope.category = "選擇類別";
-          $scope.review = "選擇用戶";
-          $scope.trade = "選擇交易";
-          $scope.company = "選擇分判商";
-          //$scope.location = "選擇地址";
 
-        } else {
-          //console.log('us_en');
-          $scope.isMockInputVal = false;
-          $scope.mockInputData = "Input Diary Entry Here…";
-          document.getElementById("mockinput").innerHTML = "Input Diary Entry Here…";
-          console.log($scope.mockInputData);
-          //$scope.category = "Select Category";
-          $scope.review = "Select User";
-          $scope.trade = "Select Trade";
-          $scope.company = "Select Subcontractor";
-          
-          //$scope.location = "Select Location";
-        }
-        //$scope.isGray_location = true;
-        //$scope.isGray_category = true;
+        $scope.isMockInputVal = false;
+        $scope.mockInputData = helpToolsFactory.i18nT('INPUT_LOG_HERE');
+        document.getElementById("mockinput").innerHTML = helpToolsFactory.i18nT('INPUT_LOG_HERE');
+        $scope.review = helpToolsFactory.i18nT('SELECT_USER');
+        $scope.trade = helpToolsFactory.i18nT('SELECT_TRADE');
+        $scope.company = helpToolsFactory.i18nT('SUBCONTRACTOR');
+
         $scope.isGray_review = true;
         $scope.isGray_trade = true;
         $scope.isGray_company = true;
