@@ -299,52 +299,55 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
 })
 .controller('JobListCtrl', function($rootScope, $scope,localStorageService,$state,$ionicViewSwitcher, $ionicHistory, helpToolsFactory){
-    /*var jobList =  localStorageService.get('downlistData').jobNumber;
-    console.log(jobList);
-    var jobListArr = [];
-    for(var i in jobList){
-        jobListArr.push({
-            jobNumber:i,
-            jobName:jobList[i]
-        });
-    }*/
+    
     $scope.jobListGoBack = function(){
       
-      //$scope.jobList = localStorageService.get('jobList')||undefined;
-      //console.log($scope.jobList);
+        //$scope.jobList = localStorageService.get('jobList')||undefined;
+        //console.log($scope.jobList);
 
-      if((localStorageService.get('jobList')||undefined) === undefined){
-        helpToolsFactory.showAlert(helpToolsFactory.i18nT('PLEASE_SELECT_JOB'));
-        return;
-      }
-      var from = $rootScope.jobList_fromState;
-      
-      $state.go(from);
-      $ionicViewSwitcher.nextDirection("back");
+        if((localStorageService.get('jobList')||undefined) === undefined){
+          helpToolsFactory.showAlert(helpToolsFactory.i18nT('PLEASE_SELECT_JOB'));
+          return;
+        }
+        var from = $rootScope.jobList_fromState;
+        
+        $state.go(from);
+        $ionicViewSwitcher.nextDirection("back");
     }
+
     $scope.jobListArr = localStorageService.get('jobItems');
 
+    $scope.jobModel = {"jobList":""};
    
     // TODO 弹窗多语言
-    $scope.showConfirm = function(event){
+     function showConfirm(){
       helpToolsFactory.showConfirm( 'Confirm Toggle Project',
                                       'Are you sure to toggle project? It will clear what you fill in new Acticity',
                                       sureCb,
                                       cancelCb);
         function cancelCb(){
-            event.preventDefault();
+            var back = $rootScope.jobList_fromState;
+            $state.go(back);
+            $ionicViewSwitcher.nextDirection("back"); 
         }
         function sureCb(){
+
           return;
         }
     }
-    $scope.$watch("jobList", function(newVal,oldVal){
+
+    if(localStorageService.get('isFillNewAct') === true){
+      showConfirm();
+    }
+    
+    $scope.$watch("jobModel.jobList", function(newVal,oldVal){
         
         if(newVal==oldVal){
           return;
         }
 
-        $scope.jobList = newVal;
+
+        $scope.jobModel.jobList = newVal;
         localStorageService.set('jobList', newVal);
 
         var selectProject =  $scope.jobListArr.filter(function(item, index, arr){
@@ -362,7 +365,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         });
 
         localStorageService.set('staffID',StaffID);
-        var back = $ionicHistory.backView().stateName;
+        //var back = $ionicHistory.backView().stateName;
+        var back = $rootScope.jobList_fromState;
         $state.go(back);
         $ionicViewSwitcher.nextDirection("back"); 
     });

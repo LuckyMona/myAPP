@@ -146,7 +146,10 @@
                     var uploadActReqStr = uploadActReqs[n].uploadActReq;
                     var uploadActReqObj = JSON.parse(uploadActReqStr);
                     uploadActReqObj.token = token;
-                    uploadActReqs[n].uploadActReq = JSON.stringify(uploadActReqObj).replace(/\"/g, "\'");
+                    //uploadActReqs[n].uploadActReq = JSON.stringify(uploadActReqObj).replace(/\"/g, "\'");
+                    uploadActReqObj.Description = uploadActReqObj.Description.replace("\"", "!~!~`^!~!~"); // 暂时将双引号改为特殊字符
+                    var uploadActReqObjStr = JSON.stringify(uploadActReqObj).replace(/\"/g, "\\\"");       // 双引号转义，否则C#会出错
+                    uploadActReqs[n].uploadActReq = uploadActReqObjStr.replace("!~!~`^!~!~", "\\\\\\\"");  // 将特殊字符转回双引号
 
                     //console.log(uploadActReqs[n].uploadActReq);
 

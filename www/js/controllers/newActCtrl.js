@@ -234,38 +234,16 @@
       // 第一个字母大写
       var upperSelectName = selectName.substr(0,1).toUpperCase() + selectName.substr(1,selectName.length-1);
       var itemList = null;
-      // var isProjectIdChanged;
-
-      //var oldProjectID = localStorageService.get('oldProjectID');
-      //var newProjectID = localStorageService.get('projectID');
-      //localStorageService.set('oldProjectID',newProjectID);
       
-      /*if(oldProjectID === null || oldProjectID === newProjectID){
-        isProjectIdChanged===false;
-      }else if(oldProjectID !== newProjectID){
-        isProjectIdChanged = true;
-      }*/
-      
-      //if(isProjectIdChanged===true){
-      //projectID已经改变
-      //     itemList = localStorageService.get(selectName+'Items');
-      //     if(selectName === 'review'){
-      //         itemList = localStorageService.get('downlistData').tbl_UserProfile;
-      //     }
-      //     filterByProjectID();
-      // }else{
-      //projectID没有改变
-          if(localStorageService.get(selectName+'Items')){
-              itemList = localStorageService.get(selectName+'Items');
-          }else if(localStorageService.get(selectName+'Items') === null){
-            itemList = localStorageService.get('downlistData')['LU_'+upperSelectName];
-            if(selectName === 'review'){
-                itemList = localStorageService.get('downlistData').tbl_UserProfile;
-            }
-            filterByProjectID();
-          }          
-      //}
-      
+      if(localStorageService.get(selectName+'Items')){
+          itemList = localStorageService.get(selectName+'Items');
+      }else if(localStorageService.get(selectName+'Items') === null){
+        itemList = localStorageService.get('downlistData')['LU_'+upperSelectName];
+        if(selectName === 'review'){
+            itemList = localStorageService.get('downlistData').tbl_UserProfile;
+        }
+        filterByProjectID();
+      }          
       
       function filterByProjectID(){
         //是否按ProjectID分组
@@ -287,7 +265,6 @@
                 
               });
             }
-            
         }
       }
       
@@ -319,15 +296,24 @@
       $scope.location = locationStr;
       $scope.locationID = data[0].locationID;
       $scope.locationOn = true;
+      localStorageService.set('isFillNewAct',true);
       localStorageService.set('location', locationStr);
       localStorageService.set('locationID', $scope.locationID);
-
     });
 
     // 切換了projectID就要清空页面 
     $rootScope.$on('jobNumberSelect', function(){
-      clearNewAct();
+      // 如果在newAct页面填过内容
+      
+      if(localStorageService.get("isFillNewAct") === true){
+        clearNewAct();
+        $scope.location = helpToolsFactory.i18nT('SELECT_LOCATION');
+        $scope.locationOn = false;
+        $scope.isGray_location = true;
+      }
+      
     });
+
     /*
      * [onSelect 监听选项改变]
      * @param  {string}  selectName [选项名]
@@ -351,6 +337,7 @@
             $scope.category =  localStorageService.get('category');
             $scope.categoryID =  localStorageService.get('categoryID');
             $scope.categoryOn = true;
+            localStorageService.set('isFillNewAct',true);
           } else {
             $scope.category = helpToolsFactory.i18nT('SELECT_CATEGORY');
           }
@@ -373,6 +360,7 @@
                 $scope[selectName] = data[selectName+'Data'];
                 $scope[selectName + 'ID'] = data[selectName+'ID'];
                 $scope[selectName + 'On'] = true;  //是否选择
+                localStorageService.set('isFillNewAct',true);
             });
             return;
         }
@@ -386,6 +374,7 @@
               localStorageService.set('categoryID', data.categoryID);
             }
             $scope[selectName + 'On'] = true;  //是否选择
+            localStorageService.set('isFillNewAct',true);
         });
     }
 
@@ -462,6 +451,7 @@
                     'imgURI':imgURI,
                     isShowSelectIcon:false,
                 });
+                localStorageService.set('isFillNewAct',true);
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength ++;
 
@@ -507,6 +497,7 @@
                 $scope.attachImgs.unshift({
                   'imgURI':imgURI
                 });
+                localStorageService.set('isFillNewAct',true);
                 localStorageService.set('photoList', $scope.attachImgs);
                 $scope.photoLength++;
                 
@@ -539,6 +530,12 @@
           break;
         }
       }
+      if($scope.attachImgs.length>0){
+        localStorageService.set('isFillNewAct',true);
+      }else{
+        localStorageService.set('isFillNewAct',false);
+      }
+
       $scope.photoLength--;
       
     }
@@ -546,6 +543,11 @@
     $rootScope.$on('deletePhotoDone', function(d, data){
         $scope.attachImgs = data;
         $scope.photoLength = data.length;
+        if($scope.attachImgs.length>0){
+          localStorageService.set('isFillNewAct',true);
+        }else{
+          localStorageService.set('isFillNewAct',false);
+        }
     });
 
     // log input clear content when focus
@@ -573,10 +575,14 @@
      // console.log($event);
     }
     $scope.mockInputBlur = function(){
-      var mockInputCont = document.getElementById("mockinput").innerHTML.replace(/(<[\/]?div>)|(<br>)|(&nbsp;)/g,"");
+      //var mockInputCont1 = document.getElementById("mockinput").innerHTML.replace(/(<[\/]?div>)|(<br>)|(&nbsp;)/g,"");
+      //var mockInputCont2 = document.getElementById("mockinput").innerHTML.replace(/<.+?>/gim,'');
+      var mockInputCont = document.getElementById("mockinput").innerText;
+      //mockInputCont = mockInputCont.replace("\"","\\\"");                 // 对双引号转义
 
       if(mockInputCont){
           $scope.isMockInputVal = true;
+          localStorageService.set('isFillNewAct',true);
           console.log('mockinputCont:'+mockInputCont);
           console.log('$scope.isMockInputVal:'+$scope.isMockInputVal);
           $scope.mockInputData = mockInputCont;
@@ -768,7 +774,13 @@
         $scope.isGray_mockinput = true;
         $scope.attachImgs = [];
         localStorageService.set('photoList',$scope.attachImgs);
+        localStorageService.set('reviewItems',null);
+        localStorageService.set('tradeItems',null);
+        localStorageService.set('companyItems',null);
+        
+
     }
+    
 
     // 开一个永远不关的定时器，后期优化再做按需开关定时器
     var timer = null;
