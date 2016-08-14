@@ -82,6 +82,8 @@
 			'TIPS': "Tips",
 			'EXIT_MSG': 'Do you want to exit the App?',
 			'LOADING': 'Loading...',
+            'CONFIRM_TOGGLE_PROJECT':'Confirm Toggle Project',
+            'CONFIRM_TOGGLE_PROJECT_CONTENT':'Are you sure to toggle project? It will clear what you fill in new Acticity',
 
 			/* 错误提示 */
 			'INVALID_LOGIN': 'Incorrect Username or Password!',
@@ -160,6 +162,8 @@
 		    'TIPS': "提示",
 		    'EXIT_MSG': '你确定要退出应用吗?',
 		    'LOADING': '載入中...',
+            'CONFIRM_TOGGLE_PROJECT':'確認切換項目',
+            'CONFIRM_TOGGLE_PROJECT_CONTENT':'確定要切換項目，如果切換，將會清空已填內容',
 
             /* 错误提示 */
 		    'INVALID_LOGIN': '不正確的用戶名稱或密碼!',

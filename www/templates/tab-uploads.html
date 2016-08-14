@@ -20,7 +20,7 @@
   </ion-content>
   <div class="uploadMaskWrap" ng-show="isUploadMaskShow">
       <div class="uploadMask"></div>
-      <div class="uploadContent" ng-hide="isStoppingShow">{{'UPLOADING' | translate}}</div>
+      <div class="uploadContent" ng-show="isUploadingShow">{{'UPLOADING' | translate}}</div>
       <div class="uploadContent" ng-show="isStoppingShow">{{'STOPPING' | translate}}</div>
   </div>
   <div class="startUpload" id="startUpload" ng-click="startUpload()">

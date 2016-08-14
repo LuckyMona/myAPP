@@ -28,7 +28,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
 
 })
-.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory,$translateLocalStorage,$state, $ionicViewSwitcher, helpToolsFactory) {
+.controller('UploadsCtrl', function($rootScope, $scope, $stateParams, localStorageService, dbFactory, uploadFactory,$translateLocalStorage,$state, $ionicViewSwitcher, helpToolsFactory, $timeout) {
    
    // $scope.uploadItems = dbFactory.findAll('fe_Activity') || "";
    dbFactory.findAll('fe_Activity', function(results){
@@ -39,6 +39,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         $scope.uploadItems = results;
    });
    $scope.isUploadMaskShow = false;
+   $scope.isUploadingShow = false;
+   $scope.isStoppingShow = false;
 
     /*$scope.editItem = function(item){
       console.log(item);
@@ -47,86 +49,60 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
       $ionicViewSwitcher.nextDirection("forward");
     }*/
 
-   function toggleLang(isStopUpload){
-      var langKey = $translateLocalStorage.get('NG_TRANSLATE_LANG_KEY');
+   function toggleLang(){
       var oStartUpload = document.getElementById('startUpload');
-      if(isStopUpload==="true"){
+
+      if(uploadFactory.isUploading()){
+        $scope.isUploadMaskShow = true;
+        $scope.isUploadingShow = true;
+        $scope.isStoppingShow = false;
+
         oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('STOP_UPLOAD1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('STOP_UPLOAD2') + "</p>";
-      }else if(isStopUpload===""){
-        oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('START_UPLOAD1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('START_UPLOAD2') + "</p>";
-      }else if(isStopUpload==="stopping"){
+      } else if(uploadFactory.isStopping()){
+        $scope.isUploadMaskShow = true;
+        $scope.isUploadingShow = false;
+        $scope.isStoppingShow = true;
+
         oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('STOPPING1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('STOPPING2') + "</p>";
+      } else {
+        $scope.isUploadMaskShow = false;
+        $scope.isUploadingShow = false;
+        $scope.isStoppingShow = false; //隐藏stopping，显示uploading
+
+        oStartUpload.innerHTML = "<p>"+ helpToolsFactory.i18nT('START_UPLOAD1') + "</p><p class='no-mg'>"+ helpToolsFactory.i18nT('START_UPLOAD2') + "</p>";
       }
    }
    
    $rootScope.$on('changeLanguage',function(){
-    toggleLang(localStorageService.get('isStopUpload'));
+     toggleLang();
    });
+   
+   $rootScope.$on('uploadStatusChange',function(){
+     toggleLang();
+
+     $timeout(function() {
+       toggleLang();            // TODO 很奇怪，为什么不会生效，要再来一次
+     }, 200);
+   });
+
    $scope.startUpload = function(){
-        console.log('startUpload clicked!');
 
-        // isStartUpload 只有当allow3G=false并且手机连的是3G网才可以手动上传
-        var isStartUpload = localStorageService.get('isStartUpload');
-        if(isStartUpload == null){ isStartUpload = "true"; } 
-        //isStopUpload用来区分是start还是stop
-        var isStopUpload = localStorageService.get('isStopUpload') || "";
+      if (uploadFactory.isStopping()) {
+        console.log('Stopping, dont click me!!!');
+        return;
 
-        if(isStartUpload ==="true" && isStopUpload === "" && $scope.uploadItems.length>0){
-        // 点击"开始上传"的情况
-            $scope.isUploadMaskShow = true;
-            $scope.isStoppingShow = false; //隐藏stopping，显示uploading
-            localStorageService.set('isStopUpload',"true")
-            toggleLang("true");
-            //if($rootScope.isUploading === false || $rootScope.isUploading === undefined){
-              // 没在上传的时候，才打开上传              
-                uploadFactory.coreUpload(true, function(){
-                  //全部上传完成后
-                  $scope.isUploadMaskShow = false;
-                  localStorageService.set('isStopUpload',"");
-                  toggleLang("");                
-                });
-            //}
+      } else if (uploadFactory.isUploading()) {
+        console.log('Stop Upload clicked!');
+        uploadFactory.stopUpload();
+        toggleLang();
 
-            // 设定了Stopping状态之后，就不可能还在上传了
-            /*else if($rootScope.isUploading === true){
-              // 已经正在上传了，就等上传停止再启动coreUpload
-              $rootScope.$on('coreUpload_done', function(){
-                uploadFactory.coreUpload(true, function(){
-                  //全部上传完成后
-                  $scope.isUploadMaskShow = false;
-                  localStorageService.set('isStopUpload',"");
-                  toggleLang("");                
-                });
-              });
-            }*/
-            //点过start upload就把isStartUpload设为"",这样再点的时候就进不来这个if分支
-            //localStorageService.set('isStartUpload',"");
-            //return;
-        }else if(isStopUpload ==="true"){
-        // 已经弹出蒙版时，点击停止上传的情况
-        // 在真正停下上传之前，蒙版显示stopping
-          $scope.isStoppingShow = true;
-          toggleLang("stopping"); 
-
-          // 真正停止上传了，就要隐藏蒙版，按钮变为"Start"
-          $rootScope.$on('stop_coreUpload_done',function(){
-            toggleLang(""); //按钮变为"Start"
-            $scope.isUploadMaskShow = true;    //隐藏蒙版
-          });
-                 
-          localStorageService.set('isStopUpload',"");
-          $rootScope.$broadcast('stopUpload');
-          
-        }else if(isStartUpload ===""){
-          //不允许点击StartUpload的情况
-          console.log('not allowed manual upload');
-          // toggleLang(""); //按钮变为"Start"
-          // $scope.isUploadMaskShow = true;    //隐藏蒙版
-        }
-
-
-        //alert('not allowed manual upload');
+      } else {
+        console.log('Start Upload clicked!');
+        uploadFactory.coreUpload();
+        toggleLang();
+      }
    }
+
    $rootScope.$on('saveAct', function(){
         //$scope.uploadItems = localStorageService.get('actDatas');
         // console.log('on saveAct');
@@ -321,8 +297,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    
     // TODO 弹窗多语言
      function showConfirm(){
-      helpToolsFactory.showConfirm( 'Confirm Toggle Project',
-                                      'Are you sure to toggle project? It will clear what you fill in new Acticity',
+      helpToolsFactory.showConfirm( helpToolsFactory.i18nT('CONFIRM_TOGGLE_PROJECT'),
+                                      helpToolsFactory.i18nT('CONFIRM_TOGGLE_PROJECT_CONTENT'),
                                       sureCb,
                                       cancelCb);
         function cancelCb(){

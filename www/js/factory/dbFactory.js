@@ -46,7 +46,7 @@
                 });
             }
 
-            var _findAll = function(tblName, successCb){
+            var _findAll = function(tblName, successCb, errorCb){
                 var rowArr = [];
                 db.transaction(function(tx){
                     tx.executeSql('SELECT * FROM '+tblName, [], function(tx, results){
@@ -59,6 +59,10 @@
                         if(successCb){
                             successCb(rowArr);
                         }
+                    }, function(){
+                        if(errorCb){
+                            errorCb();
+                        }
                     });
                  });
                 
@@ -68,7 +72,7 @@
                 var setStr = "",
                     condiStr = "";
                 for(var iSet in setObj){
-                    setStr += (iSet + " = "+ setObj[iSet] +",");
+                    setStr += (iSet + " = \""+ setObj[iSet] +"\",");
                     /*if(typeof setObj[iSet] ==="number" ){
                         setStr +=  (iSet + " = "+ setObj[iSet] +",");
                     }else{
@@ -108,7 +112,7 @@
                 });
             }
 
-            var _delete = function(tblName, condiObj, successCb){
+            var _delete = function(tblName, condiObj, successCb, errorCb){
                 var condiStr = "";
                 for(var iCondi in condiObj){
                     condiStr += (iCondi +" = "+condiObj[iCondi]);
@@ -122,6 +126,9 @@
                         }
                     },function(){
                         console.log('delete fail');
+                        if(errorCb){
+                            errorCb();
+                        }
                     })
                     //tx.executeSql('DELETE FROM '+tblName+' WHERE '+condiStr);
                 });

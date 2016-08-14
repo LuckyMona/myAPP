@@ -148,48 +148,10 @@
                 return deferred.promise;
             }
 
-            var _uploadAct = function(uploadActReq){
-                // console.log(uploadActReq);
-                var url = PARAMS.BASE_URL + 'UploadActivity';
-                var deferred = $q.defer();
-                var quoteReq = "\""+uploadActReq+"\"";
-                // console.log(quoteReq);
-                $http.post(url, quoteReq)
-                    .then(function(result){
-                        console.log(result);
-                        deferred.resolve(result.data);
-                    });
-
-                /*var uploadActData = {
-                    success:true,
-                    ActivityID:123,
-                }
-                deferred.resolve(uploadActData);*/
-                return deferred.promise;
-            }
-
-            var _uploadPhotoAct = function(uploadPhotoAct){
-                console.log(uploadPhotoAct);
-                var deferred = $q.defer();
-                /*$http.post(url, req)
-                    .then(function(result){
-                        deferred.resolve(result);
-                    });*/
-                var uploadPhotoActData = {
-                    success:true,
-                }
-                deferred.resolve(uploadPhotoActData);
-                return deferred.promise;
-            }
-
-
-
             return {
                getDownlist:_getDownlist,
                getTasklist:_getTasklist,
-               uploadAct:_uploadAct,
-               uploadPhotoAct:_uploadPhotoAct,
-               
+
             }
         }
 

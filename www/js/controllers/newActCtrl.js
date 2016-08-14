@@ -285,6 +285,7 @@
       $scope.location =  localStorageService.get('location');
       $scope.locationID =  localStorageService.get('locationID');
       $scope.locationOn = true;
+      localStorageService.set('isFillNewAct',true);
     } else {
       $scope.location = helpToolsFactory.i18nT('SELECT_LOCATION');
     }
@@ -681,6 +682,7 @@
               "CompanyID": $scope.companyID || "undefined",
               "Importance":"undefined",
               "Description":log,
+              "GUID": helpToolsFactory.GUID(),
             };
 
             var ActivityId_fake = localStorageService.get('ActivityId_fake') || 0;
@@ -701,6 +703,7 @@
               company: company,
               photos: photosArr.join(',') || "",
               photoLength:$scope.attachImgs.length,
+              photoIds:"",
               description: log,
               createdOn:time,
               idData:JSON.stringify(idData),
@@ -745,7 +748,7 @@
             }, 100);
             helpToolsFactory.showMsg(helpToolsFactory.i18nT('SAVE_TO_PENDING_SUCCESS'));
             doUpload();
-            // uploadFactory.coreUpload(false);
+            // uploadFactory.coreUpload();
             clearNewAct();
           } else {
             helpToolsFactory.showAlert(helpToolsFactory.i18nT('MANDATORY_NOT_FILL'));
@@ -853,13 +856,9 @@
                 //chkNetChange();
                 if(type===Connection.WIFI||(type===Connection.CELL_3G||type===Connection.CELL_4G) && allow3G===true){
                     console.log('online! start upload');
-                    uploadFactory.coreUpload(true);
-                    localStorageService.set('isStartUpload', "");
-                }
-                else if((type===Connection.CELL_3G||type===Connection.CELL_4G) && allow3G===false){
-                  // 只有当allow3G=false并且手机连的是3G网才可以手动上传
-                  // 当用户点击start upload的时候再上传
-                  localStorageService.set('isStartUpload', "true");
+                    uploadFactory.coreUpload();
+                } else {
+                  //uploadFactory.stopUpload();
                 }
               
                 onNetChange();
@@ -870,18 +869,16 @@
             $rootScope.$on('allow3G_Change', function(d,data){
               localStorageService.set('allow3G',data);
               if(data === true){ 
-                // Allow 3G，并且处于3G或4G的环境，就自动上传，并且不允许手动上传
+                // Allow 3G，并且处于3G或4G的环境，就自动上传
                 var type = $cordovaNetwork.getNetwork();
                 if(type===Connection.CELL_3G || type===Connection.CELL_4G){
-                  uploadFactory.coreUpload(true);
-                  localStorageService.set('isStartUpload', "");
+                  uploadFactory.coreUpload();
                 }
                 
               }else if(data === false){
                 // not Allow 3G, 如果手机连接3G或4G，就要停止上传，并允许手动点击start upload上传
                 if(type===Connection.CELL_3G || type===Connection.CELL_4G){
-                  $rootScope.$broadcast('stopUpload');
-                  localStorageService.set('isStartUpload', "true");
+                  uploadFactory.stopUpload();
                 }
               }
 
@@ -899,17 +896,13 @@
                 var allow3G = localStorageService.get('allow3G') || false;
 
                 if(networkState === Connection.WIFI){
-                  uploadFactory.coreUpload(true);
-                  localStorageService.set('isStartUpload', "");
+                  uploadFactory.coreUpload();
                 
                 } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === true){
-                  uploadFactory.coreUpload(true);
-                  localStorageService.set('isStartUpload', "");
+                  uploadFactory.coreUpload();
                   
                 } else if((networkState === Connection.CELL_3G || networkState ===Connection.CELL_4G) && allow3G === false){
-                  // 当用户点击start upload的时候再上传
-                  
-                  localStorageService.set('isStartUpload', "true");
+                  //uploadFactory.stopUpload();
                 }
                 onNetChange();
 
@@ -918,8 +911,7 @@
             $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
               //关定时器，关闭上传，不允许点击start upload
               //$timeout.cancel(timer);
-              $rootScope.$broadcast('stopUpload');
-              localStorageService.set('isStartUpload', "");
+              uploadFactory.stopUpload();
             });
 
             //监听到连线网络类型发生变化时，进行相应判断和处理
@@ -927,14 +919,12 @@
                 $rootScope.$on('netChange', function(d, data){
                     
                       if((data.oldType===Connection.CELL_3G ||  data.oldType===Connection.CELL_4G) && allow3G===false && data.newType===Connection.WIFI){
-                        // 如果从3G/4G且not Allow3G，变成wifi，就开始上传，并禁止手动点击startUpload, 
-                        localStorageService.set('isStartUpload', "");
-                        uploadFactory.coreUpload(true);
+                        // 如果从3G/4G且not Allow3G，变成wifi，就开始上传
+                        uploadFactory.coreUpload();
                         
                       } else if(data.oldType===Connection.WIFI && (data.newType===Connection.CELL_3G || data.newType===Connection.CELL_4G) && allow3G===false){
-                        // 如果从wifi变成，3G/4G且not allow3G，就要停止上传，并且可以手动点击startUpload 
-                        $rootScope.$broadcast('stopUpload');
-                        localStorageService.set('isStartUpload', "true");
+                        // 如果从wifi变成，3G/4G且not allow3G，就要停止上传
+                        //uploadFactory.stopUpload();
                       }
                   });
             }
