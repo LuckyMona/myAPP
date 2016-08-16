@@ -14,8 +14,20 @@
                 var expireNum = tokenExp,
                     nowTime = new Date().getTime(),
                     isExpire = expireNum-nowTime/1000 > 0 ? false : true,      // tokenExp的单位是秒？而不是毫秒
-                    df =  $q.defer(),
-                    device_id = '123456'; // TODO hard code
+                    df =  $q.defer();
+				var deviceData = localStorageService.get('deviceData');
+				var device_id; // TODO hard code
+				var device_name;
+				if (deviceData != null)
+				{
+					device_id = deviceData.deviceID;
+					device_name = deviceData.deviceName;
+				}
+				else
+				{
+					device_id = "<Unknown>";
+					device_name = "<Unknown>";
+				}
 
                 // if token expires
                 if(isExpire){
@@ -27,7 +39,9 @@
                                                 + '&grant_type=refresh_token&client_id='
                                                 + PARAMS.CLIENT_ID
                                                 + '&device_id='
-                                                + device_id;
+                                                + device_id
+												+ '&device_name='
+												+ device_name;
 
                         $ionicLoading.show({
                             template: 'Loading...'

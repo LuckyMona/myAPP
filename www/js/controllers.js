@@ -412,7 +412,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         for(i=0; i<len; i++){
             if(locations[i].ZoneName === block){
                 areaArr.push({
-                  AreaName:locations[i].AreaName,
+                  AreaName:locations[i].AreaName.trim(),
                   locationID:locations[i].LocationID
                 });
             }
@@ -420,13 +420,22 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         
         localStorageService.set('floorItems',areaArr);
         localStorageService.set('blockSelected',block);
-        $rootScope.$broadcast('blockSelected',areaArr);
+        
 
-        if (areaArr.length = 1 && areaArr[0].AreaName === null) {  // Zone 没有 Area
+        if (areaArr.length === 1 && areaArr[0].AreaName === null) {  // Zone 没有 Area
           $rootScope.$broadcast('floorChange', areaArr);
+          $rootScope.$broadcast('blockSelected',areaArr);
           $state.go('tab.newAct');
           $ionicViewSwitcher.nextDirection("back");
-        } else {
+
+        } else if(areaArr.length === 1 && areaArr[0].AreaName === ""){
+
+          $rootScope.$broadcast('floorChange',{"onlyBlockSelect":true,
+                                                "locationID":areaArr[0].locationID});
+          $state.go('tab.newAct');
+          $ionicViewSwitcher.nextDirection("back");
+        }else {
+          $rootScope.$broadcast('blockSelected',areaArr);
           $state.go('floor');
           $ionicViewSwitcher.nextDirection("forward");
         }

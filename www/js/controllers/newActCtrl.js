@@ -5,7 +5,7 @@
 							         function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage,helpToolsFactory){
 	
 	  $scope.isTradeShow = false;
-    $scope.isReviewShow = false;
+    $scope.reviewModel = {"isReviewShow":false};
     $scope.attachImgs = [];
     $scope.isGray_location = true;
     $scope.isGray_category = true;
@@ -290,12 +290,21 @@
       $scope.location = helpToolsFactory.i18nT('SELECT_LOCATION');
     }
     
+
     $rootScope.$on('floorChange', function(d, data){
       var block = localStorageService.get('blockSelected');
-      var locationStr = block + (data[0].AreaName === null ? "" : (" / " + data[0].AreaName));
+      var locationStr;
+      if(data.onlyBlockSelect &&  data.onlyBlockSelect===true){
+        locationStr = block;
+        $scope.locationID = data.locationID;
+      } else {
+        locationStr = block + (data[0].AreaName === null ? "" : (" / " + data[0].AreaName));
+        $scope.locationID = data[0].locationID;
+      }
+      
       $scope.isGray_location = false;
       $scope.location = locationStr;
-      $scope.locationID = data[0].locationID;
+      
       $scope.locationOn = true;
       localStorageService.set('isFillNewAct',true);
       localStorageService.set('location', locationStr);
@@ -360,7 +369,12 @@
                 $scope['isGray_'+ selectName] = false;
                 $scope[selectName] = data[selectName+'Data'];
                 $scope[selectName + 'ID'] = data[selectName+'ID'];
-                $scope[selectName + 'On'] = true;  //是否选择
+                if(data[selectName+'Data'] === ""){
+                  $scope[selectName + 'On'] = false;
+                }else{
+                  $scope[selectName + 'On'] = true;  //是否选择
+                }
+                
                 localStorageService.set('isFillNewAct',true);
             });
             return;
@@ -659,17 +673,24 @@
             console.log('saveAct confirmBy');
             
             var time = showTime(),
-                review = $scope.reviewOn? $scope.review:"",
+                review = ($scope.reviewModel.isReviewShow && $scope.reviewOn)? $scope.review:"",
+                RequireReqview = ($scope.reviewModel.isReviewShow && $scope.reviewOn)?true:false,
                 trade = $scope.tradeOn? $scope.trade:"",
                 company = $scope.companyOn? $scope.company:"",
                 staffID = localStorageService.get('staffID'),
                 projectID = localStorageService.get('projectID'),
                 log = $scope.isMockInputVal? $scope.mockInputData:"",
-                idData;
-            var RequireReqview = false;
+                idData,
+                NotityID;
+            /*var RequireReqview = false;
             if($scope.reviewID){
               RequireReqview = true;
-            }    
+            }  */
+            if($scope.reviewModel.isReviewShow && $scope.reviewOn){
+              NotityID = $scope.reviewID?$scope.reviewID:"undefined"
+            }else{
+              NotityID = "undefined";
+            }
             idData = {
 
               "StaffID":staffID,
@@ -677,7 +698,7 @@
               "LocationID":$scope.locationID,
               "CategoryID": $scope.categoryID,
               "RequireReqview":RequireReqview || false,
-              "NotityID": $scope.reviewID || "undefined",
+              "NotityID": NotityID,
               "TradeID": $scope.tradeID || "undefined",
               "CompanyID": $scope.companyID || "undefined",
               "Importance":"undefined",
@@ -768,6 +789,9 @@
         $scope.mockInputData = helpToolsFactory.i18nT('INPUT_LOG_HERE');
         document.getElementById("mockinput").innerHTML = helpToolsFactory.i18nT('INPUT_LOG_HERE');
         $scope.review = helpToolsFactory.i18nT('SELECT_USER');
+        $scope.reviewOn = false;
+        $scope.tradeOn = false;
+        $scope.companyOn = false;
         $scope.trade = helpToolsFactory.i18nT('SELECT_TRADE');
         $scope.company = helpToolsFactory.i18nT('SUBCONTRACTOR');
 

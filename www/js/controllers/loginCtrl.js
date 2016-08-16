@@ -48,8 +48,19 @@
 
 	        };
 
-	        var device_id = "123456";     // TODO: hardcode first? but need to get the mobile's device_id???
-	        var device_name = "PcClient"; // TODO: hardcode first? but need to get the mobile's device_name???
+			var deviceData = getDeviceData();
+			var device_id;
+			var device_name;
+			if (deviceData != null)
+			{
+				device_id = deviceData.deviceID;
+				device_name = deviceData.deviceName;
+			}
+			else
+			{
+				device_id = "<Unknown>";
+				device_name = "<Unknown>";
+			}			
 
 	        var loginReqStr = "username=" + $scope.loginO.username
 	                        + "&grant_type=password&client_id=" + PARAMS.CLIENT_ID
@@ -116,5 +127,25 @@
 	    $scope.changeLanguage = function (key) {
 	      $translate.use(key);
 	    };
+		
+		function onDeviceReady_LoginCtrl()
+		{
+			var deviceData = {};
+			deviceData.deviceID = device.uuid;
+			deviceData.deviceName = device.model.replace(/ /g, "_") + "@" + device.platform + "_" + device.version;
+			localStorageService.set('deviceData', deviceData);
+		};
+		document.addEventListener("deviceready", onDeviceReady_LoginCtrl, false);
+		
+		function getDeviceData()
+		{
+			var deviceData = localStorageService.get('deviceData')
+			if (deviceData == null && typeof device != "undefined")
+			{
+				onDeviceReady_LoginCtrl();
+			}
+			return deviceData;
+		};
+		
 	});
 })();
