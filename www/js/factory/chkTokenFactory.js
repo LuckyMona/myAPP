@@ -6,9 +6,17 @@
     angular.module('starter')
         .factory('chkTokenFactory', chkTokenFactoryFunc);
 
-        function chkTokenFactoryFunc(PARAMS, $q, $http, $timeout, localStorageService,$ionicLoading){
+        function chkTokenFactoryFunc(PARAMS, $q, $http, $timeout, localStorageService,$ionicLoading,$state, $ionicViewSwitcher){
 
             var _refreshToken = function(token){
+
+                if(token === null){
+                    console.log('token is null when chk token, go login!');
+                    $state.go('login.active');
+                    $ionicViewSwitcher.nextDirection("back");
+                    return;
+                }
+
                 // check if token expires
                 var tokenExp = isNaN(localStorageService.get('access#exp')) ? 0 : parseFloat(localStorageService.get('access#exp'));
                 var expireNum = tokenExp,
@@ -28,6 +36,7 @@
 					device_id = "<Unknown>";
 					device_name = "<Unknown>";
 				}
+
 
                 // if token expires
                 if(isExpire){

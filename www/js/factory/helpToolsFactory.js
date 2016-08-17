@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('helpToolsFactory', helpToolsFactoryFunc);
 
-        function helpToolsFactoryFunc($ionicPopup, $timeout, $ionicLoading, $translate){
+        function helpToolsFactoryFunc($ionicPopup, $timeout, $ionicLoading, $translate,$state,$ionicViewSwitcher,localStorageService){
 
             // 弹窗，有确认按钮
             var showAlert = function(msg){
@@ -63,12 +63,37 @@
               });
             }
 
+            var tokenInvalidHandler = function(){
+                console.log('Token invalid!');
+                localStorageService.remove('token');
+                showMsg(i18nT('INVALID_TOKEN'));
+                $timeout(function(){
+                    $state.go('login.active');
+                    $ionicViewSwitcher.nextDirection("back");
+                },1000);
+            }
+            var arrayUnique = function(arr){
+                var i = 0, 
+                    len = arr.length,
+                    json = {},
+                    result = [];
+                
+                arr.forEach(function(item, index, arr){
+                    if(!json[item]){
+                        json[item] =1;
+                        result.push(item);
+                    }
+                });
+                return result
+            }
             return {
                 showAlert:showAlert,
                 showMsg:showMsg,
                 i18nT:i18nT,
                 showConfirm:showConfirm,
                 GUID: GUID,
+                tokenInvalidHandler:tokenInvalidHandler,
+                arrayUnique:arrayUnique,
             }
         }
 

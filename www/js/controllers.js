@@ -42,12 +42,12 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    $scope.isUploadingShow = false;
    $scope.isStoppingShow = false;
 
-    /*$scope.editItem = function(item){
+    $scope.editItem = function(item){
       console.log(item);
       $rootScope.$broadcast('editItem', item);
       $state.go('tab.newAct');
       $ionicViewSwitcher.nextDirection("forward");
-    }*/
+    }
 
    function toggleLang(){
       var oStartUpload = document.getElementById('startUpload');
@@ -347,25 +347,32 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         $ionicViewSwitcher.nextDirection("back"); 
     });
 })
-.controller('FloorCtrl', function($rootScope, $scope, localStorageService, $state, $ionicViewSwitcher){
+.controller('FloorCtrl', function($rootScope, $scope, localStorageService, $state, $ionicViewSwitcher, helpToolsFactory, $timeout){
 
+    /*var floorItems = localStorageService.get('floorItems');
+    var floorNameArr = [];
+    floorItems.forEach(function(item, index, arr){
+      floorNameArr.push(item.AreaName);
+    });
+    $scope.floorParent.floorItems = helpToolsFactory.arrayUnique(floorNameArr);*/
+
+    $scope.floorParent = {
+      "floorModel":"",
+      "floorItems":[],
+    }
     $rootScope.$on('blockSelected',function(d,data){
       var floorNameArr = [];
       data.forEach(function(item, index, arr){
         floorNameArr.push(item.AreaName);
       });
-      $scope.floorItems = floorNameArr;
+
+      $scope.floorParent.floorItems = helpToolsFactory.arrayUnique(floorNameArr);
     });
 
-    $scope.floorModel = ''; 
-    var floorItems = localStorageService.get('floorItems');
-    var floorNameArr = [];
-    floorItems.forEach(function(item, index, arr){
-      floorNameArr.push(item.AreaName);
-    });
-    $scope.floorItems = floorNameArr;
+    //$scope.floorModel = ''; 
     
-    $scope.$watch('floorModel', function(newVal,oldVal){
+    
+    $scope.$watch('floorParent.floorModel', function(newVal,oldVal){
         
         if(newVal === oldVal){
           return;
@@ -382,7 +389,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
     });
 })
-.controller('BlockCtrl', function($rootScope,$scope,localStorageService,$state, $ionicViewSwitcher){
+.controller('BlockCtrl', function($rootScope,$scope,localStorageService,$state, $ionicViewSwitcher, $timeout){
     $rootScope.$on('projectid_changed', function(event, data)
     {
         var newBlockSelection = [];
@@ -410,32 +417,43 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
             areaArr = [];
         
         for(i=0; i<len; i++){
-            if(locations[i].ZoneName === block){
-                areaArr.push({
-                  AreaName:locations[i].AreaName.trim(),
-                  locationID:locations[i].LocationID
-                });
-            }
+           if(locations[i].ZoneName === block){
+              var tempLocationData = {};
+              if (locations[i].AreaName != null)
+              {
+                tempLocationData.AreaName = locations[i].AreaName.trim();
+                tempLocationData.locationId = locations[i].LocationID;
+              }else{
+                tempLocationData.AreaName = "";
+                tempLocationData.locationId = locations[i].LocationID;
+              }
+
+              areaArr.push(tempLocationData);
+          }
         }
         
         localStorageService.set('floorItems',areaArr);
         localStorageService.set('blockSelected',block);
         
 
-        if (areaArr.length === 1 && areaArr[0].AreaName === null) {  // Zone 没有 Area
+        /*if (areaArr.length === 1 && areaArr[0].AreaName === null) {  // Zone 没有 Area
           $rootScope.$broadcast('floorChange', areaArr);
           $rootScope.$broadcast('blockSelected',areaArr);
           $state.go('tab.newAct');
           $ionicViewSwitcher.nextDirection("back");
 
-        } else if(areaArr.length === 1 && areaArr[0].AreaName === ""){
+        } else*/ 
+        if(areaArr.length === 1 && areaArr[0].AreaName === ""){
 
           $rootScope.$broadcast('floorChange',{"onlyBlockSelect":true,
                                                 "locationID":areaArr[0].locationID});
           $state.go('tab.newAct');
           $ionicViewSwitcher.nextDirection("back");
         }else {
-          $rootScope.$broadcast('blockSelected',areaArr);
+          $timeout(function(){
+            $rootScope.$broadcast('blockSelected',areaArr);
+            
+          },100);
           $state.go('floor');
           $ionicViewSwitcher.nextDirection("forward");
         }

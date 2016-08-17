@@ -10,12 +10,12 @@
 	</div> -->
 </ion-header-bar>
 <ion-view>
-	<ion-content class="bg-grey has-header44" ng-controller="FloorCtrl">
+	<ion-content class="bg-grey has-header44">
 	  	
 	  	<div class="list mt24 blockFix prevBlock">
 		  	<ion-list>
 			  	<!-- <ion-radio ng-model="$parent.floor" ng-repeat="floorItem in floorItems" nav-direction="back" ng-value="{{floorItem}}">{{floorItem}}</ion-radio> -->
-			  	<ion-radio nav-direction="back" ng-model="$parent.floorModel" ng-repeat="floor in floorItems" ng-show="floor" value="{{floor}}">{{floor}}</ion-radio>
+			  	<ion-radio nav-direction="back" ng-model="floorParent.floorModel" ng-repeat="floor in floorParent.floorItems" ng-show="floor" value="{{floor}}">{{floor}}</ion-radio>
 			  	<!-- <ion-radio nav-direction="back" ng-repeat="i in ['aa','bb']" ng-model="a.floorModel" ng-value="'A'">floorA</ion-radio> -->
 			  	<!-- <ion-radio nav-direction="back" ng-model="a.floorModel" ng-value="'B'">floorA</ion-radio>
 			  	<ion-radio nav-direction="back" ng-model="a.floorModel" ng-value="'C'">floorA</ion-radio> -->

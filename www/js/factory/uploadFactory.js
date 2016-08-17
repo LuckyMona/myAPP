@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory, $http){
+        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory, $http,helpToolsFactory ){
 
             function _coreUpload(){
 
@@ -104,6 +104,12 @@
                         console.log(resObj);
                         if(resObj.success === "true"){
                           _uploadPhotoWin(reqObj, n, resObj.GUID);
+
+                        }else if(resObj.success==="false" && resObj.error ==="Token Invalid"){
+                          // token invalid情况
+                            $rootScope.isUploading = false;
+                            $rootScope.$broadcast('uploadStatusChange');  
+                            helpToolsFactory.tokenInvalidHandler();
                         } else {
                           _uploadPhotoFail(reqObj, n);
                         }
@@ -169,9 +175,9 @@
                       if(result.statusText ==="OK"){
                         token = result.data;
                         localStorageService.set('token',result.data);
-                      }else if(result==='false'){
+                      }/*else if(result==='false'){
                          // token not expire
-                      }
+                      }*/
 
                       var uploadActReqStr = reqObj.uploadActReq;
                       var uploadActReqObj = JSON.parse(uploadActReqStr);
@@ -187,8 +193,13 @@
                         .then(function successCb(result){
                           console.log(result);
 
-                          if(result.data.success === "true"){
+                          if(result.data && result.data.success === "true"){
                             _uploadActityWin(reqObj);
+                          }else if(result.data && result.data.success==="false" && result.data.error ==="Token Invalid"){
+                          // token invalid情况
+                              $rootScope.isUploading = false;
+                              $rootScope.$broadcast('uploadStatusChange'); 
+                              helpToolsFactory.tokenInvalidHandler();
                           } else {
                             _uploadActityFail(reqObj);
                           }

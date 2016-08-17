@@ -84,6 +84,7 @@
 			'LOADING': 'Loading...',
             'CONFIRM_TOGGLE_PROJECT':'Confirm Toggle Project',
             'CONFIRM_TOGGLE_PROJECT_CONTENT':'Are you sure to toggle project? It will clear what you fill in new Acticity',
+            'INVALID_TOKEN':'You have been logout by system. Please re-login and retry. If problem still exists, contact 2516-8009 immediately',
 
 			/* 错误提示 */
 			'INVALID_LOGIN': 'Incorrect Username or Password!',
@@ -164,7 +165,7 @@
 		    'LOADING': '載入中...',
             'CONFIRM_TOGGLE_PROJECT':'確認切換項目',
             'CONFIRM_TOGGLE_PROJECT_CONTENT':'確定要切換項目，如果切換，將會清空已填內容',
-
+            'INVALID_TOKEN':'你已被系統強制登出, 請重新登入及重試. 如問題仍然存在, 請立即聯絡 2516-8009.',
             /* 错误提示 */
 		    'INVALID_LOGIN': '不正確的用戶名稱或密碼!',
 		    'INVALID_EMP_ID': '不正確的顧員資料!',

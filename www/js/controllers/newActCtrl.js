@@ -38,64 +38,69 @@
       
       var token = localStorageService.get('token');
       var username = localStorageService.get('username');
-      
+      //token = null;
       chkTokenFactory.refreshToken(token)
         .then(function(result){
           if(result.statusText ==="OK"){
             // Token expires and get refreshed token
             token = result.data;
             localStorageService.set('token',result.data);
-          }else if(result==='false'){
+          }/*else if(result==='false'){
             // Token not expire
           
             return;
-          }
-        });
-
-      var getDownlistReq = {
-        token:token,
-        username:username,
-      }
-      
-      var getDownlistReqStr = '"'+JSON.stringify(getDownlistReq).replace(/\"/g,"\'")+'"';
-
-      // loading弹窗 
-      newActFactory.getDownlist(getDownlistReqStr)
-        .then(function(result){
-          //var jsonRes = JSON.parse(result.data);
-          //console.log(jsonRes);
+          }*/
           
-          if(result.data.success==="true"){
-            // console.log('downlistData:');
-            console.log(result.data);
-            //console.log(result.data.LU_Company[0].CompanyID);
-            var resObj = result.data;
-
-            //拿到的json，值为数值的话转成字符串
-            for(var i in resObj){
-              if(Array.isArray(resObj[i])===true){
-                resObj[i].forEach(function(item, index, arr){
-                  for(var j in item){
-                    if(typeof item[j] === "number"){
-                      item[j] = item[j]+"";
-                    }
-                  }
-                });
-              }
-              
-            }
-            console.log(typeof 123);
-            console.log(resObj);
-            localStorageService.set('downlistData', resObj);
-            getJobList();
-            getTasklist();
-            selectProject();
-          }else{
-            console.log('加载错误，请重试');
-            localStorageService.remove('token');
-            $state.go('login.active');
-            $ionicViewSwitcher.nextDirection("back");
+          var getDownlistReq = {
+            token:token,
+            username:username,
           }
+          
+          var getDownlistReqStr = '"'+JSON.stringify(getDownlistReq).replace(/\"/g,"\'")+'"';
+
+          // loading弹窗 
+          newActFactory.getDownlist(getDownlistReqStr)
+            .then(function(result){
+                //var jsonRes = JSON.parse(result.data);
+                //console.log(jsonRes);
+              
+                if(result.data && result.data.success==="true"){
+                    // console.log('downlistData:');
+                    console.log(result.data);
+                    //console.log(result.data.LU_Company[0].CompanyID);
+                    var resObj = result.data;
+
+                    //拿到的json，值为数值的话转成字符串
+                    for(var i in resObj){
+                        if(Array.isArray(resObj[i])===true){
+                            resObj[i].forEach(function(item, index, arr){
+                            for(var j in item){
+                                if(typeof item[j] === "number"){
+                                item[j] = item[j]+"";
+                                }
+                            }
+                            });
+                        }
+                      
+                    }
+                    console.log(typeof 123);
+                    console.log(resObj);
+                    localStorageService.set('downlistData', resObj);
+                    getJobList();
+                    getTasklist();
+                    selectProject();
+                    doUpload();
+                }else if(result.data && result.data.success==="false" && result.data.error ==="Token Invalid"){
+                // token invalid情况
+                    helpToolsFactory.tokenInvalidHandler();
+                }else{
+                    if(localStorageService.get('downlistData')){
+                        return;
+                    }
+                    console.log('加载错误，请重试');
+                    helpToolsFactory.tokenInvalidHandler();
+                }
+            });
         });
     }
 
@@ -149,6 +154,7 @@
     // 监听登录成功的事件
     $rootScope.$on('loginSuccess', function(){
       getDownlist();
+
     });
 
     // 或者，之前已经登录过，重新打开App，但Token还有效时，尝试更新数据
@@ -620,16 +626,22 @@
     /**
      * 监听editItem
      */
-    /*$rootScope.$on('editItem', function(d, data){
+    $rootScope.$on('editItem', function(d, data){
       
       //更新视图数据
       $scope.location = data.location;
       $scope.locationOn = true;
       $scope.category = data.category;
       $scope.categoryOn = true;
+      
       $scope.review = data.review ||"";
+      $scope.reviewModel.isReviewShow = $scope.reviewOn = data.review?true:false;
+
       $scope.trade = data.trade || "";
+      $scope.tradeOn = data.trade?true:false;
       $scope.company = data.company || "";
+      $scope.companyOn = data.company?true:false;
+      
       document.getElementById('mockinput').innerHTML = data.description;
       $scope.mockInputData = data.description||"";
       $scope.isMockInputVal = data.description===""?false:true;
@@ -643,7 +655,9 @@
           });
         });
       }
-
+      
+      $scope.createdOn = data.createdOn;
+      
       $scope.ActivityId = data.ActivityId;
       
       var edit_idData = JSON.parse(data.idData);
@@ -656,7 +670,8 @@
       $scope.TradeID = edit_idData.TradeID;
       $scope.CompanyID = edit_idData.CompanyID;
 
-    });*/
+
+    });
     // 保存数据
     
     // dbFactory.dropTbl('fe_Activity');
@@ -672,7 +687,7 @@
           if(confirmBy){
             console.log('saveAct confirmBy');
             
-            var time = showTime(),
+            var time = $scope.createdOn?$scope.createdOn:showTime(),
                 review = ($scope.reviewModel.isReviewShow && $scope.reviewOn)? $scope.review:"",
                 RequireReqview = ($scope.reviewModel.isReviewShow && $scope.reviewOn)?true:false,
                 trade = $scope.tradeOn? $scope.trade:"",
@@ -729,7 +744,7 @@
               createdOn:time,
               idData:JSON.stringify(idData),
             }
-            /*if(typeof $scope.ActivityId === 'number'){
+            if(typeof $scope.ActivityId === 'number'){
               actData.ActivityId = $scope.ActivityId;
               //actData.idData = actData.idData.replace(/\"/g,"");
               dbFactory.update('fe_Activity',
@@ -737,19 +752,20 @@
                                 {ActivityId:$scope.ActivityId},
                                 function succeCb(){
                                   console.log('update success');
-                                  clearNewAct();
                                   $timeout(function() {
                                     $rootScope.$broadcast('saveAct');
                                   }, 100);
                                   $scope.ActivityId = "";
-                                  helpToolsFactory.showMsg('Save To Pending List Success!');
+                                  helpToolsFactory.showMsg(helpToolsFactory.i18nT('SAVE_TO_PENDING_SUCCESS'));
+                                  doUpload();
+                                  clearNewAct();
                                   return;
                                 },
                                 function errorCb(){
                                   console.log('update error');
                                 });
               return;
-            }*/
+            }
 
             for(var i_fld in actData){
               fieldArr.push(i_fld);
@@ -794,6 +810,9 @@
         $scope.companyOn = false;
         $scope.trade = helpToolsFactory.i18nT('SELECT_TRADE');
         $scope.company = helpToolsFactory.i18nT('SUBCONTRACTOR');
+        $scope.createdOn = "";
+        $scope.tradeNum = 0;
+        $scope.companyNum = 0;
 
         $scope.isGray_review = true;
         $scope.isGray_trade = true;
