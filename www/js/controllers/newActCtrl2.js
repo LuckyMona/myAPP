@@ -667,11 +667,8 @@
       $scope.review = data.review ||"";
       $scope.reviewModel.isReviewShow = $scope.reviewOn = data.review?true:false;
 
-      $scope.tradeNum = data.trade?data.trade.split(',').length:0;
       $scope.trade = data.trade || "";
       $scope.tradeOn = data.trade?true:false;
-
-      $scope.companyNum = data.company?data.company.split(',').length:0;
       $scope.company = data.company || "";
       $scope.companyOn = data.company?true:false;
       
@@ -682,15 +679,13 @@
       if(data.photos[0]===""){
         $scope.attachImgs = [];
       }else{
-        $scope.attachImgs = [];
         data.photos.forEach(function(item, index, arr){
           $scope.attachImgs.push({
             'imgURI':item
           });
         });
       }
-      $scope.photoLength = data.photos.length;
-
+      
       $scope.createdOn = data.createdOn;
       
       $scope.ActivityId = data.ActivityId;

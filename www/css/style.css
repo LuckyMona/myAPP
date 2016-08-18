@@ -225,6 +225,7 @@
     min-height: 32px;
     line-height: 1.2;
     border: 1px solid #adadad;
+    -webkit-user-select:text;
     
     padding: 9px 5px;
     border-radius:4px;
