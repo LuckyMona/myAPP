@@ -46,10 +46,59 @@
                 });
             }
 
+            var _find = function(tblName, condiObj, successCb, errorCb){
+                var rowArr = [];
+                var condiStr = "";
+                for(var iCondi in condiObj){
+                    condiStr += (iCondi +" = " + condiObj[iCondi]);
+                }
+
+                db.transaction(function(tx){
+                    tx.executeSql('SELECT * FROM '+ tblName + ' WHERE ' + condiStr, [], function(tx, results){
+                        var rowLen = results.rows.length,i;
+                        for(i=0; i<rowLen; i++){
+                            // console.log('results.rows.item(i)'+results.rows.item(i));
+                            rowArr.push(results.rows.item(i));
+                        }
+                        // console.log('rowArr:'+rowArr);
+                        if(successCb){
+                            successCb(rowArr);
+                        }
+                    }, function(){
+                        if(errorCb){
+                            errorCb();
+                        }
+                    });
+                 });
+                
+            }
+
             var _findAll = function(tblName, successCb, errorCb){
                 var rowArr = [];
                 db.transaction(function(tx){
                     tx.executeSql('SELECT * FROM '+tblName, [], function(tx, results){
+                        var rowLen = results.rows.length,i;
+                        for(i=0; i<rowLen; i++){
+                            // console.log('results.rows.item(i)'+results.rows.item(i));
+                            rowArr.push(results.rows.item(i));
+                        }
+                        // console.log('rowArr:'+rowArr);
+                        if(successCb){
+                            successCb(rowArr);
+                        }
+                    }, function(){
+                        if(errorCb){
+                            errorCb();
+                        }
+                    });
+                 });
+                
+            }
+
+            var _findAll_OrderByCnt = function(tblName, successCb, errorCb){
+                var rowArr = [];
+                db.transaction(function(tx){
+                    tx.executeSql('SELECT * FROM '+ tblName + ' ORDER BY uploadCnt, rowid ASC', [], function(tx, results){
                         var rowLen = results.rows.length,i;
                         for(i=0; i<rowLen; i++){
                             // console.log('results.rows.item(i)'+results.rows.item(i));
@@ -150,12 +199,14 @@
             }*/
 
             return {
-                createTbl : _createTbl,
-                save : _save,
-                dropTbl:_dropTbl,
-                findAll:_findAll,
-                update:_update,
-                delete:_delete,
+                createTbl          : _createTbl,
+                save               : _save,
+                dropTbl            : _dropTbl,
+                find               : _find,
+                findAll            : _findAll,
+                findAll_OrderByCnt : _findAll_OrderByCnt,
+                update             : _update,
+                delete             : _delete,
                 //deletePhoto:_deletePhoto,
             }
         }

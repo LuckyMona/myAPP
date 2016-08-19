@@ -34,7 +34,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    dbFactory.findAll('fe_Activity', function(results){
         //console.log();
         results.forEach(function(item, index, arr){
-          item.photos = item.photos.split(',');
+          var midArr = item.photos.split(',');
+          item.photos = midArr;
+          item.photoFirst =midArr[0];
         });
         $scope.uploadItems = results;
    });
@@ -110,7 +112,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
             
             var i, len = results.length;
             for(i=0; i<len; i++){
-              results[i].photos = results[i].photos.split(',');
+              var midArr = results[i].photos.split(',');
+              results[i].photos = midArr;
+              results[i].photoFirst =midArr[0];
             }
             $scope.uploadItems = results;
             // console.log('$scope.uploadItems:'+$scope.uploadItems);
@@ -295,8 +299,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
     $scope.jobModel = {"jobList":""};
    
-    // TODO 弹窗多语言
-     function showConfirm(){
+    function showConfirm(){
       helpToolsFactory.showConfirm( helpToolsFactory.i18nT('CONFIRM_TOGGLE_PROJECT'),
                                       helpToolsFactory.i18nT('CONFIRM_TOGGLE_PROJECT_CONTENT'),
                                       sureCb,
@@ -422,10 +425,10 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
               if (locations[i].AreaName != null)
               {
                 tempLocationData.AreaName = locations[i].AreaName.trim();
-                tempLocationData.locationId = locations[i].LocationID;
+                tempLocationData.locationID = locations[i].LocationID;
               }else{
                 tempLocationData.AreaName = "";
-                tempLocationData.locationId = locations[i].LocationID;
+                tempLocationData.locationID = locations[i].LocationID;
               }
 
               areaArr.push(tempLocationData);

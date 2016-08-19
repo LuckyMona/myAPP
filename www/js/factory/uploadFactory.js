@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory, $http,helpToolsFactory ){
+        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory, $http, helpToolsFactory, $cordovaFile){
 
             function _coreUpload(){
 
@@ -26,10 +26,13 @@
                     return;  // 需要停止上传
                   }
 
-                  dbFactory.findAll('fe_Activity', function(results){
+                  dbFactory.findAll_OrderByCnt('fe_Activity', function(results){
                     if(results.length === 0){
                       $rootScope.isUploading = false;
                       $rootScope.$broadcast('uploadStatusChange');      // 全部Activity都上传完了
+
+                      // 清理残留的图片（孤儿仔，即上传后没有被成功删除的）
+                      _deleteOrphanPhoto();    // TODO，放在这个地方是否合适？？？？？
 
                       return;                               // 没有待上传的Activity
                     }
@@ -52,6 +55,20 @@
                       var next = photoIds.split(',');
                       _uploadPhoto(uploadActReqs, next.length);  // 跳过已经上传了的图片
                     }
+
+                    // Update db, upload counter + 1
+                    var cnt = (results[0].uploadCnt || 0) + 1;
+                    dbFactory.update('fe_Activity', 
+                      {uploadCnt: cnt},
+                      {ActivityId: uploadActReqs.activityId},
+                      function(){
+                        console.log('update record success, ActivityId=' + uploadActReqs.activityId + ', uploadCnt=' + cnt);
+                      },
+                      function(){
+                        // TODO need to handle this error????????????????????
+                        console.log('update record fail, ActivityId=' + uploadActReqs.activityId + ', uploadCnt=' + cnt);
+                      });
+
                   }, function(){
                       $rootScope.isUploading = false;
                       $rootScope.$broadcast('uploadStatusChange');      // hit error
@@ -73,7 +90,19 @@
                     return;
                   }
 
-                  var url = PARAMS.BASE_URL + 'UploadActivityPhoto';
+                  /*
+                  var uploadMethod;
+                  if (cordova.platformId === "android") {
+                    uploadMethod = 'UploadActivityPhoto_Android';
+                  } else if (cordova.platformId === "ios") {
+                    uploadMethod = 'UploadActivityPhoto_iOS';
+                  } else {
+                    uploadMethod = 'UploadActivityPhoto_Android';    // Just handle Android and IOS, how about Windows?
+                  }
+                  */
+                  var uploadMethod = 'UploadActivityPhoto';
+
+                  var url = PARAMS.BASE_URL + uploadMethod;
                   var access_token = localStorageService.get('token').access_token;
 
                   var options = new FileUploadOptions();
@@ -157,7 +186,8 @@
 
                   $timeout(function() {
                     console.log('Upload photo fail, ActivityId=' + reqObj.activityId + ', Photo index=' + n + ', retry');
-                    _uploadPhoto(reqObj, n);     // retry
+                    //_uploadPhoto(reqObj, n);     // retry
+                    _uploadActivity1st();    // try another activity
                   }, 10000);
                 }
 
@@ -230,6 +260,27 @@
                       $rootScope.$broadcast('updateBadgeUpload',badgeUpload);
                     }
 
+                    // 删除缓存的图片
+                    // 通过拍照或者相册选择的照片，都是缓存的图片，上传成功后需要删除（删缓存的，不会删除相册中的图片）
+                    var actPhotos = reqObj.actPhotos;
+                    for (var i = actPhotos.length - 1; i >= 0; i--) {
+                      var filePath = actPhotos[i].substr(0, actPhotos[i].lastIndexOf('/'));
+                      var fileName = actPhotos[i].substr(actPhotos[i].lastIndexOf('/') + 1);
+                      $cordovaFile.removeFile(filePath, fileName)
+                        .then(function (success) {
+                          console.log('removeFile success, ActivityId=' + reqObj.activityId + ', file=' + filePath + '/' + fileName);
+                        }, function (error) {
+                          console.log('removeFile fail, ActivityId=' + reqObj.activityId + ', file=' + filePath + '/' + fileName);
+
+                          var orphanPhotos = localStorageService.get('orphanPhotos');
+                          if (orphanPhotos) {
+                            localStorageService.set('orphanPhotos', filePath + '/' + fileName);
+                          } else {
+                            localStorageService.set('orphanPhotos', orphanPhotos + ',' + filePath + '/' + fileName);
+                          };
+                        });
+                    }
+
                     // 隔3s上传下一条数据
                     $timeout(function() {
                       _uploadActivity1st();   // go to next
@@ -246,8 +297,33 @@
 
                     $timeout(function() {
                       console.log('_uploadActityFail, ActivityId=' + reqObj.activityId + ', retry');
-                      _uploadActity(reqObj)  // retry
+                      //_uploadActity(reqObj)  // retry
+                      _uploadActivity1st();    // try another activity
                     }, 10000);
+                }
+
+                // 清理残留的图片（孤儿仔，即上传后没有被成功删除的）
+                function _deleteOrphanPhoto() {
+                  var orphanPhotos = localStorageService.get('orphanPhotos');
+
+                  if (orphanPhotos) {
+                    var photos = orphanPhotos.split(',');
+                    for (var i = photos.length - 1; i >= 0; i--) {
+
+                      var filePath = photos[i].substr(0, photos[i].lastIndexOf('/'));
+                      var fileName = photos[i].substr(photos[i].lastIndexOf('/') + 1);
+                      $cordovaFile.removeFile(filePath, fileName)
+                        .then(function (success) {
+                          console.log('_deleteOrphanPhoto success, file=' + filePath + '/' + fileName);
+                        }, function (error) {
+                          console.log('_deleteOrphanPhoto fail, file=' + filePath + '/' + fileName);
+
+                          // TODO，如果这里再删除，就不管了？？？？？？
+                        });
+                    }
+                  }
+
+                  localStorageService.remove('orphanPhotos');
                 }
 
                 function _checkToStopUpload() {

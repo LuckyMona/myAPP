@@ -496,7 +496,7 @@
 			document.addEventListener("deviceready", onCanGetPicture, false);
 			function onCanGetPicture()
 			{
-				window.imagePicker.getPictures(
+				window.plugins.imagePicker.getPictures(
 					function(results)
 					{
 						for (var i = 0; i < results.length; i++) {
@@ -524,37 +524,45 @@
 		};
 		var permissions = cordova.plugins.permissions;
 		
-		console.log("Request for write permission");
-		permissions.hasPermission(permissions.WRITE_EXTERNAL_STORAGE,
-			function(status)//call back
-			{
-				if (!status.hasPermission)
+		if (permissions == null || typeof(permissions) == "undefined")
+		{
+			invokeGetPicture();//shd be iOS
+		}
+		else
+		{
+			//android
+			console.log("Request for write permission");
+			permissions.hasPermission(permissions.WRITE_EXTERNAL_STORAGE,
+				function(status)//call back
 				{
-					console.log("No write permission > prompt to grant the permission");
-					permissions.requestPermission(permissions.WRITE_EXTERNAL_STORAGE,
-						function(status_req)
-						{
-							if (status_req.hasPermission)
+					if (!status.hasPermission)
+					{
+						console.log("No write permission > prompt to grant the permission");
+						permissions.requestPermission(permissions.WRITE_EXTERNAL_STORAGE,
+							function(status_req)
 							{
-								console.log("Write permission granted");
-								invokeGetPicture();
-							}
-							else
-							{
-								console.log("Write permission denied");
-							}
-						},
-						writePermitErrorCallback
-					);
-				}
-				else
-				{
-					console.log("Write permission is granted");
-					invokeGetPicture();
-				}
-			},
-			writePermitErrorCallback
-		);
+								if (status_req.hasPermission)
+								{
+									console.log("Write permission granted");
+									invokeGetPicture();
+								}
+								else
+								{
+									console.log("Write permission denied");
+								}
+							},
+							writePermitErrorCallback
+						);
+					}
+					else
+					{
+						console.log("Write permission is granted");
+						invokeGetPicture();
+					}
+				},
+				writePermitErrorCallback
+			);
+		}
 			
     }
     
@@ -600,6 +608,32 @@
           localStorageService.set('isFillNewAct',false);
         }
     });
+
+    //键盘弹出时，把输入框上移
+              
+    window.addEventListener('native.keyboardshow', keyboardShowHandler);
+    
+    function keyboardShowHandler(e){
+      if (cordova.platformId === 'ios') {
+          console.log('ios show keyboard');
+          console.log('Keyboard height is: ' + e.keyboardHeight);
+          document.getElementById('bar-footer').style.bottom = e.keyboardHeight +'px';
+    
+      }
+    
+    }
+    
+    window.addEventListener('native.keyboardhide', keyboardHideHandler);
+    
+    function keyboardHideHandler(e){
+      if (cordova.platformId === 'ios') {
+          console.log('ios hide keyboard');
+    
+          document.getElementById('bar-footer').style.bottom = '0px';
+    
+      }
+
+    }
 
     // log input clear content when focus
     $scope.isMockInputVal = false; // 是否填写
@@ -679,17 +713,23 @@
       $scope.mockInputData = data.description||"";
       $scope.isMockInputVal = data.description===""?false:true;
       //$scope.attachImgs = data.photos[0]===""?[]:data.photos;
-      if(data.photos[0]===""){
+      var data_photos = [];
+      if(typeof data.photos === "string"){
+          data_photos = data.photos.split(',');
+      }else{
+          data_photos =data.photos;
+      }
+      if(data_photos[0]===""){
         $scope.attachImgs = [];
       }else{
         $scope.attachImgs = [];
-        data.photos.forEach(function(item, index, arr){
+        data_photos.forEach(function(item, index, arr){
           $scope.attachImgs.push({
             'imgURI':item
           });
         });
       }
-      $scope.photoLength = data.photos.length;
+      $scope.photoLength = data_photos.length;
 
       $scope.createdOn = data.createdOn;
       
@@ -767,6 +807,7 @@
             var actData = {
               ActivityId:ActivityId_fake,
               projectId:projectID,
+              uploadCnt:0,                    // upload counter
               location: $scope.location,
               category: $scope.category,
               review: review,

@@ -24,7 +24,7 @@
                     isExpire = expireNum-nowTime/1000 > 0 ? false : true,      // tokenExp的单位是秒？而不是毫秒
                     df =  $q.defer();
 				var deviceData = localStorageService.get('deviceData');
-				var device_id; // TODO hard code
+				var device_id;
 				var device_name;
 				if (deviceData != null)
 				{
