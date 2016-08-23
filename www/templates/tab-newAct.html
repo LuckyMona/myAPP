@@ -74,8 +74,8 @@
 				</div>
 				<div class="item horizScroll">
 					<div ng-repeat="attachImg in attachImgs" class="imgItem" ng-show = 'attachImg.imgURI !== undefined'>
-						<img ng-click="showBigImg(attachImg.imgURI)" ng-src = '{{ attachImg.imgURI }}'>
-						<a ng-click="delPhoto(attachImg.imgURI)" class="deletePic"></a>
+						<img ng-click="showBigImg(attachImg.index)" ng-src = '{{ attachImg.imgURI }}'>
+						<a ng-click="delPhoto(attachImg.index)" class="deletePic"></a>
 					</div>
 					
 					<!-- <div class="imgItem">

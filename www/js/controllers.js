@@ -34,9 +34,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    dbFactory.findAll('fe_Activity', function(results){
         //console.log();
         results.forEach(function(item, index, arr){
-          var midArr = item.photos.split(',');
-          item.photos = midArr;
-          item.photoFirst =midArr[0];
+          //item.photoFirst =JSON.parse(item.photoObjs);
+          item.photoFirst = JSON.parse(item.photoObjsStr.split('  ')[0]).imgURI;
         });
         $scope.uploadItems = results;
    });
@@ -112,9 +111,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
             
             var i, len = results.length;
             for(i=0; i<len; i++){
-              var midArr = results[i].photos.split(',');
-              results[i].photos = midArr;
-              results[i].photoFirst =midArr[0];
+              // var midArr = results[i].photos.split(',');
+              // results[i].photos = midArr;
+              results[i].photoFirst = JSON.parse(results[i].photoObjsStr.split('  ')[0]).imgURI;
             }
             $scope.uploadItems = results;
             // console.log('$scope.uploadItems:'+$scope.uploadItems);
@@ -212,10 +211,14 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
   $scope.isCallSelect = false;
   // 点击图片放大
   $scope.bigImage = false;
-  $scope.showBigImg = function(imgUri){
+  $scope.showBigImg = function(index){
     if($scope.isCallSelect === false){
-      console.log(imgUri);
-      $scope.bigImgUrl = imgUri;
+      console.log(index);
+      $scope.parent.photoList.forEach(function(item, i, arr){
+        if(item.index===index){
+            $scope.bigImgUrl = item.originImgURI;
+        }
+      });
       $scope.bigImage = true;
     }
     return;

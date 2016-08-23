@@ -487,7 +487,42 @@
               });*/
           }
     }
+    //压缩图片
+    function resizeImg (todoImgURI, successCb, failCb){
+        var myFileName = todoImgURI.substring(todoImgURI.lastIndexOf('/')+1, todoImgURI.lastIndexOf('.')-1)+"_small.jpg";
+        var myDirectory = todoImgURI.substring(0,todoImgURI.lastIndexOf('/')+1);
+        
+        window.imageResizer.resizeImage(
+            function (resizedImageObj){
+                if(successCb){
+                    var resizedImageURI = todoImgURI.substring(0,todoImgURI.lastIndexOf('/')+1) + resizedImageObj.filename;
+                    successCb(resizedImageURI);
+                }
+                
+                
+            }, 
+            function(error){
+              if(failCb){
+                failCb(error);
+              }
+            }, 
+            todoImgURI, 0, 24, 
+            {
+              resizeType: ImageResizer.RESIZE_TYPE_MAX_PIXEL,
+              imageDataType: ImageResizer.IMAGE_DATA_TYPE_URL,
+              format: ImageResizer.FORMAT_JPG,
+              storeImage:true,
+              photoAlbum:0,
+              directory:myDirectory,
+              filename:myFileName,
+              storeImage:true,
 
+           }
+           //photoAlbum:true,
+           //filename:todoImgURI.substr(todoImgURI.lastIndexOf('/') + 1),
+        );
+    }
+    
     //新增图片
     $scope.getPhoto = function(){
 	
@@ -499,12 +534,35 @@
 				window.plugins.imagePicker.getPictures(
 					function(results)
 					{
-						for (var i = 0; i < results.length; i++) {
-							console.log('Image URI: ' + results[i]);
-							$scope.attachImgs.unshift( {'imgURI':results[i]} );
-						}
-						localStorageService.set('isFillNewAct',true);
-						localStorageService.set('photoList', $scope.attachImgs);
+                        var i=0;
+                        iterationResults(results, i);
+
+                        function iterationResults(results, i){
+                            if(i>=results.length){
+                                localStorageService.set('photoList', $scope.attachImgs);
+                                return;
+                            }
+
+                            console.log('Image URI: ' + results[i]);
+
+                            resizeImg(
+                                results[i],
+                                function(resizedImageURI){
+                                    console.log('Get Photo resize image success!');
+                                    $scope.attachImgs.unshift( { 'imgURI':resizedImageURI,
+                                                             'index':$scope.attachImgs.length>0 ? $scope.attachImgs[$scope.attachImgs.length-1].index+i+1 : $scope.attachImgs.length + i,
+                                                             'originImgURI':results[i]
+                                                            } );
+                                    localStorageService.set('isFillNewAct',true);
+                                    iterationResults(results, i+1);
+                                },
+                                function(error){
+                                    console.log('Get Photo resize image error:'+error);
+                                }
+                            );
+                        }
+                        
+
 						$scope.photoLength = $scope.photoLength + results.length;
 						
 						if(!$scope.$$phase) {
@@ -514,7 +572,11 @@
 					function (error)
 					{
 						console.log('Unable to obtain pictures: ' + error);
-					}
+					},
+                    {
+                        maxImages: 25
+                    }
+          
 				);
 			}
 		};
@@ -568,9 +630,14 @@
     
     // 点击图片放大
     $scope.bigImage = false;
-    $scope.showBigImg = function(imgUri){
-      console.log(imgUri);
-      $scope.bigImgUrl = imgUri;
+    $scope.showBigImg = function(index){
+      console.log(index);
+      $scope.attachImgs.forEach(function(item, i, arr){
+        if(item.index===index){
+            $scope.bigImgUrl = item.originImgURI;
+        }
+      });
+      
       $scope.bigImage = true;
     }
     $scope.hideBigImg = function(){
@@ -579,12 +646,12 @@
     }
 
     // 点击红叉删除图片
-    $scope.delPhoto = function(imgUri){
+    $scope.delPhoto = function(index){
       
       var i, len =  $scope.attachImgs.length;
       
       for(i=0; i<len; i++){
-        if($scope.attachImgs[i].imgURI === imgUri){
+        if($scope.attachImgs[i].index === index){
           $scope.attachImgs.splice(i,1);
           break;
         }
@@ -714,21 +781,23 @@
       $scope.isMockInputVal = data.description===""?false:true;
       //$scope.attachImgs = data.photos[0]===""?[]:data.photos;
       var data_photos = [];
-      if(typeof data.photos === "string"){
+      /*if(typeof data.photos === "string"){
           data_photos = data.photos.split(',');
       }else{
           data_photos =data.photos;
-      }
+      }*/
+      data_photos = data.photoObjsStr.split("  ");
       if(data_photos[0]===""){
         $scope.attachImgs = [];
       }else{
         $scope.attachImgs = [];
         data_photos.forEach(function(item, index, arr){
-          $scope.attachImgs.push({
-            'imgURI':item
-          });
+          
+          $scope.attachImgs.push(JSON.parse(item));
         });
+        
       }
+      localStorageService.set('photoList', $scope.attachImgs);
       $scope.photoLength = data_photos.length;
 
       $scope.createdOn = data.createdOn;
@@ -800,9 +869,15 @@
             var attPhotos = $scope.attachImgs;
             var photosArr = [];
             for(var m=0, phLen = attPhotos.length; m<phLen; m++ ){
-                photosArr.push(attPhotos[m].imgURI);
+                photosArr.push(attPhotos[m].originImgURI);
             }             
-            
+            var _photoObjsStr = "";
+            var _attachImgs = [];
+            $scope.attachImgs.forEach(function(item, index, arr){
+                _attachImgs.push(JSON.stringify(item));
+            });
+            _photoObjsStr = _attachImgs.join('  ');//两个空格
+
             var fieldArr = [];
             var actData = {
               ActivityId:ActivityId_fake,
@@ -814,6 +889,7 @@
               trade: trade,
               company: company,
               photos: photosArr.join(',') || "",
+              photoObjsStr:_photoObjsStr,
               photoLength:$scope.attachImgs.length,
               photoIds:"",
               description: log,
