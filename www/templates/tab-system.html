@@ -28,10 +28,18 @@
 
 		</a>
 		<a class="item c3" href="#/jobList" nav-direction="forward">
+            
+           {{'JOB_NUMBER' | translate }}
+            <span class="item-note c30">
+              {{jobNumber}}
+              <i class="icon ion-chevron-right ml10 cce"></i>
+            </span>
+        </a>
+        <a class="item c3" href="#/photoResolution" nav-direction="forward">
 		    
-		   {{'JOB_NUMBER' | translate }}
+		   {{'PHOTO_RESOLUTION' | translate }}
 		    <span class="item-note c30">
-		      {{jobNumber}}
+		      {{photoResolution}}
 		      <i class="icon ion-chevron-right ml10 cce"></i>
 		    </span>
 		</a>
@@ -50,7 +58,7 @@
 		<div class="item item-toggle c3" href="">
 		    {{'NOTIFICATION' | translate }}
 		    <label class="toggle toggle-balanced">
-		       <input type="checkbox">
+		       <input ng-model="$parent.notification" type="checkbox">
 		       <div class="track">
 		         <div class="handle"></div>
 		       </div>

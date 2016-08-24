@@ -4,7 +4,7 @@
     angular.module('starter')
         .factory('uploadFactory', uploadFactoryFunc);
 
-        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory, $http, helpToolsFactory, $cordovaFile){
+        function uploadFactoryFunc(PARAMS, $rootScope, dbFactory, newActFactory, $cordovaNetwork, localStorageService, $timeout, chkTokenFactory, $http, helpToolsFactory, $cordovaFile, $q){
 
             function _coreUpload(){
 
@@ -105,47 +105,110 @@
                   var url = PARAMS.BASE_URL + uploadMethod;
                   var access_token = localStorageService.get('token').access_token;
 
-                  var options = new FileUploadOptions();
-                  options.fileKey = "file";
-                  options.httpMethod = 'POST';
-                  options.fileName = actPhotos[n].substr(actPhotos[n].lastIndexOf('/') + 1);
-                  options.mimeType = "image/jpeg";
-                  options.chunkedMode = false;
-                  options.headers = {
-                     Connection: "close"
-                  };
+                  var filePath = actPhotos[n].substr(0, actPhotos[n].lastIndexOf('/'));
+                  var fileName1 = actPhotos[n].substr(actPhotos[n].lastIndexOf('/') + 1);         // 原图
+                  var fileName2 = fileName1.substr(0, fileName1.lastIndexOf('.'))
+                                      + "_zip" + fileName1.substr(fileName1.lastIndexOf('.'));  // 压缩图
 
-                  var projectID = reqObj.projectID;
-                  var staffID = reqObj.staffID;
-                  var dateCreated = reqObj.dateCreated;
-                  var activityID = reqObj.activityId;
+                  var uploadFileName;
+                  _zipImage(filePath, fileName1, fileName2).then(function(){
+                      uploadFileName = fileName2; // 压缩成功
+                      __upload();
+                    },function(){
+                      uploadFileName = fileName1; // 压缩失败，或者不需要压缩，使用原图
+                      __upload();
+                    });
 
-                  var params = {};
-                  params.all = "{'token':'"+access_token+"','ProjectID':'"+projectID+"','ActivityID':'"+activityID+"','StaffID':'"+staffID+"','DateCreated':'"+dateCreated+"'}";
-                  //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
-                  
-                  options.params = params;
+                  // 执行上传
+                  function __upload() {
+                    var options = new FileUploadOptions();
+                    options.fileKey = "file";
+                    options.httpMethod = 'POST';
+                    options.fileName = uploadFileName;
+                    options.mimeType = "image/jpeg";
+                    options.chunkedMode = false;
+                    options.headers = {
+                       Connection: "close"
+                    };
 
-                  var ft = new FileTransfer();
-                  ft.upload(actPhotos[n], encodeURI(url),
-                      function(result){
-                        var resObj = JSON.parse(result.response.replace(/(^\"*)|(\"*$)/g,''));
-                        console.log(resObj);
-                        if(resObj.success === "true"){
-                          _uploadPhotoWin(reqObj, n, resObj.GUID);
+                    var projectID = reqObj.projectID;
+                    var staffID = reqObj.staffID;
+                    var dateCreated = reqObj.dateCreated;
+                    var activityID = reqObj.activityId;
 
-                        }else if(resObj.success==="false" && resObj.error ==="Token Invalid"){
-                          // token invalid情况
-                            $rootScope.isUploading = false;
-                            $rootScope.$broadcast('uploadStatusChange');  
-                            helpToolsFactory.tokenInvalidHandler();
-                        } else {
+                    var params = {};
+                    params.all = "{'token':'"+access_token+"','ProjectID':'"+projectID+"','ActivityID':'"+activityID+"','StaffID':'"+staffID+"','DateCreated':'"+dateCreated+"'}";
+                    //var params = {'ProjectID':'1','StaffID':'1','DateCreated':'2016-01-01 00:00:00'};
+                    
+                    options.params = params;
+
+                    var ft = new FileTransfer();
+                    ft.upload(filePath + '/' + uploadFileName, encodeURI(url),
+                        function(result){
+                          var resObj = JSON.parse(result.response.replace(/(^\"*)|(\"*$)/g,''));
+                          console.log(resObj);
+                          if(resObj.success === "true"){
+                            _uploadPhotoWin(reqObj, n, resObj.GUID);
+
+                          }else if(resObj.success==="false" && resObj.error ==="Token Invalid"){
+                            // token invalid情况
+                              $rootScope.isUploading = false;
+                              $rootScope.$broadcast('uploadStatusChange');  
+                              helpToolsFactory.tokenInvalidHandler();
+                          } else {
+                            _uploadPhotoFail(reqObj, n);
+                          }
+                        },
+                        function(){
                           _uploadPhotoFail(reqObj, n);
-                        }
-                      },
-                      function(){
-                        _uploadPhotoFail(reqObj, n);
-                      }, options);
+                        }, options);
+                  }
+                }
+
+                // 按比例压缩图片
+                function _zipImage(filePath, oriFileName, zipFileName) {
+                  var deferred = $q.defer();
+
+                  var width;
+                  var height;
+
+                  var photoResolution = localStorageService.get('photoReso');
+                  if (photoResolution != null && photoResolution != "Original Size") {
+                    width = photoResolution.substr(0, photoResolution.indexOf('*'));
+                    width = isNaN(width) ? 1600 : width;  // default 1600
+
+                    height = photoResolution.substr(photoResolution.indexOf('*') + 1);
+                    height = isNaN(height) ? 1200 : height;  // default 1200
+                  
+
+                    window.plugins.imageResizer.resizeImage(
+                       function(data) {
+                         console.log("_zipImage success, file = " + data.filename);
+                         
+                         deferred.resolve();
+                       }, function (error) {
+                         console.log("_zipImage error, error = " + error + ", file = " + data.filename);
+
+                         deferred.reject();
+                       }, filePath + "/" + oriFileName, width, height, {
+                          format: ImageResizer.FORMAT_JPG,
+                          imageDataType: ImageResizer.IMAGE_DATA_TYPE_URL,
+                          resizeType: ImageResizer.RESIZE_TYPE_PIXEL,
+                          quality: 100,
+                          storeImage: true,
+                          pixelDensity: false,
+                          directory: filePath,
+                          filename: zipFileName,
+                          photoAlbum: 0
+                       }
+                    );
+                  } else {
+                    $timeout(function(){
+                      deferred.reject();
+                    },100);
+                  }
+
+                  return deferred.promise;
                 }
 
                 function _uploadPhotoWin(reqObj, n, photoId) {
@@ -265,20 +328,15 @@
                     var actPhotos = reqObj.actPhotos;
                     for (var i = actPhotos.length - 1; i >= 0; i--) {
                       var filePath = actPhotos[i].substr(0, actPhotos[i].lastIndexOf('/'));
-                      var fileName = actPhotos[i].substr(actPhotos[i].lastIndexOf('/') + 1);
-                      $cordovaFile.removeFile(filePath, fileName)
-                        .then(function (success) {
-                          console.log('removeFile success, ActivityId=' + reqObj.activityId + ', file=' + filePath + '/' + fileName);
-                        }, function (error) {
-                          console.log('removeFile fail, ActivityId=' + reqObj.activityId + ', file=' + filePath + '/' + fileName);
+                      var fileName1 = actPhotos[i].substr(actPhotos[i].lastIndexOf('/') + 1);         // 原图
+                      var fileName2 = fileName1.substr(0, fileName1.lastIndexOf('.'))
+                                      + "_zip" + fileName1.substr(fileName1.lastIndexOf('.'));  // 压缩图
+                      var fileName3 = fileName1.substr(0, fileName1.lastIndexOf('.'))
+                                      + "_small" + fileName1.substr(fileName1.lastIndexOf('.'));  // 小图
 
-                          var orphanPhotos = localStorageService.get('orphanPhotos');
-                          if (orphanPhotos) {
-                            localStorageService.set('orphanPhotos', filePath + '/' + fileName);
-                          } else {
-                            localStorageService.set('orphanPhotos', orphanPhotos + ',' + filePath + '/' + fileName);
-                          };
-                        });
+                      _deleteFile(filePath, fileName1, (actPhotos.length - 1 - i) * 30 + 50);
+                      _deleteFile(filePath, fileName2, (actPhotos.length - 1 - i) * 30 + 100);
+                      _deleteFile(filePath, fileName3, (actPhotos.length - 1 - i) * 30 + 150);
                     }
 
                     // 隔3s上传下一条数据
@@ -302,28 +360,46 @@
                     }, 10000);
                 }
 
+                // 删除文件
+                function _deleteFile(filePath, fileName, delay) {
+                  $cordovaFile.removeFile(filePath, fileName)
+                    .then(function (success) {
+                      console.log('_deleteFile success, file=' + filePath + '/' + fileName);
+                    }, function (error) {
+                      console.log('_deleteFile fail, error = ' + error.message + ', file=' + filePath + '/' + fileName);
+
+                      if (error.message != "NOT_FOUND_ERR" && error.message != "PATH_EXISTS_ERR") {
+                        // 写入 localStorage，后面再尝试删除
+                        // 延迟写入 localStorage 避免一个Activity有多张图片时的 concurrence 问题
+                        $timeout(function(){
+                            var orphanPhotos = localStorageService.get('orphanPhotos');
+                            if (orphanPhotos === null) {
+                              localStorageService.set('orphanPhotos', filePath + '/' + fileName);
+                            } else {
+                              localStorageService.set('orphanPhotos', orphanPhotos + ',' + filePath + '/' + fileName);
+                            };
+                          }, delay);
+                       }
+                    });
+                }
+
                 // 清理残留的图片（孤儿仔，即上传后没有被成功删除的）
                 function _deleteOrphanPhoto() {
                   var orphanPhotos = localStorageService.get('orphanPhotos');
 
-                  if (orphanPhotos) {
+                  if (orphanPhotos != null) {
+                    localStorageService.remove('orphanPhotos');  // remove first
+
                     var photos = orphanPhotos.split(',');
                     for (var i = photos.length - 1; i >= 0; i--) {
 
                       var filePath = photos[i].substr(0, photos[i].lastIndexOf('/'));
                       var fileName = photos[i].substr(photos[i].lastIndexOf('/') + 1);
-                      $cordovaFile.removeFile(filePath, fileName)
-                        .then(function (success) {
-                          console.log('_deleteOrphanPhoto success, file=' + filePath + '/' + fileName);
-                        }, function (error) {
-                          console.log('_deleteOrphanPhoto fail, file=' + filePath + '/' + fileName);
-
-                          // TODO，如果这里再删除，就不管了？？？？？？
-                        });
+                      
+                      _deleteFile(filePath, fileName, (photos.length - 1 - i) * 100);
                     }
                   }
 
-                  localStorageService.remove('orphanPhotos');
                 }
 
                 function _checkToStopUpload() {

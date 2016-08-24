@@ -81,7 +81,6 @@
                             }
                             });
                         }
-                      
                     }
                     console.log(typeof 123);
                     console.log(resObj);
@@ -468,14 +467,28 @@
              
               $cordovaCamera.getPicture(options).then(function(imgURI) {
                 //$scope.imgURI = imgURI;
-                $scope.attachImgs.unshift({
-                    'imgURI':imgURI,
-                    isShowSelectIcon:false,
-                });
-                localStorageService.set('isFillNewAct',true);
-                localStorageService.set('photoList', $scope.attachImgs);
-                $scope.photoLength ++;
+                // $scope.attachImgs.unshift({
+                //     'imgURI':imgURI,
+                //     isShowSelectIcon:false,
+                // });
 
+                resizeImg(
+                    imgURI,
+                    function(resizedImageURI){
+                        console.log('Take Photo resize image success!');
+                        $scope.attachImgs.unshift( { 'imgURI':resizedImageURI,
+                                                 'index':$scope.attachImgs.length>0 ? $scope.attachImgs[$scope.attachImgs.length-1].index+1 : 0,
+                                                 'originImgURI':imgURI
+                                                } );
+                        localStorageService.set('isFillNewAct',true);
+                        localStorageService.set('photoList', $scope.attachImgs);
+                        $scope.photoLength ++;
+                    },
+                    function(error){
+                        console.log('Take Photo resize image error:'+error);
+                    }
+                );
+                
               }, function(err) {
                 console.debug("Unable to obtain picture: " + err, "app");
               });
@@ -506,7 +519,7 @@
                 failCb(error);
               }
             }, 
-            todoImgURI, 0, 24, 
+            todoImgURI, 0, 70, 
             {
               resizeType: ImageResizer.RESIZE_TYPE_MAX_PIXEL,
               imageDataType: ImageResizer.IMAGE_DATA_TYPE_URL,

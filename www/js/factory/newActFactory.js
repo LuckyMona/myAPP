@@ -6,27 +6,45 @@
 
         function newActFactoryFunc($q, $http, PARAMS,$ionicLoading){
 
+			var getDataDict = function (getDownlistReq, currentTrail, maxTrail, defer)
+			{
+				console.log("Trying to get Data Dict ( " + currentTrail + " out of " + maxTrail + " )");
+				
+                var url = PARAMS.BASE_URL + 'GetDataDict';
+				$http({
+                    method: 'POST',
+                    url: url,
+                    data: getDownlistReq,
+                    timeout: 5000
+                }).then(
+					function onSuccess(result)
+					{
+						$ionicLoading.hide();
+						defer.resolve(result);
+					},
+					function onErr(result)
+					{
+						if (currentTrail >= 0 && currentTrail <= maxTrail)
+						{
+							getDataDict(getDownlistReq, currentTrail + 1, maxTrail, defer);
+						}
+						else
+						{
+							$ionicLoading.hide();
+							defer.resolve(result);
+						}
+					}
+				);
+			};
+		
             var _getDownlist = function(getDownlistReq){
                 //console.log(getDownlistReq);
                 $ionicLoading.show({
                     template: 'Loading...'
                 });
                 var deferred = $q.defer();
-                var url = PARAMS.BASE_URL + 'GetDataDict';
-
-                $http({
-                    method: 'POST',
-                    url: url,
-                    data: getDownlistReq,
-                    timeout:5000
-                }).then(function successCb(result){
-                        $ionicLoading.hide();
-                        deferred.resolve(result);
-                    },function errorCb(result){
-                        $ionicLoading.hide();
-                        deferred.resolve(result);
-                        
-                    });
+				
+				getDataDict(getDownlistReq, 1, 5, deferred);
 
                 return deferred.promise;
             }

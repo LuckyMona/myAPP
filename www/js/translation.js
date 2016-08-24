@@ -56,6 +56,8 @@
 			'NOTIFICATION':'Notification',
 			'SIGN_OUT':'SIGN OUT',
 			'SUPPORT_HOTLINE':'Support Hotline',
+            'PHOTO_RESOLUTION':'Photo Resolution',
+            'ORIGINAL_SIZE':'Original Size',
 
 			/*category*/
 			'CATEGORY':'Category',
@@ -138,6 +140,8 @@
 			'NOTIFICATION':'通知',
 			'SIGN_OUT':'登出',
 			'SUPPORT_HOTLINE':'支持熱線',
+            'PHOTO_RESOLUTION':' 圖片解析度',
+            'ORIGINAL_SIZE':'原圖',
 
 			/*category*/
 			'CATEGORY':'類別',

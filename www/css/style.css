@@ -363,14 +363,14 @@
 .curUser p:last-child { font-size:12px; }
 
 .bigImg { position: absolute;
-    top: 10%;
-    left: 50%;
+    top: 80px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     z-index: 100;
     display: block;
-    margin-top: 18px;
-    margin-left: -165px;
-    height: auto;
-    width: 330px;
+    max-height: 80%;
+    max-width: 90%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
 .imgBackdrop {
     position: fixed;

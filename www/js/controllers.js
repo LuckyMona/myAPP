@@ -122,13 +122,16 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
    });
 })
 
-.controller('SystemCtrl', function($rootScope, $scope, $window,$timeout,localStorageService, $state, $ionicViewSwitcher, $translate, $localStorage) {
+.controller('SystemCtrl', function($rootScope, $scope, $window,$timeout,localStorageService, $state, $ionicViewSwitcher, $translate, $localStorage,helpToolsFactory) {
   
     $scope.UID = localStorageService.get('UID');
     $scope.Name = localStorageService.get('Name');
-    $scope.allow3G = false;
+    $scope.allow3G = localStorageService.get('allow3G')|| false;
+    $scope.photoResolution = localStorageService.get('photoReso')|| helpToolsFactory.i18nT('ORIGINAL_SIZE');
+    $scope.notification = localStorageService.get('notification') || false;
     // $scope.isGray_language = false;
     // $scope.isGray_jobNumber = false;
+
     $scope.signOut = function(){
         
         // 删除字段：token / tasklistData / badgeTask
@@ -140,10 +143,20 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $rootScope.$on('jobNumberSelect', function(d, data){
         $scope.jobNumber = data;
     })
+    $rootScope.$on('photoResoChange', function(d, data){
+      if(data === "Original Size"){
+        $scope.photoResolution = helpToolsFactory.i18nT('ORIGINAL_SIZE');
+        localStorageService.set('photoReso', $scope.photoResolution);
+        return;
+      }
+      $scope.photoResolution = data;
+      localStorageService.set('photoReso', data);
+    });
 
-    var langKey = localStorageService.get('NG_TRANSLATE_LANG_KEY');
+    // var langKey = localStorageService.get('NG_TRANSLATE_LANG_KEY');
+    var langKey = $translate.use();
     var getLang = function(langKey){
-        if(langKey == "zh_hk"){
+        if(langKey === "zh_hk"){
             $scope.lang = '繁體中文';
         } else {
            $scope.lang = 'English'; 
@@ -154,6 +167,10 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $rootScope.$on('changeLanguage', function(d, data){
         getLang(data);
         $translate.use(data);
+        if($scope.photoResolution === "原圖" || $scope.photoResolution ==="Original Size"){
+          $scope.photoResolution = helpToolsFactory.i18nT('ORIGINAL_SIZE');
+          localStorageService.set('photoReso', $scope.photoResolution);
+        }
         
     });
 
@@ -161,12 +178,18 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $scope.$watch('allow3G', function(newVal, oldVal){
       console.log('change allow3G');
       console.log(newVal);
+      localStorageService.set('allow3G',newVal);
       $rootScope.$broadcast('allow3G_Change', newVal);
      
     });
+    $scope.$watch('notification', function(newVal, oldVal){
+      console.log(newVal);
+      localStorageService.set('notification',newVal);
+    });
 })
-.controller('LangCtrl',function($rootScope, $scope, $state, $ionicViewSwitcher,$translateLocalStorage){
+.controller('LangCtrl',function($rootScope, $scope, $state, $ionicViewSwitcher,$translateLocalStorage, $translate){
     // language.html页面单选后跳回来
+    $scope.lan = $translate.use();
     $scope.$watch("lan", function(newVal,oldVal){
         
         if(newVal==oldVal){
@@ -300,7 +323,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
     $scope.jobListArr = localStorageService.get('jobItems');
 
-    $scope.jobModel = {"jobList":""};
+    var localProjectID = localStorageService.get('projectID');
+
+    $scope.jobModel = {"jobList":localProjectID};
    
     function showConfirm(){
       helpToolsFactory.showConfirm( helpToolsFactory.i18nT('CONFIRM_TOGGLE_PROJECT'),
@@ -353,6 +378,21 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         $ionicViewSwitcher.nextDirection("back"); 
     });
 })
+.controller('PhotoResolutionCtrl', function($rootScope, $scope,localStorageService,$state,$ionicViewSwitcher, $ionicHistory){
+    var localPhotoReso = localStorageService.get('photoReso') || helpToolsFactory.i18nT('ORIGINAL_SIZE');
+    $scope.photoRModel = {"photoReso":localPhotoReso};
+    $scope.$watch('photoRModel.photoReso', function(newVal, oldVal){
+      //console.log(oldVal);
+      console.log(newVal);
+      if(newVal === oldVal){
+        return;
+      }
+      $state.go('tab.system');
+      localStorageService.set('photoReso', newVal);
+      $rootScope.$broadcast('photoResoChange', newVal);
+      $ionicViewSwitcher.nextDirection("back"); 
+    });
+})
 .controller('FloorCtrl', function($rootScope, $scope, localStorageService, $state, $ionicViewSwitcher, helpToolsFactory, $timeout){
 
     /*var floorItems = localStorageService.get('floorItems');
@@ -362,8 +402,9 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     });
     $scope.floorParent.floorItems = helpToolsFactory.arrayUnique(floorNameArr);*/
 
+    var localFloor = localStorageService.get('floorSelected');
     $scope.floorParent = {
-      "floorModel":"",
+      "floorModel":localFloor,
       "floorItems":[],
     }
     $rootScope.$on('blockSelected',function(d,data){
@@ -390,6 +431,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         });
 
         $rootScope.$broadcast('floorChange', selItems);
+        localStorageService.set('floorSelected',selItems);
         $state.go('tab.newAct');
         $ionicViewSwitcher.nextDirection("back");
 
@@ -469,7 +511,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
 
 .controller('CategoryCtrl', function($rootScope,$scope, categoryFactory, localStorageService, $state, $ionicViewSwitcher){
     
-    $scope.category = "";
+    $scope.category = localStorageService.get('categoryID')|| "";
     $scope.categoryItems = localStorageService.get('categoryItems');
     $scope.$watch('category', function(newVal, oldVal){
     
@@ -496,9 +538,6 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $ionicViewSwitcher.nextDirection("back");
     
   });
-})
-.controller('LanguageCtrl', function($scope){
-    $scope.lan = 'En';
 })
 
 .controller('ReviewCtrl', function($rootScope,$scope, localStorageService, $state, $ionicViewSwitcher){
