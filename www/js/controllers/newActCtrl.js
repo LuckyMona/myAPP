@@ -1,14 +1,14 @@
 'use strict';
 (function () {
 	angular.module('NewActCtrl', ['LocalStorageModule', 'ngStorage'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory','$localStorage','helpToolsFactory',
-							         function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage,helpToolsFactory){
+		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory','$localStorage','helpToolsFactory','$ionicScrollDelegate',
+							         function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage,helpToolsFactory,$ionicScrollDelegate){
 	
 	  $scope.isTradeShow = false;
     $scope.reviewModel = {"isReviewShow":false};
     $scope.attachImgs = [];
-    $scope.isGray_location = true;
-    $scope.isGray_category = true;
+    $scope.isGray_location = localStorageService.get('isGray_location') && true;
+    $scope.isGray_category = localStorageService.get('isGray_category') && true;
     $scope.isGray_review = true;
     $scope.isGray_trade = true;
     $scope.isGray_company = true;
@@ -308,6 +308,7 @@
       }
       
       $scope.isGray_location = false;
+      localStorageService.set('isGray_location', false);
       $scope.location = locationStr;
       
       $scope.locationOn = true;
@@ -325,6 +326,7 @@
         $scope.location = helpToolsFactory.i18nT('SELECT_LOCATION');
         $scope.locationOn = false;
         $scope.isGray_location = true;
+        localStorageService.set('isGray_location', true);
       }
       
     });
@@ -340,7 +342,8 @@
     $scope.tradeOn = false;
     $scope.companyOn = false;
     $scope.tradeNum = 0;
-    $scope.companyNum =0;
+    $scope.companyNum = 0;
+    $scope.reviewNum = 0;
     var onSelect = function(selectName, isMulti){
         $scope[selectName] = 'Select ' + selectName.substring(0,1).toUpperCase()+selectName.substring(1);
         if(selectName === 'review')
@@ -360,18 +363,14 @@
         
         if(isMulti){
             $rootScope.$on(selectName + 'Done', function(d, data){
-              if(d.name==="tradeDone")
+              if(d.name===selectName+"Done")
               {
-                var tradeNum = data.tradeID.split(',').length;
-                $scope.tradeNum = tradeNum;
+                $scope[selectName+'Num'] = data[selectName+'ID'].split(',').length;
               }
-              else if(d.name==="companyDone"){
-                var companyNum = data.companyID.split(',').length;
-                $scope.companyNum = companyNum;
-              }
-
+              
                 $scope['is'+selectName+'Show'] = true;
                 $scope['isGray_'+ selectName] = false;
+                
                 $scope[selectName] = data[selectName+'Data'];
                 $scope[selectName + 'ID'] = data[selectName+'ID'];
                 if(data[selectName+'Data'] === ""){
@@ -392,6 +391,7 @@
             if(selectName === 'category'){
               localStorageService.set('category', data.categoryData);
               localStorageService.set('categoryID', data.categoryID);
+              localStorageService.set('isGray_category',false);
             }
             $scope[selectName + 'On'] = true;  //是否选择
             localStorageService.set('isFillNewAct',true);
@@ -524,7 +524,6 @@
               resizeType: ImageResizer.RESIZE_TYPE_MAX_PIXEL,
               imageDataType: ImageResizer.IMAGE_DATA_TYPE_URL,
               format: ImageResizer.FORMAT_JPG,
-              storeImage:true,
               photoAlbum:0,
               directory:myDirectory,
               filename:myFileName,
@@ -587,7 +586,7 @@
 						console.log('Unable to obtain pictures: ' + error);
 					},
                     {
-                        maxImages: 25
+                        maxImages: 15
                     }
           
 				);
@@ -694,13 +693,16 @@
     window.addEventListener('native.keyboardshow', keyboardShowHandler);
     
     function keyboardShowHandler(e){
-      if (cordova.platformId === 'ios') {
-          console.log('ios show keyboard');
-          console.log('Keyboard height is: ' + e.keyboardHeight);
-          document.getElementById('bar-footer').style.bottom = e.keyboardHeight +'px';
-    
-      }
-    
+        if (cordova.platformId === 'ios') {
+            console.log('ios show keyboard');
+            console.log('Keyboard height is: ' + e.keyboardHeight);
+            document.getElementById('bar-footer').style.bottom = e.keyboardHeight +'px';
+
+        }      
+        console.log('Keyboard height is: ' + e.keyboardHeight);
+        $ionicScrollDelegate.scrollTo(0, e.keyboardHeight, true);
+        localStorageService.set('keyboardHeight',e.keyboardHeight);
+        document.getElementById('lastEle').style.marginBottom = '46px';
     }
     
     window.addEventListener('native.keyboardhide', keyboardHideHandler);
@@ -712,7 +714,8 @@
           document.getElementById('bar-footer').style.bottom = '0px';
     
       }
-
+      $ionicScrollDelegate.scrollTo(0, 0, true);
+      document.getElementById('lastEle').style.marginBottom = '100px';
     }
 
     // log input clear content when focus
@@ -726,6 +729,7 @@
       }
 
       $scope.isGray_mockinput = false;
+      
       // $event.target.focus();
       /*$event.target.click();*/
       //return true;
@@ -973,16 +977,22 @@
         $scope.reviewOn = false;
         $scope.tradeOn = false;
         $scope.companyOn = false;
-        $scope.trade = helpToolsFactory.i18nT('SELECT_TRADE');
-        $scope.company = helpToolsFactory.i18nT('SUBCONTRACTOR');
+        //$scope.trade = helpToolsFactory.i18nT('SELECT_TRADE');
+        //$scope.company = helpToolsFactory.i18nT('SUBCONTRACTOR');
         $scope.createdOn = "";
-        $scope.tradeNum = 0;
-        $scope.companyNum = 0;
+        //$scope.tradeNum = 0;
+        //$scope.companyNum = 0;
 
         $scope.isGray_review = true;
         $scope.isGray_trade = true;
         $scope.isGray_company = true;
+        $scope.isGray_category = true;
+        $scope.isGray_location = true;
         $scope.isGray_mockinput = true;
+
+        localStorageService.set('isGray_category',true);
+        localStorageService.set('isGray_location',true);
+        
         $scope.attachImgs = [];
         localStorageService.set('photoList',$scope.attachImgs);
         localStorageService.set('reviewItems',null);

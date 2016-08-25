@@ -10,8 +10,9 @@
 	</div> -->
 </ion-header-bar> 
 <ion-view>
-	<ion-content class="bg-grey has-header44" ng-controller="CategoryCtrl">
-		<div class="list mt24 blockFix prevBlock">
+	<ion-content class="bg-grey hackIonContent" ng-controller="CategoryCtrl">
+		<div class="thinBar mt42"></div>
+		<div class="list blockFix prevBlock">
 		  	<ion-list>
 			  	<ion-radio ng-model="$parent.category" ng-repeat="category in categoryItems" nav-direction="back" value="{{category.CategoryID}}">{{category.name}}</ion-radio>
 			  	<!-- <ion-radio ng-model="$parent.category" nav-direction="back" ng-value="'Category B'">Category B</ion-radio>

@@ -127,8 +127,14 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $scope.UID = localStorageService.get('UID');
     $scope.Name = localStorageService.get('Name');
     $scope.allow3G = localStorageService.get('allow3G')|| false;
-    $scope.photoResolution = localStorageService.get('photoReso')|| helpToolsFactory.i18nT('ORIGINAL_SIZE');
     $scope.notification = localStorageService.get('notification') || false;
+
+    var _localPhotoReso = localStorageService.get('photoReso');
+    if(_localPhotoReso && _localPhotoReso === "Original Size"){
+      $scope.photoResolution = helpToolsFactory.i18nT('ORIGINAL_SIZE');
+    }else{
+      $scope.photoResolution = _localPhotoReso || helpToolsFactory.i18nT('ORIGINAL_SIZE');
+    }
     // $scope.isGray_language = false;
     // $scope.isGray_jobNumber = false;
 
@@ -146,7 +152,8 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     $rootScope.$on('photoResoChange', function(d, data){
       if(data === "Original Size"){
         $scope.photoResolution = helpToolsFactory.i18nT('ORIGINAL_SIZE');
-        localStorageService.set('photoReso', $scope.photoResolution);
+        var localPhotoReso = "Original Size";
+        localStorageService.set('photoReso', localPhotoReso);
         return;
       }
       $scope.photoResolution = data;
@@ -379,7 +386,7 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
     });
 })
 .controller('PhotoResolutionCtrl', function($rootScope, $scope,localStorageService,$state,$ionicViewSwitcher, $ionicHistory){
-    var localPhotoReso = localStorageService.get('photoReso') || helpToolsFactory.i18nT('ORIGINAL_SIZE');
+    var localPhotoReso = localStorageService.get('photoReso') || "Original Size";
     $scope.photoRModel = {"photoReso":localPhotoReso};
     $scope.$watch('photoRModel.photoReso', function(newVal, oldVal){
       //console.log(oldVal);
@@ -388,8 +395,15 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
         return;
       }
       $state.go('tab.system');
-      localStorageService.set('photoReso', newVal);
-      $rootScope.$broadcast('photoResoChange', newVal);
+      if(newVal === "原圖"){
+        localStorageService.set('photoReso', "Original Size");
+        $rootScope.$broadcast('photoResoChange', "Original Size");
+      }else{
+        localStorageService.set('photoReso', newVal);
+        $rootScope.$broadcast('photoResoChange', newVal);
+      }
+
+      $scope.photoRModel.photoReso = newVal === "原圖"?"Original Size": newVal;
       $ionicViewSwitcher.nextDirection("back"); 
     });
 })

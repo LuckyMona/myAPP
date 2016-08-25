@@ -2,7 +2,7 @@
 
 (function () {
     angular.module('starter')
-        .directive('logdirective',function($interval,$ionicScrollDelegate){
+        .directive('logdirective',function($interval,$ionicScrollDelegate,localStorageService){
 
             return {
                 //restrict:"A",
@@ -11,7 +11,7 @@
                     var memHeight = ele[0].offsetHeight;
 
                     ele.on('focus', function(){
-                        $ionicScrollDelegate.scrollTo(0, 300, true);
+                        //$ionicScrollDelegate.scrollTo(0, 300, true);
                         console.log('focus');
                         $interval.cancel(timer);
                         console.log(timer);
@@ -21,9 +21,9 @@
                             memHeight = newVal;
                             if(newVal !== oldVal){
                                 console.log('height changed!');
-                                
+                                var keybrdH = parseInt(localStorageService.get('keyboardHeight')); 
                                 document.getElementById('lastEle').style.marginBottom = (100 + newVal) + 'px';
-                                $ionicScrollDelegate.scrollBy(0,300+newVal,true);                                
+                                $ionicScrollDelegate.scrollBy(0,keybrdH+newVal-oldVal,true);                                
                                 
                                 return;
                             }
@@ -44,7 +44,8 @@
                         $interval.cancel(timer);
                         console.log(timer);
                     });
-                      
+
+                    
                 }
             }
         });

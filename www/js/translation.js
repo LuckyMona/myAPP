@@ -33,7 +33,7 @@
             'START_UPLOAD2':'Upload',
 
             /*newAct*/
-            'NEW_ACT_TITLE':'New Activity / Photo',
+            // 'NEW_ACT_TITLE':'New Activity / Photo',
 			'SELECT_LOCATION':'Select Location',
 			'SELECT_CATEGORY':'Select Category',
 			'REQUEST_REVIEW':'Request Review / Notify',
@@ -117,7 +117,7 @@
             'START_UPLOAD2':'上傳',
 
 			/*newAct*/
-            'NEW_ACT_TITLE':'新活動 / 照片',
+            // 'NEW_ACT_TITLE':'新活動 / 照片',
 			'SELECT_LOCATION':'選擇地址',
 			'SELECT_CATEGORY':'選擇類別',
 			'REQUEST_REVIEW':'請求檢查 / 通知',

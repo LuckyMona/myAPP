@@ -10,8 +10,8 @@
 		      </div>
 		</ion-header-bar> -->
 		<div class="newAct mt49">
-			<!-- <div class="thinBar"></div> -->
-			<div class="greyBar">{{'NEW_ACT_TITLE' | translate }}</div>
+			<div class="thinBar"></div>
+			<!-- <div class="greyBar">{{'NEW_ACT_TITLE' | translate }}</div> -->
 			<div class="list prevBlock no-mg">
 		    	<a class="item c3" ng-click="getLocationBlock()" nav-direction="forward">
 				    <i class="fl ion-android-pin fz20" style="width:10%;"></i>
@@ -31,7 +31,7 @@
 		    </div>
 		    <!-- <div class="thinBar"></div> -->
 		    <div class="list mt24 prevBlock">
-		    	<ion-checkbox ng-model="reviewModel.isReviewShow">{{ 'REQUEST_REVIEW' | translate }}</ion-checkbox>
+		    	<ion-checkbox ng-model="reviewModel.isReviewShow">{{ 'REQUEST_REVIEW' | translate }} ({{ reviewNum }})</ion-checkbox>
 
 		    	<a class="item c3" ng-click="getMulti('review', true, false)" nav-direction="forward" ng-show="reviewModel.isReviewShow">
 				    <i class="fl ion-android-person fz20" style="width:10%;"></i>
