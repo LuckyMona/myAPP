@@ -113,7 +113,11 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
             for(i=0; i<len; i++){
               // var midArr = results[i].photos.split(',');
               // results[i].photos = midArr;
-              results[i].photoFirst = JSON.parse(results[i].photoObjsStr.split('  ')[0]).imgURI;
+              if (results[i].photoObjsStr != "") {
+                results[i].photoFirst = JSON.parse(results[i].photoObjsStr.split('  ')[0]).imgURI;
+              } else {
+                results[i].photoFirst = "";
+              }
             }
             $scope.uploadItems = results;
             // console.log('$scope.uploadItems:'+$scope.uploadItems);
@@ -160,6 +164,12 @@ angular.module('starter.controllers', ['LocalStorageModule', 'ngStorage'])
       localStorageService.set('photoReso', data);
     });
 
+    $rootScope.$on('loginSuccess', function()
+    {
+        //rebind the UID and Name
+        $scope.UID = localStorageService.get('UID');
+        $scope.Name = localStorageService.get('Name');
+    });
     // var langKey = localStorageService.get('NG_TRANSLATE_LANG_KEY');
     var langKey = $translate.use();
     var getLang = function(langKey){

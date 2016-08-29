@@ -108,7 +108,8 @@
                   var filePath = actPhotos[n].substr(0, actPhotos[n].lastIndexOf('/'));
                   var fileName1 = actPhotos[n].substr(actPhotos[n].lastIndexOf('/') + 1);         // 原图
                   var fileName2 = fileName1.substr(0, fileName1.lastIndexOf('.'))
-                                      + "_zip" + fileName1.substr(fileName1.lastIndexOf('.'));  // 压缩图
+                                      //+ "_zip" + fileName1.substr(fileName1.lastIndexOf('.'));  // 压缩图
+                                      + "_zip.jpg";  // 压缩图
 
                   var uploadFileName;
                   _zipImage(filePath, fileName1, fileName2).then(function(){
@@ -330,9 +331,11 @@
                       var filePath = actPhotos[i].substr(0, actPhotos[i].lastIndexOf('/'));
                       var fileName1 = actPhotos[i].substr(actPhotos[i].lastIndexOf('/') + 1);         // 原图
                       var fileName2 = fileName1.substr(0, fileName1.lastIndexOf('.'))
-                                      + "_zip" + fileName1.substr(fileName1.lastIndexOf('.'));  // 压缩图
+                                      //+ "_zip" + fileName1.substr(fileName1.lastIndexOf('.'));  // 压缩图
+                                      + "_zip.jpg";  // 压缩图
                       var fileName3 = fileName1.substr(0, fileName1.lastIndexOf('.'))
-                                      + "_small" + fileName1.substr(fileName1.lastIndexOf('.'));  // 小图
+                                      //+ "_small" + fileName1.substr(fileName1.lastIndexOf('.'));  // 小图
+                                      + "_small.jpg";  // 小图
 
                       _deleteFile(filePath, fileName1, (actPhotos.length - 1 - i) * 30 + 50);
                       _deleteFile(filePath, fileName2, (actPhotos.length - 1 - i) * 30 + 100);

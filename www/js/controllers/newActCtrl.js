@@ -1,10 +1,10 @@
 'use strict';
 (function () {
-	angular.module('NewActCtrl', ['LocalStorageModule', 'ngStorage'])
-		.controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory','$localStorage','helpToolsFactory','$ionicScrollDelegate',
-							         function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage,helpToolsFactory,$ionicScrollDelegate){
-	
-	  $scope.isTradeShow = false;
+    angular.module('NewActCtrl', ['LocalStorageModule', 'ngStorage'])
+        .controller('NewActCtrl', ['$rootScope', '$scope', '$window', '$timeout','localStorageService','$cordovaCamera','newActFactory','$translateLocalStorage', '$cordovaNetwork','dbFactory', 'uploadFactory','$state','$ionicViewSwitcher','$ionicPopup','$q', '$http', 'PARAMS','$cordovaFileTransfer','chkTokenFactory','$localStorage','helpToolsFactory','$ionicScrollDelegate',
+                                     function($rootScope, $scope, $window, $timeout,localStorageService,$cordovaCamera,newActFactory, $translateLocalStorage, $cordovaNetwork,dbFactory,uploadFactory,$state,$ionicViewSwitcher,$ionicPopup,$q, $http, PARAMS, $cordovaFileTransfer,chkTokenFactory,$localStorage,helpToolsFactory,$ionicScrollDelegate){
+    
+      $scope.isTradeShow = false;
     $scope.reviewModel = {"isReviewShow":false};
     $scope.attachImgs = [];
     $scope.isGray_location = localStorageService.get('isGray_location') && true;
@@ -117,6 +117,7 @@
           StaffID:"111",
       }] */
       // 筛选LU_Project，条件是ProjectID等于Project#Staff中的Project
+      /*
       staffProjectArr.forEach(function(item, index, arr){
         
           LU_Project.forEach(function(itemPro, index, arr){
@@ -127,6 +128,17 @@
           });
 
       });
+      */
+      // 按Project Number去排序
+      LU_Project.forEach(function(itemPro, index, arr){
+          staffProjectArr.forEach(function(item, index, arr){
+              if(itemPro.ProjectID === item.split("#")[0]){
+                  itemPro.StaffID = item.split("#")[1];
+                  LU_ProjectFilter.push(itemPro);
+              }
+          });
+      });
+
       console.log(LU_ProjectFilter);
       localStorageService.set('jobItems',LU_ProjectFilter);
     }
@@ -481,6 +493,7 @@
                                                  'originImgURI':imgURI
                                                 } );
                         localStorageService.set('isFillNewAct',true);
+                        localStorageService.set('isAllResized',true);
                         localStorageService.set('photoList', $scope.attachImgs);
                         $scope.photoLength ++;
                     },
@@ -502,13 +515,14 @@
     }
     //压缩图片
     function resizeImg (todoImgURI, successCb, failCb){
-        var myFileName = todoImgURI.substring(todoImgURI.lastIndexOf('/')+1, todoImgURI.lastIndexOf('.')-1)+"_small.jpg";
+        var myFileName = todoImgURI.substring(todoImgURI.lastIndexOf('/')+1, todoImgURI.lastIndexOf('.'))+"_small.jpg";
         var myDirectory = todoImgURI.substring(0,todoImgURI.lastIndexOf('/')+1);
         
         window.imageResizer.resizeImage(
             function (resizedImageObj){
                 if(successCb){
                     var resizedImageURI = todoImgURI.substring(0,todoImgURI.lastIndexOf('/')+1) + resizedImageObj.filename;
+                    console.log("resizeImg:" + resizedImageURI);
                     successCb(resizedImageURI);
                 }
                 
@@ -537,107 +551,108 @@
     
     //新增图片
     $scope.getPhoto = function(){
-	
-		var invokeGetPicture = function()
-		{
-			document.addEventListener("deviceready", onCanGetPicture, false);
-			function onCanGetPicture()
-			{
-				window.plugins.imagePicker.getPictures(
-					function(results)
-					{
-                        var i=0;
-                        iterationResults(results, i);
+    
+        var invokeGetPicture = function()
+        {
+            document.addEventListener("deviceready", onCanGetPicture, false);
+            function onCanGetPicture()
+            {
+                window.plugins.imagePicker.getPictures(
+                    function(results)
+                    {
+              var i=0;
+              iterationResults(results, i);
 
-                        function iterationResults(results, i){
-                            if(i>=results.length){
-                                localStorageService.set('photoList', $scope.attachImgs);
-                                return;
-                            }
+              function iterationResults(results, i){
+                  if(i>=results.length){
+                      localStorageService.set('photoList', $scope.attachImgs);
+                      localStorageService.set('isAllResized',true);
+                      return;
+                  }
+                  localStorageService.set('isAllResized',false);
+                  console.log('Image URI: ' + results[i]);
 
-                            console.log('Image URI: ' + results[i]);
-
-                            resizeImg(
-                                results[i],
-                                function(resizedImageURI){
-                                    console.log('Get Photo resize image success!');
-                                    $scope.attachImgs.unshift( { 'imgURI':resizedImageURI,
-                                                             'index':$scope.attachImgs.length>0 ? $scope.attachImgs[$scope.attachImgs.length-1].index+i+1 : $scope.attachImgs.length + i,
-                                                             'originImgURI':results[i]
-                                                            } );
-                                    localStorageService.set('isFillNewAct',true);
-                                    iterationResults(results, i+1);
-                                },
-                                function(error){
-                                    console.log('Get Photo resize image error:'+error);
-                                }
-                            );
-                        }
+                  resizeImg(
+                      results[i],
+                      function(resizedImageURI){
+                          console.log('Get Photo resize image success!');
+                          $scope.attachImgs.unshift( { 'imgURI':resizedImageURI,
+                                                   'index':$scope.attachImgs.length>0 ? $scope.attachImgs[$scope.attachImgs.length-1].index+i+1 : $scope.attachImgs.length + i,
+                                                   'originImgURI':results[i]
+                                                  } );
+                          localStorageService.set('isFillNewAct',true);
+                          iterationResults(results, i+1);
+                      },
+                      function(error){
+                          console.log('Get Photo resize image error:'+error);
+                      }
+                  );
+              }
                         
 
-						$scope.photoLength = $scope.photoLength + results.length;
-						
-						if(!$scope.$$phase) {
-							$scope.$apply();
-						}
-					},
-					function (error)
-					{
-						console.log('Unable to obtain pictures: ' + error);
-					},
+                        $scope.photoLength = $scope.photoLength + results.length;
+                        
+                        if(!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    },
+                    function (error)
                     {
-                        maxImages: 15
-                    }
+                        console.log('Unable to obtain pictures: ' + error);
+                    },
+          {
+              maxImages: 15
+          }
           
-				);
-			}
-		};
-		var writePermitErrorCallback = function()
-		{
-			console.log("Request permission error");
-		};
-		var permissions = cordova.plugins.permissions;
-		
-		if (permissions == null || typeof(permissions) == "undefined")
-		{
-			invokeGetPicture();//shd be iOS
-		}
-		else
-		{
-			//android
-			console.log("Request for write permission");
-			permissions.hasPermission(permissions.WRITE_EXTERNAL_STORAGE,
-				function(status)//call back
-				{
-					if (!status.hasPermission)
-					{
-						console.log("No write permission > prompt to grant the permission");
-						permissions.requestPermission(permissions.WRITE_EXTERNAL_STORAGE,
-							function(status_req)
-							{
-								if (status_req.hasPermission)
-								{
-									console.log("Write permission granted");
-									invokeGetPicture();
-								}
-								else
-								{
-									console.log("Write permission denied");
-								}
-							},
-							writePermitErrorCallback
-						);
-					}
-					else
-					{
-						console.log("Write permission is granted");
-						invokeGetPicture();
-					}
-				},
-				writePermitErrorCallback
-			);
-		}
-			
+                );
+            }
+        };
+        var writePermitErrorCallback = function()
+        {
+            console.log("Request permission error");
+        };
+        var permissions = cordova.plugins.permissions;
+        
+        if (permissions == null || typeof(permissions) == "undefined")
+        {
+            invokeGetPicture();//shd be iOS
+        }
+        else
+        {
+            //android
+            console.log("Request for write permission");
+            permissions.hasPermission(permissions.WRITE_EXTERNAL_STORAGE,
+                function(status)//call back
+                {
+                    if (!status.hasPermission)
+                    {
+                        console.log("No write permission > prompt to grant the permission");
+                        permissions.requestPermission(permissions.WRITE_EXTERNAL_STORAGE,
+                            function(status_req)
+                            {
+                                if (status_req.hasPermission)
+                                {
+                                    console.log("Write permission granted");
+                                    invokeGetPicture();
+                                }
+                                else
+                                {
+                                    console.log("Write permission denied");
+                                }
+                            },
+                            writePermitErrorCallback
+                        );
+                    }
+                    else
+                    {
+                        console.log("Write permission is granted");
+                        invokeGetPicture();
+                    }
+                },
+                writePermitErrorCallback
+            );
+        }
+            
     }
     
     // 点击图片放大
@@ -782,6 +797,7 @@
       $scope.category = data.category;
       $scope.categoryOn = true;
       
+      $scope.reviewNum = data.review?data.review.split(',').length:0;
       $scope.review = data.review ||"";
       $scope.reviewModel.isReviewShow = $scope.reviewOn = data.review?true:false;
 
@@ -793,6 +809,30 @@
       $scope.company = data.company || "";
       $scope.companyOn = data.company?true:false;
       
+      var idData = JSON.parse(data.idData);
+      getMultiChecked('Notity','review');
+      getMultiChecked('Trade','trade');
+      getMultiChecked('Company','company');
+
+      function getMultiChecked(IDName,selectName){
+        var multiDataIDs = idData[IDName + 'ID'].split(',');
+        var localData = localStorageService.get(selectName+'Items');
+        if(multiDataIDs && multiDataIDs.length>0 && localData && localData.length>0 ){
+            multiDataIDs.forEach(function(item, index, arr){
+                localData.forEach(function(localItem, localIndex, localArr){
+                    var ID = localItem[IDName+"ID"]?localItem[IDName+"ID"]:localItem.StaffID;
+                    if(item===ID){
+                        localItem.checked = true;
+                    }
+                })
+                   
+                
+            });
+            localStorageService.set(selectName+'Items', localData);
+        }
+        
+      }
+
       document.getElementById('mockinput').innerHTML = data.description;
       $scope.mockInputData = data.description||"";
       $scope.isMockInputVal = data.description===""?false:true;
@@ -815,7 +855,7 @@
         
       }
       localStorageService.set('photoList', $scope.attachImgs);
-      $scope.photoLength = data_photos.length;
+      $scope.photoLength = $scope.attachImgs.length;
 
       $scope.createdOn = data.createdOn;
       
@@ -831,7 +871,6 @@
       $scope.TradeID = edit_idData.TradeID;
       $scope.CompanyID = edit_idData.CompanyID;
 
-
     });
     // 保存数据
     
@@ -846,6 +885,12 @@
           var confirmBy = $scope.locationOn && $scope.categoryOn && ( $scope.attachImgs.length>0 || $scope.isMockInputVal)
          
           if(confirmBy){
+            var isAllResized = localStorageService.get('isAllResized');
+            if(isAllResized===false){
+              var msg = helpToolsFactory.i18nT('PLEASE_WAIT')
+              helpToolsFactory.showMsg(msg);
+              return;
+            }
             console.log('saveAct confirmBy');
             
             var time = $scope.createdOn?$scope.createdOn:showTime(),
@@ -973,10 +1018,10 @@
         $scope.isMockInputVal = false;
         $scope.mockInputData = helpToolsFactory.i18nT('INPUT_LOG_HERE');
         document.getElementById("mockinput").innerHTML = helpToolsFactory.i18nT('INPUT_LOG_HERE');
-        $scope.review = helpToolsFactory.i18nT('SELECT_USER');
-        $scope.reviewOn = false;
-        $scope.tradeOn = false;
-        $scope.companyOn = false;
+        // $scope.review = helpToolsFactory.i18nT('SELECT_USER');
+        // $scope.reviewOn = false;
+        // $scope.tradeOn = false;
+        // $scope.companyOn = false;
         //$scope.trade = helpToolsFactory.i18nT('SELECT_TRADE');
         //$scope.company = helpToolsFactory.i18nT('SUBCONTRACTOR');
         $scope.createdOn = "";
@@ -995,9 +1040,9 @@
         
         $scope.attachImgs = [];
         localStorageService.set('photoList',$scope.attachImgs);
-        localStorageService.set('reviewItems',null);
-        localStorageService.set('tradeItems',null);
-        localStorageService.set('companyItems',null);
+        //localStorageService.set('reviewItems',null);
+        //localStorageService.set('tradeItems',null);
+        //localStorageService.set('companyItems',null);
         
 
     }
@@ -1150,7 +1195,7 @@
     }
 
     
-		}])
+        }])
     .filter('zoneUnique', function() {                  // ng-repeat 过滤重复
        return function(collection, keyname) {
           var output = [], 
