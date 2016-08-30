@@ -84,8 +84,8 @@
 			'TIPS': "Tips",
 			'EXIT_MSG': 'Do you want to exit the App?',
 			'LOADING': 'Loading...',
-            'CONFIRM_TOGGLE_PROJECT':'Confirm Toggle Project',
-            'CONFIRM_TOGGLE_PROJECT_CONTENT':'Are you sure to toggle project? It will clear what you fill in new Acticity',
+            'CONFIRM_TOGGLE_PROJECT':'Confirm change project?',
+            'CONFIRM_TOGGLE_PROJECT_CONTENT':"You are adding new record and haven't submitted yet. Change project and discard this record?",
             'INVALID_TOKEN':'You have been logout by system. Please re-login and retry. If problem still exists, contact 2516-8009 immediately',
             'PLEASE_WAIT':'Please wait for all photos attached!',
 
@@ -168,8 +168,8 @@
 		    'TIPS': "提示",
 		    'EXIT_MSG': '你确定要退出应用吗?',
 		    'LOADING': '載入中...',
-            'CONFIRM_TOGGLE_PROJECT':'確認切換項目',
-            'CONFIRM_TOGGLE_PROJECT_CONTENT':'確定要切換項目，如果切換，將會清空已填內容',
+            'CONFIRM_TOGGLE_PROJECT':'確認切換至另一地盤?',
+            'CONFIRM_TOGGLE_PROJECT_CONTENT':'由於你正在填寫的資料仍未提交, 切換至另一地盤後將不作保留.',
             'INVALID_TOKEN':'你已被系統強制登出, 請重新登入及重試. 如問題仍然存在, 請立即聯絡 2516-8009.',
             'PLEASE_WAIT':'請等待所有圖片添加完畢!',
             /* 错误提示 */

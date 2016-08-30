@@ -82,8 +82,15 @@
 	                console.log(accToken_Json);
 
 	                var staffProjectObjArr = [];
-	                
-	                accToken_Json.staffid.forEach(function(item, index, arr){
+	                var _staffidArr = [];
+	                if(typeof accToken_Json.staffid === "string"){
+	                	
+	                	_staffidArr.push(accToken_Json.staffid);
+	                	
+	                }else if(Array.isArray(accToken_Json.staffid)){
+	                	_staffidArr = accToken_Json.staffid;
+	                }
+	                _staffidArr.forEach(function(item, index, arr){
 	                	//var staff_project_Arr = item.split("#");
 	                	var staff_project_Obj = {
 	                		ProjectID:item.split("#")[0],
@@ -94,7 +101,7 @@
 
 	                });
 
-	                localStorageService.set('Project#Staff', accToken_Json.staffid);
+	                localStorageService.set('Project#Staff', _staffidArr);
 	                localStorageService.set('UID', accToken_Json.uid);
 	                localStorageService.set('Name', accToken_Json.fn);
 	                localStorageService.set('access#exp',accToken_Json.exp);
