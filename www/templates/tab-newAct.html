@@ -73,35 +73,14 @@
 					</span>
 				</div>
 				<div class="item horizScroll">
-					<div ng-repeat="attachImg in attachImgs" class="imgItem" ng-show = 'attachImg.imgURI !== undefined'>
-						<img ng-click="showBigImg(attachImg.index)" ng-src = '{{ attachImg.imgURI }}'>
-						<a ng-click="delPhoto(attachImg.index)" class="deletePic"></a>
-					</div>
+					<!-- <div class="scrollWrap"> -->
+						<div ng-repeat="attachImg in attachImgs" class="imgItem" ng-show = 'attachImg.imgURI !== undefined'>
+							<img ng-click="showBigImg(attachImg.index)" ng-src = '{{ attachImg.imgURI }}'>
+							<a ng-click="delPhoto(attachImg.index)" class="deletePic"></a>
+						</div>
+					<!-- </div> -->
 					
-					<!-- <div class="imgItem">
-						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
-						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
-					</div>
-					<div class="imgItem">
-						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
-						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
-					</div>
-					<div class="imgItem">
-						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
-						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
-					</div>
-					<div class="imgItem">
-						<img ng-click="showBigImg('img/one.jpg')" src="img/one.jpg">
-						<a ng-click="delPhoto('img/one.jpg')" class="deletePic"></a>
-					</div> -->
-					<!-- <div class="imgItem">
-						<img src="img/one.jpg">
-						<a href="" class="deletePic"></a>
-					</div>
-					<div class="imgItem">
-						<img src="img/one.jpg">
-						<a href="" class="deletePic"></a>
-					</div> -->
+					
 				</div>
 			</div>
 			

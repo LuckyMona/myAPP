@@ -3,7 +3,7 @@
   <ion-header-bar align-title="left" class="bar-cus bar-positive" ng-controller="TranslationsMainCtrl">
       <div class="buttons">
         <div class="app_icon">
-          <img height="80%" src="img/logo.png" />
+          <img src="img/logo.png" />
         </div>
         <button class="button" ng-click="doSomething()"></button>
       </div>
@@ -11,16 +11,24 @@
       <div class="buttons">
         <button class="button button-clear" ng-click="changeLanguage()"><i class="demo-icon icon-translate">&#xe800;</i></button>
       </div>
+      <div class="headerBar loginBar"></div>
   </ion-header-bar> 
      <ion-tabs class="tabs-striped tabs-color-positive tabs-top">
 
         <ion-tab title="{{'ACTIVE_DIRECTORY' | translate }}" href="#/login/active" >
           <ion-nav-view name="login-active"></ion-nav-view>
         </ion-tab>
+<!-- <div style="-webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;"></div> -->
+        <!-- <ion-tab title="{{'EMPLOYEE_ID' | translate }}" href="#/login/id"> -->
 
-        <ion-tab title="{{'EMPLOYEE_ID' | translate }}" href="#/login/id">
+        <!-- <ion-tab title="{{'EMPLOYEE_ID' | translate }}" href="#/login/active">
           <ion-nav-view name="login-id"></ion-nav-view>
-        </ion-tab>
+        </ion-tab> -->
       </ion-tabs>
   
 <!--   </ion-content>

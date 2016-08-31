@@ -16,7 +16,7 @@ navigation history that also transitions its views in and out.
 </ion-nav-bar> -->
 
 <ion-tabs class="notLogin tabs-icon-only tabs-color-active-positive tabs-color-positive">
-
+  <img class="smallLogo" src="img/logo_small.png">
   <a class="num" nav-direction="forward" href="#/jobList">{{jobNumber}}</a>
   <!-- tastList Tab -->
  <!--  hide for temporary -->
@@ -25,20 +25,20 @@ navigation history that also transitions its views in and out.
   </ion-tab> -->
 
   <!-- uploads Tab -->
-  <ion-tab title="Upload" badge="badgeUpload" badge-style="badge-assertive" icon-off="ion-ios-cloud-upload-outline" icon-on="ion-ios-cloud-upload-outline" href="#/tab/uploads">
+  <ion-tab title="Upload" badge="badgeUpload" class="white" badge-style="badge-assertive" icon-off="ion-ios-cloud-upload-outline" icon-on="ion-ios-cloud-upload-outline" href="#/tab/uploads">
     <ion-nav-view name="tab-uploads"></ion-nav-view>
   </ion-tab>
 
   <!-- newAct Tab -->
-  <ion-tab title="newAct" icon-off="ion-ios-plus-empty" icon-on="ion-ios-plus-empty" href="#/tab/newAct">
+  <ion-tab title="newAct" icon-off="ion-ios-plus-empty" class="white" icon-on="ion-ios-plus-empty" href="#/tab/newAct">
     <ion-nav-view name="tab-newAct"></ion-nav-view>
   </ion-tab>
  
 
   <!-- system Tab -->
-  <ion-tab title="System" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear-outline" href="#/tab/system">
+  <ion-tab title="System" icon-off="ion-ios-gear-outline" class="white" icon-on="ion-ios-gear-outline" href="#/tab/system">
     <ion-nav-view name="tab-system"></ion-nav-view>
   </ion-tab>
-
+  <div class="headerBar"></div>
 
 </ion-tabs>
